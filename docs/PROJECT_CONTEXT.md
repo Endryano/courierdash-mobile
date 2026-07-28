@@ -8,9 +8,10 @@ CourierDash Mobile — нативний застосунок для кур'єр�
 
 ## Стан репозиторію
 
-- **Фактично реалізоване:** лише `README.md`; Expo, залежностей, коду, конфігурації та мобільного Supabase client немає.
-- **Підтверджений read-only repository audit:** 2026-07-28, чисте дерево; гілка `codex/project-foundation`; HEAD `dd3ddf4`.
-- **Не виконувалось:** remote Supabase audit, ініціалізація Expo, міграції, підключення до зовнішніх сервісів.
+- **Фактично реалізоване:** Expo foundation у commit `d01058621745b2c3a0d6468c065ff29c380da955`: Expo `57.0.8`, React Native `0.86.0`, React `19.2.3`, Expo Router `57.0.8` і TypeScript `6.0.3`.
+- **Структура foundation:** `src/app/` містить лише мінімальні routes `_layout.tsx` та `index.tsx`; tabs, auth, Supabase, theme, localization, tests і бізнес-логіка не реалізовані.
+- **Перевірено:** `expo-doctor`, lint, Android export та iOS export успішні.
+- **Не виконувалось:** реальний Android/iOS device test, remote Supabase audit, міграції та підключення до зовнішніх сервісів.
 
 ## Погоджений MVP
 

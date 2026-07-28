@@ -5,7 +5,7 @@ _Оновлено: 2026-07-28. Статуси implementation-етапів не �
 | Етап | Статус | Результат |
 | --- | --- | --- |
 | 0. Documentation baseline | Завершено | Контекст, roadmap, рішення та поточна задача прийняті власником. |
-| 1. Expo foundation | Заплановано | Ініціалізація TypeScript Expo у погодженому scope; без backend. |
+| 1. Expo foundation | Завершено | Expo SDK 57, Expo Router, `src/app/` і мінімальні routes створено; lint, expo-doctor та Android/iOS exports успішні. |
 | 2. Quality baseline | Заплановано | Strict TypeScript, ESLint, test runner і базові команди перевірки; formatter лише після окремого погодження. |
 | 3. Theme and localization foundation | Заплановано | Dark tokens, доступні базові компоненти, `pl`/`uk`/`en`/`ru`, persisted locale. |
 | 4. Supabase read-only audit | Заплановано | Перевірка production schema, RLS, Auth і contracts без жодної зміни remote state. |
