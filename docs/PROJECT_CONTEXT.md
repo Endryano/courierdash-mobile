@@ -9,8 +9,9 @@ CourierDash Mobile — нативний застосунок для кур'єр�
 ## Стан репозиторію
 
 - **Фактично реалізоване:** Expo foundation у commit `d01058621745b2c3a0d6468c065ff29c380da955`: Expo `57.0.8`, React Native `0.86.0`, React `19.2.3`, Expo Router `57.0.8` і TypeScript `6.0.3`.
-- **Структура foundation:** `src/app/` містить лише мінімальні routes `_layout.tsx` та `index.tsx`; tabs, auth, Supabase, theme, localization, tests і бізнес-логіка не реалізовані.
-- **Перевірено:** `expo-doctor`, lint, Android export та iOS export успішні.
+- **Структура foundation:** `src/app/` містить лише мінімальні routes `_layout.tsx` та `index.tsx`; tabs, auth, Supabase, theme, localization і бізнес-логіка не реалізовані.
+- **Quality baseline:** у commit `80b69071b46c659ba9ff1fb1b6636258bdfec14e`: `typecheck` виконує `tsc --noEmit`, ESLint запускається через Expo config, Jest `29.7.0` + `jest-expo` `57.0.2` і React Native Testing Library `14.0.1` встановлені. Є один smoke test для `src/app/index.tsx`.
+- **Перевірено:** `typecheck`, lint, два послідовні test runs, `expo install --check`, `expo-doctor`, Android export та iOS export успішні.
 - **Не виконувалось:** реальний Android/iOS device test, remote Supabase audit, міграції та підключення до зовнішніх сервісів.
 
 ## Погоджений MVP
@@ -74,6 +75,7 @@ CourierDash Mobile — нативний застосунок для кур'єр�
 ## Ризики, залежності та відкриті рішення
 
 - Read-only production Supabase audit дозволений, але ще не виконаний. До його завершення фактичні remote schema, RLS та Auth settings залишаються непідтвердженими.
+- npm audit findings є transitive; `npm audit fix` не застосовувався. Окремий dependency security review потрібен як майбутня задача.
 - Потрібно погодити bottom tabs, launch flow після onboarding, Expo identifiers, мінімальні OS версії, assets/screenshot source of truth, chart library після Expo spike та beta/release policy.
 - До calculation core слід зафіксувати повний перелік nullable/validation правил, якщо він відрізняється від технічного контракту вебверсії.
 - Offline, legal/support, privacy/account deletion і diagnostics не входять у поточний scope та не повинні додаватися неявно.

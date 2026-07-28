@@ -69,3 +69,13 @@
 **Причини.** Це погоджений foundation scope та актуальний шлях, рекомендований Expo для нового TypeScript-проєкту.
 
 **Наслідки.** Tabs, auth, Supabase, theme, localization і tests не входять до foundation; вони реалізуються лише на наступних окремо погоджених етапах.
+
+## 2026-07-28 — Quality baseline
+
+**Контекст.** Після Expo foundation потрібен мінімальний перевірюваний набір статичного аналізу й UI smoke testing без розширення продуктового scope.
+
+**Рішення.** Quality baseline використовує strict TypeScript, Expo ESLint, Jest + `jest-expo` і React Native Testing Library.
+
+**Причини.** Це погоджений мінімальний набір, сумісний з поточним Expo SDK 57 foundation, для ранньої перевірки коду та UI.
+
+**Наслідки.** Formatter, CI, coverage, snapshots і E2E відкладені до окремих погоджених етапів.

@@ -1,20 +1,20 @@
-# Current Task — Quality Baseline Plan
+# Current Task — Theme and Localization Foundation Plan
 
 _Дата: 2026-07-28_
 
 ## Мета
 
-Підготувати короткий план Quality baseline для окремого погодження, без початку реалізації.
+Підготувати короткий план Theme and Localization foundation для окремого погодження, без початку реалізації.
 
 ## Scope
 
-- Read-only перевірити Expo foundation, прийняту документацію та наявні quality-команди.
-- Показати план Quality baseline максимум із п'яти пунктів.
+- Read-only перевірити прийняту документацію, Expo foundation і Quality baseline.
+- Показати план Theme and Localization foundation максимум із п'яти пунктів.
 - Не виконувати реалізацію до окремого повідомлення власника `ЗАТВЕРДЖУЮ`.
 
 ## Inputs
 
-- Прийняті `PROJECT_CONTEXT.md`, `ROADMAP.md` і `DECISIONS.md`, а також Expo foundation commit `d01058621745b2c3a0d6468c065ff29c380da955`.
+- Прийняті `PROJECT_CONTEXT.md`, `ROADMAP.md` і `DECISIONS.md`, а також Quality baseline commit `80b69071b46c659ba9ff1fb1b6636258bdfec14e`.
 - Пріоритетні MVP рішення власника.
 - Фактичний стан мобільного репозиторію.
 
@@ -32,4 +32,4 @@ _Дата: 2026-07-28_
 
 ## Статус
 
-**Активна документаційна задача:** підготовка плану Quality baseline. Реалізація не активна й не починається до окремого `ЗАТВЕРДЖУЮ`.
+**Активна документаційна задача:** підготовка плану Theme and Localization foundation. Реалізація не активна й не починається до окремого `ЗАТВЕРДЖУЮ`.
