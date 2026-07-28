@@ -1,0 +1,8 @@
+{
+  "expo": {
+    "name": "CourierDash Mobile",
+    "slug": "courierdash-mobile",
+    "version": "1.0.0",
+    "plugins": ["expo-router"]
+  }
+}
