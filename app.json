@@ -3,6 +3,19 @@
     "name": "CourierDash Mobile",
     "slug": "courierdash-mobile",
     "version": "1.0.0",
-    "plugins": ["expo-router"]
+    "userInterfaceStyle": "dark",
+    "plugins": [
+      "expo-router",
+      "expo-system-ui",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["pl", "uk", "en", "ru"],
+            "android": ["pl", "uk", "en", "ru"]
+          }
+        }
+      ]
+    ]
   }
 }
