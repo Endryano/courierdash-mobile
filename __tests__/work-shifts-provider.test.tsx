@@ -25,9 +25,23 @@ function authenticatedState(id: string): AuthState {
   return { status: 'authenticated', isAuthenticated: true, user, session: { user } as AuthState['session'] };
 }
 
+function shift(id: number): WorkShift {
+  return {
+    id, date: '2026-07-29', hours: 8, km: 20,
+    analytics: { platforms: {
+      uber: { income: 1, orders: null, appTips: null, cashTips: 0, bonuses: null },
+      wolt: { income: 0, orders: null, appTips: null, cashTips: 0, bonuses: null },
+      bolt: { income: 0, orders: null, appTips: null, cashTips: 0, bonuses: null },
+      glovo: { income: 0, orders: null, appTips: null, cashTips: 0, bonuses: null },
+      stuart: { income: 0, orders: 0, appTips: 0, cashTips: 0, bonuses: 0 },
+      other: { income: 0, orders: 0, appTips: 0, cashTips: 0, bonuses: 0, name: null },
+    } },
+  };
+}
+
 function Probe() {
   const { retry, shifts, status } = useWorkShifts();
-  return <Text onPress={retry}>{`${status}:${shifts.length}`}</Text>;
+  return <Text onPress={retry}>{`${status}:${shifts.length}:${shifts[0]?.analytics.platforms.uber.income ?? '-'}`}</Text>;
 }
 
 describe('WorkShiftsProvider', () => {
@@ -40,19 +54,19 @@ describe('WorkShiftsProvider', () => {
   test('stays idle without an authenticated user', async () => {
     await render(<WorkShiftsProvider><Probe /></WorkShiftsProvider>);
 
-    expect(screen.getByText('idle:0')).toBeTruthy();
+    expect(screen.getByText('idle:0:-')).toBeTruthy();
     expect(mockGetOwnWorkShifts).not.toHaveBeenCalled();
   });
 
   test('exposes empty and ready results only for the current owner', async () => {
     mockAuth = authenticatedState('user-1');
     const view = await render(<WorkShiftsProvider><Probe /></WorkShiftsProvider>);
-    expect(await screen.findByText('empty:0')).toBeTruthy();
+    expect(await screen.findByText('empty:0:-')).toBeTruthy();
     expect(mockGetOwnWorkShifts).toHaveBeenCalledWith('user-1');
 
-    mockGetOwnWorkShifts.mockResolvedValue([{ id: 1, date: '2026-07-29', hours: 8, km: 20 }]);
-    await act(async () => { screen.getByText('empty:0').props.onPress(); });
-    expect(await screen.findByText('ready:1')).toBeTruthy();
+    mockGetOwnWorkShifts.mockResolvedValue([shift(1)]);
+    await act(async () => { screen.getByText('empty:0:-').props.onPress(); });
+    expect(await screen.findByText('ready:1:1')).toBeTruthy();
     await view.unmount();
   });
 
@@ -60,11 +74,11 @@ describe('WorkShiftsProvider', () => {
     mockAuth = authenticatedState('user-1');
     mockGetOwnWorkShifts.mockRejectedValue(new MockWorkShiftsApiError('network_unavailable'));
     const view = await render(<WorkShiftsProvider><Probe /></WorkShiftsProvider>);
-    expect(await screen.findByText('recoverable_error:0')).toBeTruthy();
+    expect(await screen.findByText('recoverable_error:0:-')).toBeTruthy();
 
     let rejectRetry: ((reason?: unknown) => void) | undefined;
     mockGetOwnWorkShifts.mockImplementationOnce(() => new Promise((_, reject) => { rejectRetry = reject; }));
-    const retryControl = screen.getByText('recoverable_error:0');
+    const retryControl = screen.getByText('recoverable_error:0:-');
     let retryOutcome: Promise<unknown> | undefined;
     await act(async () => {
       retryOutcome = retryControl.props.onPress().then(() => undefined, (error: unknown) => error);
@@ -75,7 +89,7 @@ describe('WorkShiftsProvider', () => {
 
     await act(async () => { rejectRetry?.(new MockWorkShiftsApiError('forbidden')); });
     await expect(retryOutcome).resolves.toMatchObject({ category: 'forbidden' });
-    expect(await screen.findByText('blocked:0')).toBeTruthy();
+    expect(await screen.findByText('blocked:0:-')).toBeTruthy();
     await view.unmount();
   });
 
@@ -89,11 +103,11 @@ describe('WorkShiftsProvider', () => {
 
     mockAuth = authenticatedState('user-b');
     await view.rerender(<WorkShiftsProvider><Probe /></WorkShiftsProvider>);
-    expect(await screen.findByText('empty:0')).toBeTruthy();
+    expect(await screen.findByText('empty:0:-')).toBeTruthy();
 
-    await act(async () => { resolveFirst?.([{ id: 1, date: '2026-07-29', hours: 8, km: 20 }]); });
-    expect(screen.getByText('empty:0')).toBeTruthy();
-    expect(screen.queryByText('ready:1')).toBeNull();
+    await act(async () => { resolveFirst?.([shift(1)]); });
+    expect(screen.getByText('empty:0:-')).toBeTruthy();
+    expect(screen.queryByText('ready:1:1')).toBeNull();
   });
 
   test('ignores a stale failure after logout', async () => {
@@ -105,10 +119,10 @@ describe('WorkShiftsProvider', () => {
 
     mockAuth = { status: 'unauthenticated', isAuthenticated: false, session: null, user: null };
     await view.rerender(<WorkShiftsProvider><Probe /></WorkShiftsProvider>);
-    expect(await screen.findByText('idle:0')).toBeTruthy();
+    expect(await screen.findByText('idle:0:-')).toBeTruthy();
 
     await act(async () => { rejectRequest?.(new MockWorkShiftsApiError('forbidden')); });
-    expect(screen.getByText('idle:0')).toBeTruthy();
-    expect(screen.queryByText('blocked:0')).toBeNull();
+    expect(screen.getByText('idle:0:-')).toBeTruthy();
+    expect(screen.queryByText('blocked:0:-')).toBeNull();
   });
 });
