@@ -1,5 +1,7 @@
 import { Stack } from 'expo-router';
 
+import { WorkShiftsProvider } from '@/features/work/provider/WorkShiftsProvider';
+
 export default function AppLayout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return <WorkShiftsProvider><Stack screenOptions={{ headerShown: false }} /></WorkShiftsProvider>;
 }
