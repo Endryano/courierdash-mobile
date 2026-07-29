@@ -1,0 +1,437 @@
+/**
+ * Environment: Staging
+ * Generated: 2026-07-29T14:49:10Z
+ * Source: Supabase CLI linked-schema metadata (sanitized; no rows or credentials)
+ * Web commit: e991539b88ae5d6ec2149389dba4d298f6c19864
+ * Directly verified from Staging: YES
+ * Matches web lib/database.types.ts: NO — this artifact includes graphql_public and
+ *   correctly models public.work_shifts.user_id as required/non-null without a default.
+ */
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  public: {
+    Tables: {
+      garage_history: {
+        Row: {
+          cost: number | null
+          created_at: string
+          date: string | null
+          id: number
+          name: string | null
+          odometer: number | null
+          rule_id: number | null
+          service_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          date?: string | null
+          id?: number
+          name?: string | null
+          odometer?: number | null
+          rule_id?: number | null
+          service_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          date?: string | null
+          id?: number
+          name?: string | null
+          odometer?: number | null
+          rule_id?: number | null
+          service_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      garage_rules: {
+        Row: {
+          created_at: string
+          id: number
+          interval_km: number | null
+          last_change_km: number | null
+          name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          interval_km?: number | null
+          last_change_km?: number | null
+          name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          interval_km?: number | null
+          last_change_km?: number | null
+          name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          id: string
+          nickname: string | null
+        }
+        Insert: {
+          id: string
+          nickname?: string | null
+        }
+        Update: {
+          id?: string
+          nickname?: string | null
+        }
+        Relationships: []
+      }
+      tax_settings: {
+        Row: {
+          bolt_type: string | null
+          bolt_val: number | null
+          glovo_type: string | null
+          glovo_val: number | null
+          id: string
+          uber_type: string | null
+          uber_val: number | null
+          updated_at: string | null
+          user_id: string
+          wolt_type: string | null
+          wolt_val: number | null
+        }
+        Insert: {
+          bolt_type?: string | null
+          bolt_val?: number | null
+          glovo_type?: string | null
+          glovo_val?: number | null
+          id?: string
+          uber_type?: string | null
+          uber_val?: number | null
+          updated_at?: string | null
+          user_id: string
+          wolt_type?: string | null
+          wolt_val?: number | null
+        }
+        Update: {
+          bolt_type?: string | null
+          bolt_val?: number | null
+          glovo_type?: string | null
+          glovo_val?: number | null
+          id?: string
+          uber_type?: string | null
+          uber_val?: number | null
+          updated_at?: string | null
+          user_id?: string
+          wolt_type?: string | null
+          wolt_val?: number | null
+        }
+        Relationships: []
+      }
+      work_shifts: {
+        Row: {
+          bolt: number
+          bonuses: number | null
+          bonuses_bolt: number | null
+          bonuses_glovo: number | null
+          bonuses_other: number
+          bonuses_stuart: number
+          bonuses_uber: number | null
+          bonuses_wolt: number | null
+          cash_tips_bolt: number
+          cash_tips_glovo: number
+          cash_tips_other: number
+          cash_tips_stuart: number
+          cash_tips_uber: number
+          cash_tips_wolt: number
+          created_at: string
+          date: string
+          glovo: number
+          hours: number
+          id: number
+          km: number
+          orders_bolt: number | null
+          orders_glovo: number | null
+          orders_other: number
+          orders_stuart: number
+          orders_uber: number | null
+          orders_wolt: number | null
+          other_income: number
+          other_platform_name: string | null
+          stuart: number
+          tips: number | null
+          tips_bolt: number | null
+          tips_glovo: number | null
+          tips_other: number
+          tips_stuart: number
+          tips_uber: number | null
+          tips_wolt: number | null
+          uber: number
+          user_id: string
+          wolt: number
+        }
+        Insert: {
+          bolt?: number
+          bonuses?: number | null
+          bonuses_bolt?: number | null
+          bonuses_glovo?: number | null
+          bonuses_other?: number
+          bonuses_stuart?: number
+          bonuses_uber?: number | null
+          bonuses_wolt?: number | null
+          cash_tips_bolt?: number
+          cash_tips_glovo?: number
+          cash_tips_other?: number
+          cash_tips_stuart?: number
+          cash_tips_uber?: number
+          cash_tips_wolt?: number
+          created_at?: string
+          date: string
+          glovo?: number
+          hours?: number
+          id?: never
+          km?: number
+          orders_bolt?: number | null
+          orders_glovo?: number | null
+          orders_other?: number
+          orders_stuart?: number
+          orders_uber?: number | null
+          orders_wolt?: number | null
+          other_income?: number
+          other_platform_name?: string | null
+          stuart?: number
+          tips?: number | null
+          tips_bolt?: number | null
+          tips_glovo?: number | null
+          tips_other?: number
+          tips_stuart?: number
+          tips_uber?: number | null
+          tips_wolt?: number | null
+          uber?: number
+          user_id: string
+          wolt?: number
+        }
+        Update: {
+          bolt?: number
+          bonuses?: number | null
+          bonuses_bolt?: number | null
+          bonuses_glovo?: number | null
+          bonuses_other?: number
+          bonuses_stuart?: number
+          bonuses_uber?: number | null
+          bonuses_wolt?: number | null
+          cash_tips_bolt?: number
+          cash_tips_glovo?: number
+          cash_tips_other?: number
+          cash_tips_stuart?: number
+          cash_tips_uber?: number
+          cash_tips_wolt?: number
+          created_at?: string
+          date?: string
+          glovo?: number
+          hours?: number
+          id?: never
+          km?: number
+          orders_bolt?: number | null
+          orders_glovo?: number | null
+          orders_other?: number
+          orders_stuart?: number
+          orders_uber?: number | null
+          orders_wolt?: number | null
+          other_income?: number
+          other_platform_name?: string | null
+          stuart?: number
+          tips?: number | null
+          tips_bolt?: number | null
+          tips_glovo?: number | null
+          tips_other?: number
+          tips_stuart?: number
+          tips_uber?: number | null
+          tips_wolt?: number | null
+          uber?: number
+          user_id?: string
+          wolt?: number
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {},
+  },
+} as const

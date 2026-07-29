@@ -5,6 +5,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LocalizationProvider, useLocalization } from '@/i18n/LocalizationProvider';
+import { AuthProvider } from '@/features/auth/AuthProvider';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 
 function RootNavigator() {
@@ -33,7 +34,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <LocalizationProvider>
-          <RootNavigator />
+          <AuthProvider>
+            <RootNavigator />
+          </AuthProvider>
         </LocalizationProvider>
       </ThemeProvider>
     </SafeAreaProvider>
