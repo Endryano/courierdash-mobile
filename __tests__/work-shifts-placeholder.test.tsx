@@ -4,9 +4,11 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
 const mockRetry = jest.fn<() => Promise<void>>();
+const mockEditLoad = jest.fn<() => Promise<void>>();
 let mockWorkState: { status: 'idle' | 'loading' | 'empty' | 'ready' | 'recoverable_error' | 'blocked'; shifts: readonly { id: number; date: string; hours: number; km: number }[]; retry: () => Promise<void> };
 
 jest.mock('@/features/work/hooks/useWorkShifts', () => ({ useWorkShifts: () => mockWorkState }));
+jest.mock('@/features/work/hooks/useWorkShiftEdit', () => ({ useWorkShiftEdit: () => ({ load: mockEditLoad }) }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ t: (key: string) => key }) }));
 jest.mock('@/features/work/components/WorkShiftCreateForm', () => {
   const React = require('react');
@@ -23,6 +25,7 @@ function renderPlaceholder() {
 describe('WorkShiftsPlaceholder', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockEditLoad.mockResolvedValue(undefined);
     mockRetry.mockResolvedValue(undefined);
     mockWorkState = { status: 'loading', shifts: [], retry: mockRetry };
   });
