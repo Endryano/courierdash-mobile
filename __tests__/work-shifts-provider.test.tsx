@@ -65,13 +65,16 @@ describe('WorkShiftsProvider', () => {
     let rejectRetry: ((reason?: unknown) => void) | undefined;
     mockGetOwnWorkShifts.mockImplementationOnce(() => new Promise((_, reject) => { rejectRetry = reject; }));
     const retryControl = screen.getByText('recoverable_error:0');
+    let retryOutcome: Promise<unknown> | undefined;
     await act(async () => {
-      await retryControl.props.onPress();
-      await retryControl.props.onPress();
+      retryOutcome = retryControl.props.onPress().then(() => undefined, (error: unknown) => error);
+      retryControl.props.onPress();
+      await Promise.resolve();
     });
     await waitFor(() => expect(mockGetOwnWorkShifts).toHaveBeenCalledTimes(2));
 
     await act(async () => { rejectRetry?.(new MockWorkShiftsApiError('forbidden')); });
+    await expect(retryOutcome).resolves.toMatchObject({ category: 'forbidden' });
     expect(await screen.findByText('blocked:0')).toBeTruthy();
     await view.unmount();
   });

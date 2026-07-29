@@ -8,6 +8,11 @@ let mockWorkState: { status: 'idle' | 'loading' | 'empty' | 'ready' | 'recoverab
 
 jest.mock('@/features/work/hooks/useWorkShifts', () => ({ useWorkShifts: () => mockWorkState }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ t: (key: string) => key }) }));
+jest.mock('@/features/work/components/WorkShiftCreateForm', () => {
+  const React = require('react');
+  const { Text: MockText } = require('react-native');
+  return { WorkShiftCreateForm: () => React.createElement(MockText, { testID: 'work-create-form' }, 'create form') };
+});
 
 const { WorkShiftsPlaceholder } = require('@/features/work/components/WorkShiftsPlaceholder') as typeof import('@/features/work/components/WorkShiftsPlaceholder');
 
@@ -53,5 +58,18 @@ describe('WorkShiftsPlaceholder', () => {
     mockWorkState = { status: 'blocked', shifts: [], retry: mockRetry };
     await view.rerender(<ThemeProvider><WorkShiftsPlaceholder /></ThemeProvider>);
     expect(screen.getByText('work.blocked.title')).toBeTruthy();
+  });
+
+  test('opens the create form from empty and ready states', async () => {
+    mockWorkState = { status: 'empty', shifts: [], retry: mockRetry };
+    const view = await renderPlaceholder();
+    await fireEvent.press(screen.getByTestId('work-create-action'));
+    expect(screen.getByTestId('work-create-form')).toBeTruthy();
+
+    await view.unmount();
+    mockWorkState = { status: 'ready', shifts: [{ id: 1, date: '2026-07-29', hours: 8, km: 20 }], retry: mockRetry };
+    await renderPlaceholder();
+    await fireEvent.press(screen.getByTestId('work-create-action'));
+    expect(screen.getByTestId('work-create-form')).toBeTruthy();
   });
 });

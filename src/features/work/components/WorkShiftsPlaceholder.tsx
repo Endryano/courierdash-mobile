@@ -8,12 +8,14 @@ import { useLocalization } from '@/i18n/LocalizationProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
 import { useWorkShifts } from '../hooks/useWorkShifts';
+import { WorkShiftCreateForm } from './WorkShiftCreateForm';
 
 export function WorkShiftsPlaceholder() {
   const { retry, shifts, status } = useWorkShifts();
   const { t } = useLocalization();
   const { spacing } = useTheme();
   const [isRetrying, setIsRetrying] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   async function retryWorkShifts() {
     if (isRetrying) return;
@@ -21,10 +23,14 @@ export function WorkShiftsPlaceholder() {
     setIsRetrying(true);
     try {
       await retry();
+    } catch {
+      // The read provider already exposes the safe error state.
     } finally {
       setIsRetrying(false);
     }
   }
+
+  if (isCreating) return <WorkShiftCreateForm onCancel={() => setIsCreating(false)} />;
 
   if (status === 'loading' || status === 'idle') {
     return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl }}><AppText>{t('work.loading')}</AppText></View></Screen>;
@@ -42,12 +48,13 @@ export function WorkShiftsPlaceholder() {
   }
 
   if (status === 'empty') {
-    return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl, gap: spacing.md }}><AppText variant="title">{t('work.empty.title')}</AppText><AppText muted>{t('work.empty.description')}</AppText></View></Screen>;
+    return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl, gap: spacing.md }}><AppText variant="title">{t('work.empty.title')}</AppText><AppText muted>{t('work.empty.description')}</AppText><AppButton label={t('work.create.action')} onPress={() => setIsCreating(true)} testID="work-create-action" /></View></Screen>;
   }
 
   return (
     <Screen><View style={{ flex: 1, padding: spacing.xl, gap: spacing.md }}>
       <AppText variant="title">{t('work.list.title')}</AppText>
+      <AppButton label={t('work.create.action')} onPress={() => setIsCreating(true)} testID="work-create-action" />
       {shifts.map((shift) => (
         <View key={shift.id} style={{ gap: spacing.xs }}>
           <AppText>{shift.date}</AppText>
