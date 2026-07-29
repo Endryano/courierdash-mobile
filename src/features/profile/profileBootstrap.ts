@@ -1,8 +1,8 @@
 import { ProfileApiError, getOwnProfile, upsertOwnProfile } from './profileApi';
+import { validateNickname } from './nicknameValidation';
 import type { Profile, ProfileBootstrapState, SafeProfileError, ValidNickname } from './profileTypes';
 
 export const PROFILE_METADATA_NICKNAME_KEY = 'nickname';
-const nicknamePattern = /^[A-Za-z0-9_]{3,15}$/;
 
 type BootstrapDependencies = {
   getOwnProfile: typeof getOwnProfile;
@@ -17,8 +17,8 @@ export function getValidMetadataNickname(metadata: unknown): ValidNickname | nul
   const value = (metadata as Record<string, unknown>)[PROFILE_METADATA_NICKNAME_KEY];
   if (typeof value !== 'string') return null;
 
-  const nickname = value.trim();
-  return nicknamePattern.test(nickname) ? (nickname as ValidNickname) : null;
+  const result = validateNickname(value);
+  return result.isValid ? result.value : null;
 }
 
 function isValidProfileNickname(profile: Profile): boolean {

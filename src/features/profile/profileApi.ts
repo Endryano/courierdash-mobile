@@ -1,8 +1,7 @@
 import { supabase } from '@/lib/supabase/client';
 
+import { validateNickname } from './nicknameValidation';
 import type { Profile, SafeProfileError, ValidNickname } from './profileTypes';
-
-const nicknamePattern = /^[A-Za-z0-9_]{3,15}$/;
 
 export class ProfileApiError extends Error {
   constructor(readonly category: SafeProfileError) {
@@ -37,7 +36,7 @@ export async function getOwnProfile(userId: string): Promise<Profile | null> {
 }
 
 export async function upsertOwnProfile(userId: string, nickname: ValidNickname): Promise<void> {
-  if (typeof nickname !== 'string' || !nicknamePattern.test(nickname)) throw new ProfileApiError('invalid_response');
+  if (!validateNickname(nickname).isValid) throw new ProfileApiError('invalid_response');
 
   const { error } = await supabase.from('profiles').upsert({ id: userId, nickname }, { onConflict: 'id' });
 

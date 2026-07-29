@@ -7,11 +7,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LocalizationProvider, useLocalization } from '@/i18n/LocalizationProvider';
 import { AuthProvider } from '@/features/auth/AuthProvider';
 import { ProfileProvider } from '@/features/profile/ProfileProvider';
+import { NicknameOnboardingScreen } from '@/features/profile/NicknameOnboardingScreen';
+import { useProfile } from '@/features/profile/useProfile';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 
 function RootNavigator() {
   const { colors } = useTheme();
   const { isReady } = useLocalization();
+  const { status: profileStatus } = useProfile();
 
   useEffect(() => {
     void setBackgroundColorAsync(colors.background).catch(() => {
@@ -25,6 +28,10 @@ function RootNavigator() {
         <ActivityIndicator color={colors.accent} />
       </View>
     );
+  }
+
+  if (profileStatus === 'needs_nickname') {
+    return <NicknameOnboardingScreen />;
   }
 
   return <Stack screenOptions={{ headerShown: false }} />;

@@ -15,7 +15,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
   const [retryVersion, setRetryVersion] = useState(0);
   const requestVersion = useRef(0);
 
-  const retry = useCallback(() => {
+  const retry = useCallback(async () => {
     setRetryVersion((version) => version + 1);
   }, []);
 
