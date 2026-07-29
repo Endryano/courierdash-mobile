@@ -79,3 +79,13 @@
 **Причини.** Це погоджений мінімальний набір, сумісний з поточним Expo SDK 57 foundation, для ранньої перевірки коду та UI.
 
 **Наслідки.** Formatter, CI, coverage, snapshots і E2E відкладені до окремих погоджених етапів.
+
+## 2026-07-29 — Theme and localization foundation
+
+**Контекст.** MVP потребує власного Dark-only native foundation і чотирьох локалізацій без передчасного додавання великого UI або стороннього i18n framework.
+
+**Рішення.** MVP використовує Dark-only semantic `darkTheme`; на foundation застосовується system font. Локалізація реалізована через lightweight typed dictionaries без стороннього i18n framework; preference мови зберігається в AsyncStorage. Foundation primitives обмежені `Screen`, `AppText`, `AppButton`.
+
+**Причини.** Це відповідає погодженому Dark-only scope, підтримує `pl`, `uk`, `en`, `ru` і дає мінімальну спільну основу без непогоджених UI dependencies або custom font assets.
+
+**Наслідки.** Persisted locale має пріоритет над device locale; storage write failure не скасовує in-session locale change. Light/system theme, custom font / Inter, додаткові UI primitives і product UI залишаються поза цим етапом.

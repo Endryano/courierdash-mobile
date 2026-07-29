@@ -1,27 +1,27 @@
-# Current Task — Theme and Localization Foundation Plan
+# Current Task — Read-only Production Supabase Audit Plan
 
-_Дата: 2026-07-28_
+_Дата: 2026-07-29_
 
 ## Мета
 
-Підготувати короткий план Theme and Localization foundation для окремого погодження, без початку реалізації.
+Підготувати короткий план read-only production Supabase audit для окремого погодження, без виконання audit.
 
 ## Scope
 
-- Read-only перевірити прийняту документацію, Expo foundation і Quality baseline.
-- Показати план Theme and Localization foundation максимум із п'яти пунктів.
-- Не виконувати реалізацію до окремого повідомлення власника `ЗАТВЕРДЖУЮ`.
+- Read-only перевірити прийняту документацію та фактичний mobile foundation, щоб визначити безпечний scope remote audit.
+- Показати план read-only production Supabase audit максимум із п'яти пунктів.
+- Не виконувати audit до окремого повідомлення власника `ЗАТВЕРДЖУЮ`.
 
 ## Inputs
 
-- Прийняті `PROJECT_CONTEXT.md`, `ROADMAP.md` і `DECISIONS.md`, а також Quality baseline commit `80b69071b46c659ba9ff1fb1b6636258bdfec14e`.
+- Прийняті `PROJECT_CONTEXT.md`, `ROADMAP.md` і `DECISIONS.md`, а також Theme and Localization foundation commit `28bb517ad7b1e2d3999a9e3ac2b08767688109c3`.
 - Пріоритетні MVP рішення власника.
 - Фактичний стан мобільного репозиторію.
 
 ## Constraints
 
 - Не встановлювати залежності, не створювати продуктовий код чи змінювати конфігурацію до окремого погодження.
-- Не підключати Supabase, не запускати remote audit, не виконувати migrations і не торкатися remote-сервісів.
+- Не виконувати remote audit до окремого погодження; план не авторизує changes, migrations, remote writes, RLS/policy/Auth changes або показ секретів.
 - Не змінювати `README.md`; не робити branch, commit, merge або push без окремої команди.
 
 ## Acceptance criteria
@@ -32,4 +32,4 @@ _Дата: 2026-07-28_
 
 ## Статус
 
-**Активна документаційна задача:** підготовка плану Theme and Localization foundation. Реалізація не активна й не починається до окремого `ЗАТВЕРДЖУЮ`.
+**Активна документаційна задача:** підготовка плану read-only production Supabase audit. Audit не активний і не починається до окремого `ЗАТВЕРДЖУЮ`; changes, migrations і remote writes заборонені.
