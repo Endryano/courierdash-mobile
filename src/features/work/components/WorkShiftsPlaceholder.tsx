@@ -11,6 +11,8 @@ import { useWorkShifts } from '../hooks/useWorkShifts';
 import { WorkShiftCreateForm } from './WorkShiftCreateForm';
 import { WorkShiftEditForm } from './WorkShiftEditForm';
 import { useWorkShiftEdit } from '../hooks/useWorkShiftEdit';
+import { useWorkShiftDelete } from '../hooks/useWorkShiftDelete';
+import { WorkShiftDeleteConfirmation } from './WorkShiftDeleteConfirmation';
 
 export function WorkShiftsPlaceholder() {
   const { retry, shifts, status } = useWorkShifts();
@@ -20,6 +22,7 @@ export function WorkShiftsPlaceholder() {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const edit = useWorkShiftEdit();
+  const deletion = useWorkShiftDelete();
 
   async function retryWorkShifts() {
     if (isRetrying) return;
@@ -36,6 +39,7 @@ export function WorkShiftsPlaceholder() {
 
   if (isCreating) return <WorkShiftCreateForm onCancel={() => setIsCreating(false)} />;
   if (isEditing) return <WorkShiftEditForm onCancel={() => setIsEditing(false)} />;
+  if (deletion.status !== 'idle' && deletion.status !== 'success') return <WorkShiftDeleteConfirmation />;
 
   if (status === 'loading' || status === 'idle') {
     return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl }}><AppText>{t('work.loading')}</AppText></View></Screen>;
@@ -66,6 +70,7 @@ export function WorkShiftsPlaceholder() {
           <AppText muted>{`${t('work.shift.hours')}: ${shift.hours}`}</AppText>
           <AppText muted>{`${t('work.shift.km')}: ${shift.km}`}</AppText>
           <AppButton label={t('work.edit.action')} onPress={() => { setIsEditing(true); void edit.load(shift.id); }} testID={`work-edit-${shift.id}`} />
+          <AppButton label={t('work.delete.action')} onPress={() => deletion.requestDelete({ id: shift.id, date: shift.date, hours: shift.hours, km: shift.km })} testID={`work-delete-${shift.id}`} />
         </View>
       ))}
     </View></Screen>

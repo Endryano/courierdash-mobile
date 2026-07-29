@@ -3,6 +3,7 @@ import type { Database } from '@/lib/supabase/database.types';
 
 import type { ValidatedWorkShiftCreateInput, WorkPlatformInput } from '../domain/workShiftCreate';
 import type { ValidatedWorkShiftEdit } from '../domain/workShiftEdit';
+import type { WorkShiftDeleteErrorCategory } from '../domain/workShiftDelete';
 
 export type WorkShiftMutationErrorCategory = 'duplicate_date' | 'validation' | 'recoverable' | 'blocked' | 'unknown';
 export class WorkShiftMutationError extends Error {
@@ -59,4 +60,14 @@ export async function updateOwnWorkShift(userId: string, shiftId: number, input:
   const { data, error } = await supabase.from('work_shifts').update(toWorkShiftUpdatePayload(input)).eq('id', shiftId).eq('user_id', userId).select('id');
   if (error) throw new WorkShiftMutationError(classifyWorkShiftMutationError(error));
   if (!Array.isArray(data) || data.length !== 1 || data[0]?.id !== shiftId) throw new WorkShiftMutationError('blocked');
+}
+
+export class WorkShiftDeleteError extends Error { constructor(readonly category: WorkShiftDeleteErrorCategory) { super('Work shift delete failed.'); } }
+export async function deleteOwnWorkShift(userId: string, shiftId: number): Promise<void> {
+  if (!Number.isInteger(shiftId) || shiftId <= 0 || !userId) throw new WorkShiftDeleteError('affected_row_failure');
+  try {
+    const { data, error } = await supabase.from('work_shifts').delete().eq('id', shiftId).eq('user_id', userId).select('id');
+    if (error) throw new WorkShiftDeleteError(classifyWorkShiftMutationError(error) === 'blocked' ? 'blocked' : 'recoverable');
+    if (!Array.isArray(data) || data.length !== 1 || data[0]?.id !== shiftId) throw new WorkShiftDeleteError('affected_row_failure');
+  } catch (error) { if (error instanceof WorkShiftDeleteError) throw error; throw new WorkShiftDeleteError('recoverable'); }
 }
