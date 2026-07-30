@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { filterWorkShiftsByPeriod } from '@/features/dashboard/domain/dashboardPeriod';
+import { filterWorkShiftsByPeriod } from '@/features/work/domain/workShiftPeriod';
+import { filterWorkShiftsByPeriod as dashboardFilterWorkShiftsByPeriod } from '@/features/dashboard/domain/dashboardPeriod';
 import type { WorkShift } from '@/features/work/domain/workShift';
 
 function shift(id: number, date: string): WorkShift {
@@ -12,6 +13,10 @@ function shift(id: number, date: string): WorkShift {
 const july29 = new Date(2026, 6, 29, 12, 0, 0);
 
 describe('filterWorkShiftsByPeriod', () => {
+  test('is the same canonical implementation exposed to Dashboard', () => {
+    expect(dashboardFilterWorkShiftsByPeriod).toBe(filterWorkShiftsByPeriod);
+  });
+
   test('matches only the local calendar Today and keeps multiple same-day shifts', () => {
     const shifts = [shift(1, '2026-07-28'), shift(2, '2026-07-29'), shift(3, '2026-07-29'), shift(4, '2026-07-30')];
     expect(filterWorkShiftsByPeriod(shifts, 'today', july29).map(({ id }) => id)).toEqual([2, 3]);

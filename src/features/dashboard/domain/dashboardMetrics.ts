@@ -1,4 +1,9 @@
 import type { WorkShift } from '@/features/work/domain/workShift';
+import {
+  calculatePlatformBrutto,
+  calculatePlatformOrders,
+  workPlatformKeys,
+} from '@/features/work/domain/workShiftAnalytics';
 
 export type DashboardMetrics = {
   readonly totalIncome: number;
@@ -10,31 +15,6 @@ export type DashboardMetrics = {
   readonly incomePerOrder: number;
   readonly incomePerKilometer: number;
 };
-
-type DashboardPlatform = {
-  readonly income: number;
-  readonly orders: number | null;
-  readonly appTips: number | null;
-  readonly cashTips: number;
-  readonly bonuses: number | null;
-};
-
-const platformKeys = ['uber', 'wolt', 'bolt', 'glovo', 'stuart', 'other'] as const;
-
-function nullableContribution(value: number | null): number {
-  return value === null ? 0 : value;
-}
-
-function calculatePlatformIncome(platform: DashboardPlatform): number {
-  return platform.income
-    + nullableContribution(platform.appTips)
-    + platform.cashTips
-    + nullableContribution(platform.bonuses);
-}
-
-function calculatePlatformOrders(platform: DashboardPlatform): number {
-  return nullableContribution(platform.orders);
-}
 
 function safeRate(totalIncome: number, denominator: number): number {
   return denominator > 0 ? totalIncome / denominator : 0;
@@ -50,9 +30,9 @@ export function calculateDashboardMetrics(shifts: readonly WorkShift[]): Dashboa
     totalHours += shift.hours;
     totalKilometers += shift.km;
 
-    for (const key of platformKeys) {
+    for (const key of workPlatformKeys) {
       const platform = shift.analytics.platforms[key];
-      totalIncome += calculatePlatformIncome(platform);
+      totalIncome += calculatePlatformBrutto(platform);
       totalOrders += calculatePlatformOrders(platform);
     }
   }

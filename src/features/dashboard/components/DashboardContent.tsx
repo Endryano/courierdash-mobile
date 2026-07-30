@@ -7,7 +7,8 @@ import { Screen } from '@/components/ui/Screen';
 import { useDashboardMetrics } from '@/features/dashboard/hooks/useDashboardMetrics';
 import { defaultDashboardPeriod, type DashboardPeriod } from '@/features/dashboard/domain/dashboardPeriod';
 import { useLocalization } from '@/i18n/LocalizationProvider';
-import type { SupportedLocale, TranslationKey } from '@/i18n/translations';
+import type { TranslationKey } from '@/i18n/translations';
+import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { useTheme } from '@/theme/ThemeProvider';
 
 type MetricCardProps = {
@@ -24,18 +25,7 @@ const periodTranslationKeys: Readonly<Record<DashboardPeriod, TranslationKey>> =
   allTime: 'dashboard.period.allTime',
 };
 
-export function formatDashboardCurrency(locale: SupportedLocale, value: number): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: 'PLN',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
-
-export function formatDashboardNumber(locale: SupportedLocale, value: number, maximumFractionDigits: number): string {
-  return new Intl.NumberFormat(locale, { maximumFractionDigits }).format(value);
-}
+export { formatCurrency as formatDashboardCurrency, formatNumber as formatDashboardNumber } from '@/lib/formatters';
 
 function MetricCard({ label, value }: MetricCardProps) {
   const { colors, radii, spacing } = useTheme();
@@ -124,14 +114,14 @@ export function DashboardContent() {
 
   const { metrics } = dashboard;
   const cards: readonly MetricCardProps[] = [
-    { label: t('dashboard.totalIncome'), value: formatDashboardCurrency(locale, metrics.totalIncome) },
-    { label: t('dashboard.totalHours'), value: formatDashboardNumber(locale, metrics.totalHours, 2) },
-    { label: t('dashboard.totalOrders'), value: formatDashboardNumber(locale, metrics.totalOrders, 0) },
-    { label: t('dashboard.totalKilometers'), value: formatDashboardNumber(locale, metrics.totalKilometers, 2) },
-    { label: t('dashboard.totalShifts'), value: formatDashboardNumber(locale, metrics.totalShifts, 0) },
-    { label: t('dashboard.incomePerHour'), value: formatDashboardCurrency(locale, metrics.incomePerHour) },
-    { label: t('dashboard.incomePerOrder'), value: formatDashboardCurrency(locale, metrics.incomePerOrder) },
-    { label: t('dashboard.incomePerKilometer'), value: formatDashboardCurrency(locale, metrics.incomePerKilometer) },
+    { label: t('dashboard.totalIncome'), value: formatCurrency(locale, metrics.totalIncome) },
+    { label: t('dashboard.totalHours'), value: formatNumber(locale, metrics.totalHours, 2) },
+    { label: t('dashboard.totalOrders'), value: formatNumber(locale, metrics.totalOrders, 0) },
+    { label: t('dashboard.totalKilometers'), value: formatNumber(locale, metrics.totalKilometers, 2) },
+    { label: t('dashboard.totalShifts'), value: formatNumber(locale, metrics.totalShifts, 0) },
+    { label: t('dashboard.incomePerHour'), value: formatCurrency(locale, metrics.incomePerHour) },
+    { label: t('dashboard.incomePerOrder'), value: formatCurrency(locale, metrics.incomePerOrder) },
+    { label: t('dashboard.incomePerKilometer'), value: formatCurrency(locale, metrics.incomePerKilometer) },
   ];
 
   return (
