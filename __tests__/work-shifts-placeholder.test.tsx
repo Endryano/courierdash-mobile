@@ -4,19 +4,14 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
 const mockRetry = jest.fn<() => Promise<void>>();
-const mockEditLoad = jest.fn<() => Promise<void>>();
 const mockRequestDelete = jest.fn();
+const mockPush = jest.fn();
 let mockWorkState: { status: 'idle' | 'loading' | 'empty' | 'ready' | 'recoverable_error' | 'blocked'; shifts: readonly { id: number; date: string; hours: number; km: number }[]; retry: () => Promise<void> };
 
 jest.mock('@/features/work/hooks/useWorkShifts', () => ({ useWorkShifts: () => mockWorkState }));
-jest.mock('@/features/work/hooks/useWorkShiftEdit', () => ({ useWorkShiftEdit: () => ({ load: mockEditLoad }) }));
 jest.mock('@/features/work/hooks/useWorkShiftDelete', () => ({ useWorkShiftDelete: () => ({ status: 'idle', requestDelete: mockRequestDelete }) }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ t: (key: string) => key }) }));
-jest.mock('@/features/work/components/WorkShiftCreateForm', () => {
-  const React = require('react');
-  const { Text: MockText } = require('react-native');
-  return { WorkShiftCreateForm: () => React.createElement(MockText, { testID: 'work-create-form' }, 'create form') };
-});
+jest.mock('expo-router', () => ({ router: { push: mockPush } }));
 
 const { WorkShiftsPlaceholder } = require('@/features/work/components/WorkShiftsPlaceholder') as typeof import('@/features/work/components/WorkShiftsPlaceholder');
 
@@ -27,7 +22,6 @@ function renderPlaceholder() {
 describe('WorkShiftsPlaceholder', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockEditLoad.mockResolvedValue(undefined);
     mockRequestDelete.mockClear();
     mockRetry.mockResolvedValue(undefined);
     mockWorkState = { status: 'loading', shifts: [], retry: mockRetry };
@@ -66,17 +60,17 @@ describe('WorkShiftsPlaceholder', () => {
     expect(screen.getByText('work.blocked.title')).toBeTruthy();
   });
 
-  test('opens the create form from empty and ready states', async () => {
+  test('navigates to the create route from empty and ready states', async () => {
     mockWorkState = { status: 'empty', shifts: [], retry: mockRetry };
     const view = await renderPlaceholder();
     await fireEvent.press(screen.getByTestId('work-create-action'));
-    expect(screen.getByTestId('work-create-form')).toBeTruthy();
+    expect(mockPush).toHaveBeenCalledWith('/work/create');
 
     await view.unmount();
     mockWorkState = { status: 'ready', shifts: [{ id: 1, date: '2026-07-29', hours: 8, km: 20 }], retry: mockRetry };
     await renderPlaceholder();
     await fireEvent.press(screen.getByTestId('work-create-action'));
-    expect(screen.getByTestId('work-create-form')).toBeTruthy();
+    expect(mockPush).toHaveBeenLastCalledWith('/work/create');
   });
 
   test('renders Delete beside Edit and delegates only the safe canonical summary', async () => {
@@ -84,6 +78,8 @@ describe('WorkShiftsPlaceholder', () => {
     await renderPlaceholder();
 
     expect(screen.getByTestId('work-edit-1')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('work-edit-1'));
+    expect(mockPush).toHaveBeenCalledWith('/work/1/edit');
     await fireEvent.press(screen.getByTestId('work-delete-1'));
     expect(mockRequestDelete).toHaveBeenCalledWith({ id: 1, date: '2026-07-29', hours: 8, km: 20 });
     expect(mockRetry).not.toHaveBeenCalled();

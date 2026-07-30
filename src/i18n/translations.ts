@@ -9,7 +9,7 @@ export type TranslationKey =
   | 'language.ru'
   | 'auth.loginTitle' | 'auth.signupTitle' | 'auth.email' | 'auth.password' | 'auth.confirmPassword' | 'auth.login' | 'auth.signup' | 'auth.goToLogin' | 'auth.goToSignup' | 'auth.loading' | 'auth.required' | 'auth.invalidEmail' | 'auth.passwordMismatch' | 'auth.confirmEmail' | 'auth.signedUp' | 'auth.error.generic' | 'auth.error.invalidCredentials' | 'auth.error.accountExists' | 'auth.error.rateLimit' | 'auth.error.network' | 'auth.error.weakPassword'
   | 'profile.nickname.title' | 'profile.nickname.description' | 'profile.nickname.label' | 'profile.nickname.save' | 'profile.nickname.saving' | 'profile.nickname.error.required' | 'profile.nickname.error.tooShort' | 'profile.nickname.error.tooLong' | 'profile.nickname.error.invalidCharacters' | 'profile.nickname.error.conflict' | 'profile.nickname.error.network' | 'profile.nickname.error.forbidden' | 'profile.nickname.error.unknown'
-  | 'navigation.loading' | 'navigation.profileError.title' | 'navigation.profileError.description' | 'navigation.blocked.title' | 'navigation.blocked.description' | 'navigation.retry' | 'navigation.retrying' | 'app.placeholder.title' | 'app.placeholder.nickname'
+  | 'navigation.loading' | 'navigation.profileError.title' | 'navigation.profileError.description' | 'navigation.blocked.title' | 'navigation.blocked.description' | 'navigation.retry' | 'navigation.retrying' | 'navigation.tab.dashboard' | 'navigation.tab.work' | 'navigation.tab.more' | 'navigation.more.title' | 'navigation.more.description' | 'navigation.backToWork' | 'app.placeholder.title' | 'app.placeholder.nickname'
   | 'work.loading' | 'work.empty.title' | 'work.empty.description' | 'work.list.title' | 'work.shift.hours' | 'work.shift.km' | 'work.error.title' | 'work.error.description' | 'work.blocked.title' | 'work.blocked.description' | 'work.retry'
   | 'work.create.action' | 'work.create.title' | 'work.create.date' | 'work.create.km' | 'work.create.hours' | 'work.create.otherName' | 'work.create.submit' | 'work.create.submitting' | 'work.create.cancel' | 'work.create.validation' | 'work.create.duplicate' | 'work.create.recoverable' | 'work.create.reconciliation' | 'work.create.reconcile' | 'work.create.blocked' | 'work.create.success'
   | 'work.platform.uber' | 'work.platform.wolt' | 'work.platform.bolt' | 'work.platform.glovo' | 'work.platform.stuart' | 'work.platform.other' | 'work.metric.income' | 'work.metric.orders' | 'work.metric.appTips' | 'work.metric.cashTips' | 'work.metric.bonuses'
@@ -22,8 +22,44 @@ type TranslationDictionary = Record<TranslationKey, string>;
 export const supportedLocales: readonly SupportedLocale[] = ['pl', 'uk', 'en', 'ru'];
 export const defaultLocale: SupportedLocale = 'pl';
 
+const navigationTranslations = {
+  pl: {
+    'navigation.tab.dashboard': 'Pulpit',
+    'navigation.tab.work': 'Zmiany',
+    'navigation.tab.more': 'Więcej',
+    'navigation.more.title': 'Więcej',
+    'navigation.more.description': 'Dodatkowe sekcje będą dostępne w kolejnych etapach.',
+    'navigation.backToWork': 'Wróć do zmian',
+  },
+  uk: {
+    'navigation.tab.dashboard': 'Панель',
+    'navigation.tab.work': 'Зміни',
+    'navigation.tab.more': 'Більше',
+    'navigation.more.title': 'Більше',
+    'navigation.more.description': 'Додаткові розділи з’являться на наступних етапах.',
+    'navigation.backToWork': 'Повернутися до змін',
+  },
+  en: {
+    'navigation.tab.dashboard': 'Dashboard',
+    'navigation.tab.work': 'Work',
+    'navigation.tab.more': 'More',
+    'navigation.more.title': 'More',
+    'navigation.more.description': 'Additional sections will be available in later stages.',
+    'navigation.backToWork': 'Back to work shifts',
+  },
+  ru: {
+    'navigation.tab.dashboard': 'Панель',
+    'navigation.tab.work': 'Смены',
+    'navigation.tab.more': 'Больше',
+    'navigation.more.title': 'Больше',
+    'navigation.more.description': 'Дополнительные разделы появятся на следующих этапах.',
+    'navigation.backToWork': 'Вернуться к сменам',
+  },
+} as const;
+
 export const translations = {
   pl: {
+    ...navigationTranslations.pl,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Podstawa motywu i lokalizacji jest gotowa.',
     'foundation.languageLabel': 'Język',
@@ -40,6 +76,7 @@ export const translations = {
     'dashboard.title': 'Pulpit', 'dashboard.totalIncome': 'Łączny przychód', 'dashboard.totalHours': 'Łączne godziny', 'dashboard.totalOrders': 'Łączne zamówienia', 'dashboard.totalKilometers': 'Łączne kilometry', 'dashboard.totalShifts': 'Łączne zmiany', 'dashboard.incomePerHour': 'Przychód na godzinę', 'dashboard.incomePerOrder': 'Przychód na zamówienie', 'dashboard.incomePerKilometer': 'Przychód na kilometr', 'dashboard.loading': 'Ładowanie pulpitu…', 'dashboard.empty.title': 'Brak zmian', 'dashboard.empty.description': 'Dodaj pierwszą zmianę, aby zobaczyć metryki pulpitu.', 'dashboard.error.title': 'Pulpit jest tymczasowo niedostępny', 'dashboard.error.description': 'Spróbuj ponownie.', 'dashboard.retry': 'Spróbuj ponownie', 'dashboard.period.today': 'Dzisiaj', 'dashboard.period.week': 'Ten tydzień', 'dashboard.period.month': 'Ten miesiąc', 'dashboard.period.allTime': 'Cały czas', 'dashboard.periodEmpty.title': 'Brak zmian w tym okresie', 'dashboard.periodEmpty.description': 'Wybierz inny okres, aby zobaczyć metryki.',
   },
   uk: {
+    ...navigationTranslations.uk,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основу теми та локалізації підготовлено.',
     'foundation.languageLabel': 'Мова',
@@ -56,6 +93,7 @@ export const translations = {
     'dashboard.title': 'Панель', 'dashboard.totalIncome': 'Загальний дохід', 'dashboard.totalHours': 'Загальні години', 'dashboard.totalOrders': 'Загальні замовлення', 'dashboard.totalKilometers': 'Загальні кілометри', 'dashboard.totalShifts': 'Загальна кількість змін', 'dashboard.incomePerHour': 'Дохід за годину', 'dashboard.incomePerOrder': 'Дохід за замовлення', 'dashboard.incomePerKilometer': 'Дохід за кілометр', 'dashboard.loading': 'Завантаження панелі…', 'dashboard.empty.title': 'Немає змін', 'dashboard.empty.description': 'Додайте першу зміну, щоб побачити показники панелі.', 'dashboard.error.title': 'Панель тимчасово недоступна', 'dashboard.error.description': 'Спробуйте ще раз.', 'dashboard.retry': 'Спробувати ще раз', 'dashboard.period.today': 'Сьогодні', 'dashboard.period.week': 'Цей тиждень', 'dashboard.period.month': 'Цей місяць', 'dashboard.period.allTime': 'За весь час', 'dashboard.periodEmpty.title': 'У цьому періоді немає змін', 'dashboard.periodEmpty.description': 'Виберіть інший період, щоб побачити показники.',
   },
   en: {
+    ...navigationTranslations.en,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Theme and localization foundation is ready.',
     'foundation.languageLabel': 'Language',
@@ -72,6 +110,7 @@ export const translations = {
     'dashboard.title': 'Dashboard', 'dashboard.totalIncome': 'Total income', 'dashboard.totalHours': 'Total hours', 'dashboard.totalOrders': 'Total orders', 'dashboard.totalKilometers': 'Total kilometers', 'dashboard.totalShifts': 'Total shifts', 'dashboard.incomePerHour': 'Income per hour', 'dashboard.incomePerOrder': 'Income per order', 'dashboard.incomePerKilometer': 'Income per kilometer', 'dashboard.loading': 'Loading dashboard…', 'dashboard.empty.title': 'No work shifts yet', 'dashboard.empty.description': 'Add your first shift to see dashboard metrics.', 'dashboard.error.title': 'Dashboard is temporarily unavailable', 'dashboard.error.description': 'Please try again.', 'dashboard.retry': 'Try again', 'dashboard.period.today': 'Today', 'dashboard.period.week': 'This week', 'dashboard.period.month': 'This month', 'dashboard.period.allTime': 'All time', 'dashboard.periodEmpty.title': 'No shifts in this period', 'dashboard.periodEmpty.description': 'Choose another period to see metrics.',
   },
   ru: {
+    ...navigationTranslations.ru,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основа темы и локализации готова.',
     'foundation.languageLabel': 'Язык',

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
+import { router } from 'expo-router';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { AppText } from '@/components/ui/AppText';
@@ -8,9 +9,6 @@ import { useLocalization } from '@/i18n/LocalizationProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
 import { useWorkShifts } from '../hooks/useWorkShifts';
-import { WorkShiftCreateForm } from './WorkShiftCreateForm';
-import { WorkShiftEditForm } from './WorkShiftEditForm';
-import { useWorkShiftEdit } from '../hooks/useWorkShiftEdit';
 import { useWorkShiftDelete } from '../hooks/useWorkShiftDelete';
 import { WorkShiftDeleteConfirmation } from './WorkShiftDeleteConfirmation';
 
@@ -19,9 +17,6 @@ export function WorkShiftsPlaceholder() {
   const { t } = useLocalization();
   const { spacing } = useTheme();
   const [isRetrying, setIsRetrying] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const edit = useWorkShiftEdit();
   const deletion = useWorkShiftDelete();
 
   async function retryWorkShifts() {
@@ -37,8 +32,6 @@ export function WorkShiftsPlaceholder() {
     }
   }
 
-  if (isCreating) return <WorkShiftCreateForm onCancel={() => setIsCreating(false)} />;
-  if (isEditing) return <WorkShiftEditForm onCancel={() => setIsEditing(false)} />;
   if (deletion.status !== 'idle' && deletion.status !== 'success') return <WorkShiftDeleteConfirmation />;
 
   if (status === 'loading' || status === 'idle') {
@@ -57,19 +50,19 @@ export function WorkShiftsPlaceholder() {
   }
 
   if (status === 'empty') {
-    return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl, gap: spacing.md }}><AppText variant="title">{t('work.empty.title')}</AppText><AppText muted>{t('work.empty.description')}</AppText><AppButton label={t('work.create.action')} onPress={() => setIsCreating(true)} testID="work-create-action" /></View></Screen>;
+    return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl, gap: spacing.md }}><AppText variant="title">{t('work.empty.title')}</AppText><AppText muted>{t('work.empty.description')}</AppText><AppButton label={t('work.create.action')} onPress={() => router.push('/work/create')} testID="work-create-action" /></View></Screen>;
   }
 
   return (
     <Screen><View style={{ flex: 1, padding: spacing.xl, gap: spacing.md }}>
       <AppText variant="title">{t('work.list.title')}</AppText>
-      <AppButton label={t('work.create.action')} onPress={() => setIsCreating(true)} testID="work-create-action" />
+      <AppButton label={t('work.create.action')} onPress={() => router.push('/work/create')} testID="work-create-action" />
       {shifts.map((shift) => (
         <View key={shift.id} style={{ gap: spacing.xs }}>
           <AppText>{shift.date}</AppText>
           <AppText muted>{`${t('work.shift.hours')}: ${shift.hours}`}</AppText>
           <AppText muted>{`${t('work.shift.km')}: ${shift.km}`}</AppText>
-          <AppButton label={t('work.edit.action')} onPress={() => { setIsEditing(true); void edit.load(shift.id); }} testID={`work-edit-${shift.id}`} />
+          <AppButton label={t('work.edit.action')} onPress={() => router.push(`/work/${shift.id}/edit`)} testID={`work-edit-${shift.id}`} />
           <AppButton label={t('work.delete.action')} onPress={() => deletion.requestDelete({ id: shift.id, date: shift.date, hours: shift.hours, km: shift.km })} testID={`work-delete-${shift.id}`} />
         </View>
       ))}
