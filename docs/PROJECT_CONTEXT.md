@@ -1,6 +1,6 @@
 # CourierDash Mobile — Project Context
 
-_Оновлено: 2026-07-29_
+_Оновлено: 2026-07-30_
 
 ## Призначення
 
@@ -9,12 +9,14 @@ CourierDash Mobile — нативний застосунок для кур'єр�
 ## Стан репозиторію
 
 - **Фактично реалізоване:** Expo foundation у commit `d01058621745b2c3a0d6468c065ff29c380da955`: Expo `57.0.8`, React Native `0.86.0`, React `19.2.3`, Expo Router `57.0.8` і TypeScript `6.0.3`.
-- **Структура foundation:** `src/app/` містить лише мінімальні routes `_layout.tsx` та `index.tsx`; tabs, auth, Supabase і бізнес-логіка не реалізовані.
+- **Поточна структура:** `src/app/` містить auth, onboarding і protected `(app)` route groups; поточні tabs — Dashboard, Work, More, а Work і Statistics мають secondary Stack routes. Остаточний bottom tabs layout не вважається погодженим.
 - **Quality baseline:** у commit `80b69071b46c659ba9ff1fb1b6636258bdfec14e`: `typecheck` виконує `tsc --noEmit`, ESLint запускається через Expo config, Jest `29.7.0` + `jest-expo` `57.0.2` і React Native Testing Library `14.0.1` встановлені. Є один smoke test для `src/app/index.tsx`.
 - **Theme і localization foundation:** у commit `28bb517ad7b1e2d3999a9e3ac2b08767688109c3` реалізовано Dark-only appearance через `userInterfaceStyle: "dark"`, `expo-system-ui`, semantic `darkTheme`, system font, `SafeAreaProvider` та primitives `Screen`, `AppText`, `AppButton`. Є typed translation keys і dictionaries для `pl`, `uk`, `en`, `ru`; `expo-localization` визначає device locale, а AsyncStorage з key `courierdash.locale.v1` зберігає явний вибір користувача.
 - **Locale поведінка:** persisted locale має пріоритет над device locale; bootstrap loading state запобігає flash неправильної мови. Помилка читання storage переходить до device/fallback resolution, а помилка запису не блокує зміну мови в поточній сесії.
-- **Перевірено:** `typecheck`, lint, два послідовні test runs, `expo install --check`, `expo-doctor`, Android export та iOS export успішні; наявні 3 test suites / 8 tests.
-- **Не виконувалось:** Light/system theme, custom font / Inter, реальний Android/iOS device test, product UI, auth, Supabase, onboarding, tabs, remote Supabase audit, міграції та підключення до зовнішніх сервісів.
+- **Statistics milestone:** у прийнятому commit `3332409f7b549a255235eb30aa182ada3302c519` Statistics доступна з More як protected secondary route, а не bottom tab. Вона є derived-read UI над `WorkShiftsProvider`: без Statistics provider, cache або fetch. Підтримано Today, Week, Month, All time; Total Brutto, base income, app tips, cash tips, bonuses, orders, worked time, distance, shift count; усі шість платформ Uber, Wolt, Bolt, Glovo, Stuart, Other. Other агрегується в одну категорію, а всі шість рядків рендеряться включно з нульовими значеннями.
+- **Statistics semantics:** period filtering canonical у Work domain; Brutto calculation canonical і спільний для Dashboard та Statistics. Валюта — PLN; дати лишаються локальними `YYYY-MM-DD`, тиждень — понеділок–неділя. Charts, expenses, Reports, custom ranges і backend changes не додавалися.
+- **Остання перевірка:** для accepted Statistics milestone успішні `typecheck`, lint, test; 43 test suites / 234 tests.
+- **Не виконувалось:** Light/system theme, custom font / Inter, реальний Android/iOS device test, remote Supabase audit, міграції та неавторизовані підключення до зовнішніх сервісів.
 
 ## Погоджений MVP
 
@@ -78,6 +80,7 @@ CourierDash Mobile — нативний застосунок для кур'єр�
 
 - Read-only production Supabase audit дозволений, але ще не виконаний. До його завершення фактичні remote schema, RLS та Auth settings залишаються непідтвердженими.
 - npm audit findings є transitive; `npm audit fix` не застосовувався. Окремий dependency security review потрібен як майбутня задача.
+- `workPlatformKeys` має другу декларацію у create flow; майбутній вузький cleanup має централізувати platform keys. Це не інвалідовує і не відкриває заново accepted Statistics milestone.
 - Потрібно погодити bottom tabs, launch flow після onboarding, Expo identifiers, мінімальні OS версії, assets/screenshot source of truth, chart library після Expo spike та beta/release policy.
 - До calculation core слід зафіксувати повний перелік nullable/validation правил, якщо він відрізняється від технічного контракту вебверсії.
 - Offline, legal/support, privacy/account deletion і diagnostics не входять у поточний scope та не повинні додаватися неявно.

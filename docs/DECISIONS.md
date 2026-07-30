@@ -89,3 +89,13 @@
 **Причини.** Це відповідає погодженому Dark-only scope, підтримує `pl`, `uk`, `en`, `ru` і дає мінімальну спільну основу без непогоджених UI dependencies або custom font assets.
 
 **Наслідки.** Persisted locale має пріоритет над device locale; storage write failure не скасовує in-session locale change. Light/system theme, custom font / Inter, додаткові UI primitives і product UI залишаються поза цим етапом.
+
+## 2026-07-30 — Statistics як derived-read від Work
+
+**Контекст.** Потрібен перший production-quality Statistics зріз без створення другого джерела Work-даних або нового backend contract.
+
+**Рішення.** Statistics доступна з More як protected secondary route, не як bottom tab. Вона derives дані лише з `WorkShiftsProvider`; окремі Statistics provider, cache і fetch заборонені. Period filtering та Brutto calculation винесені до canonical Work-domain utilities, спільних із Dashboard.
+
+**Причини.** Це усуває конкуруючі loading/retry/data semantics і зберігає accepted локальні календарні та Brutto правила.
+
+**Наслідки.** Statistics показує PLN summary і шість платформ, де Other є однією агрегованою категорією, включно з нульовими значеннями. Charts, Reports, expenses, custom ranges і backend changes не входять у цей milestone.

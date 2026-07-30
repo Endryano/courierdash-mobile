@@ -1,6 +1,6 @@
 # CourierDash Mobile — Roadmap
 
-_Оновлено: 2026-07-29. Статуси implementation-етапів не означають виконання._
+_Оновлено: 2026-07-30. Статуси implementation-етапів не означають виконання, якщо це не зафіксовано як accepted milestone._
 
 | Етап | Статус | Результат |
 | --- | --- | --- |
@@ -15,6 +15,7 @@ _Оновлено: 2026-07-29. Статуси implementation-етапів не �
 | 8. Calculation core | Заплановано | Pure tested calculations: платформи, час, перерви, Brutto, averages, calendar rules. |
 | 9. Work read-only dashboard | Заплановано | Місячні дані, історія, summaries, loading/error/empty, refresh. |
 | 10. Work create/edit/delete | Заплановано | Валідовані форми, безпечні CRUD-операції й confirmation delete. |
+| Statistics overview (accepted milestone) | Завершено | Commit `3332409f7b549a255235eb30aa182ada3302c519`: protected route з More, derived-read від `WorkShiftsProvider`, canonical Work periods/Brutto, PLN summary і шість platform rows без charts, Reports чи backend changes; validation — 43 suites / 234 tests. |
 | 11. Monthly Brutto summaries and charts | Заплановано | Brutto-only підсумки й chart UI після окремого compatibility spike. |
 | 12. Annual Report correctness | Заплановано | Тести та коректні агрегації до створення mobile UI. |
 | 13. Annual Report mobile UI | Заплановано | Summary, monthly records, platform breakdown, chart/text alternative. |
