@@ -5,6 +5,7 @@ Durable repository knowledge for AI agents. Read only documents relevant to the 
 | Document | Purpose |
 | --- | --- |
 | [architecture.md](architecture.md) | Layers, routes, providers, state, dependencies |
+| [architecture-decisions.md](architecture-decisions.md) | Accepted architectural decisions and evidence |
 | [domain-contracts.md](domain-contracts.md) | Product/domain, calculations, localization, backend contracts |
 | [workflow.md](workflow.md) | Discovery, implementation, checkpoint workflow |
 | [commit-policy.md](commit-policy.md) | Git staging, commits, repository safety |

@@ -3,7 +3,7 @@
 ## Detailed repository knowledge
 
 - Read only task-relevant `docs/ai/` material; do not load the whole knowledge base by default.
-- Architecture/providers: `docs/ai/architecture.md`; domain/backend: `docs/ai/domain-contracts.md`.
+- Architecture/providers: `docs/ai/architecture.md`; accepted decisions: `docs/ai/architecture-decisions.md`; domain/backend: `docs/ai/domain-contracts.md`.
 - Workflow: `docs/ai/workflow.md`; Git: `docs/ai/commit-policy.md`; evolving state: `docs/ai/project-state.md`.
 
 ## Scope and workflow
