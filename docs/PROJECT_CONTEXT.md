@@ -67,7 +67,7 @@ CourierDash Mobile — нативний застосунок для кур'єр�
 
 ## Annual Report correctness
 
-Перед UI необхідно зафіксувати й протестувати коректні агрегації: усі шість платформ, окремі назви Other, cash tips, всі orders, нульові значення без `NaN`/`Infinity`, динамічні роки та calendar-safe дати. Погоджені correctness fixes є canonical для mobile MVP. Якщо виправлений mobile result відрізняється від поточного вебрезультату на реальних даних, спосіб синхронізації або виправлення вебверсії погоджується окремо.
+Annual Report correctness foundation є рекомендованим наступним milestone, але ще не початий: реалізація навмисно очікує shared-contract revision `0.2.0-draft` і sanitized snapshot від Web. Перед UI необхідно верифікувати або явно погодити provisional semantics для timezone і date boundaries, rounding status та canonical numeric fixtures. Усі шість платформ, cash tips, всі orders і нульові значення без `NaN`/`Infinity` залишаються необхідними correctness-перевірками. Динамічні доступні роки та групування Other за окремими назвами — лише запропонована Mobile-поведінка до верифікації shared contract. Погоджені correctness fixes є canonical для mobile MVP. Якщо виправлений mobile result відрізняється від поточного вебрезультату на реальних даних, спосіб синхронізації або виправлення вебверсії погоджується окремо.
 
 ## Безпека та Git
 

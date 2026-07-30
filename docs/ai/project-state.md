@@ -28,7 +28,8 @@
 
 ## Next planned milestone
 
-- Select and discover the next Mobile milestone; this document does not choose implementation priority or authorize changes.
+- Annual Report correctness foundation is the preferred next milestone, but is not started. Implementation intentionally waits for shared-contract revision `0.2.0-draft` and a sanitized snapshot that verify or explicitly set provisional annual timezone/date-boundary semantics, rounding status, and canonical numeric fixtures.
+- Dynamic available years and grouping Other by individual names are proposed Mobile behavior only; the shared contract must verify them before implementation.
 
 ## Repository conventions
 

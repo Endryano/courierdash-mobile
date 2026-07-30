@@ -17,7 +17,7 @@ _Оновлено: 2026-07-30. Статуси implementation-етапів не �
 | 10. Work create/edit/delete | Заплановано | Валідовані форми, безпечні CRUD-операції й confirmation delete. |
 | Statistics overview (accepted milestone) | Завершено | Commit `3332409f7b549a255235eb30aa182ada3302c519`: protected route з More, derived-read від `WorkShiftsProvider`, canonical Work periods/Brutto, PLN summary і шість platform rows без charts, Reports чи backend changes; validation — 43 suites / 234 tests. |
 | 11. Monthly Brutto summaries and charts | Заплановано | Brutto-only підсумки й chart UI після окремого compatibility spike. |
-| 12. Annual Report correctness | Заплановано | Тести та коректні агрегації до створення mobile UI. |
+| 12. Annual Report correctness | Заплановано — preferred next, blocked | Тести та коректні агрегації до створення mobile UI. Реалізація ще не почата й очікує shared-contract revision `0.2.0-draft`, sanitized snapshot, verified/provisional timezone і date-boundary semantics, rounding status та canonical numeric fixtures. |
 | 13. Annual Report mobile UI | Заплановано | Summary, monthly records, platform breakdown, chart/text alternative. |
 | 14. Onboarding | Заплановано | Короткий skip-able flow у погодженому launch UX. |
 | 15. Hardening | Заплановано | Accessibility, loading/retry, session expiry, security, performance, error behavior. |

@@ -1,21 +1,22 @@
-# Current Task — Select and discover the next Mobile milestone
+# Current Task — Review shared-contract revision 0.2.0-draft
 
 _Дата: 2026-07-30_
 
 ## Мета
 
-Вибрати та дослідити наступний Mobile milestone після прийнятого Statistics implementation.
+Перевірити incoming shared-contract revision `0.2.0-draft` і sanitized snapshot для Annual Report.
 
 ## Scope
 
-- Проаналізувати актуальний репозиторій, accepted contracts і roadmap перед пропозицією нового implementation scope.
-- Не обирати пріоритет або не починати implementation без окремого погодження власника.
+- Перевірити, чи artifacts підтверджують або явно задають provisional annual timezone і date-boundary semantics, rounding status та canonical numeric fixtures.
+- Не реалізовувати Annual Report у межах цього review.
+- Після успішного review наступною задачею є Annual Report correctness foundation; вона не починається без окремого погодження.
 
 ## Constraints
 
-- Discovery є read-only, доки окрема задача явно не дозволить зміни.
+- Review є read-only, доки окрема задача явно не дозволить зміни.
 - Не виконувати remote changes, migrations, staging, commit або push без відповідного окремого дозволу.
 
 ## Статус
 
-**Активна discovery-задача:** Select and discover the next Mobile milestone. Statistics implementation більше не активний.
+**Активна review-задача:** Review incoming shared-contract revision `0.2.0-draft` and sanitized snapshot. Annual Report correctness foundation є наступним рекомендованим milestone, але implementation ще не активний.

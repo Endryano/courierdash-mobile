@@ -99,3 +99,13 @@
 **Причини.** Це усуває конкуруючі loading/retry/data semantics і зберігає accepted локальні календарні та Brutto правила.
 
 **Наслідки.** Statistics показує PLN summary і шість платформ, де Other є однією агрегованою категорією, включно з нульовими значеннями. Charts, Reports, expenses, custom ranges і backend changes не входять у цей milestone.
+
+## 2026-07-30 — Верифікація shared reporting contract перед Annual Report
+
+**Контекст.** Annual Report correctness залежить від shared financial/reporting semantics, які ще не підтверджені canonical fixtures або еквівалентними verified artifacts.
+
+**Рішення.** Не реалізовувати shared financial/reporting calculations для Annual Report, доки не буде перевірено shared-contract revision `0.2.0-draft` і sanitized snapshot з timezone/date-boundary semantics, rounding status та canonical numeric fixtures або їх verified equivalent.
+
+**Причини.** Це запобігає розбіжностям між Web і Mobile у фінансових та reporting результатах.
+
+**Наслідки.** Annual Report correctness foundation є preferred next milestone, але його implementation навмисно відкладений до review artifacts; це не є implementation bug.
