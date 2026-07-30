@@ -1,5 +1,5 @@
-import { WorkShiftsPlaceholder } from '@/features/work/components/WorkShiftsPlaceholder';
+import { DashboardContent } from '@/features/dashboard/components/DashboardContent';
 
 export default function AuthenticatedPlaceholderScreen() {
-  return <WorkShiftsPlaceholder />;
+  return <DashboardContent />;
 }
