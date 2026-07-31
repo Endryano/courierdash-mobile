@@ -10,7 +10,8 @@ const mockReset = jest.fn<WorkShiftCreateContextValue['reset']>();
 let mockCreateState: WorkShiftCreateContextValue;
 
 jest.mock('@/features/work/hooks/useWorkShiftCreate', () => ({ useWorkShiftCreate: () => mockCreateState }));
-jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ t: (key: string) => key }) }));
+jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ locale: 'en', t: (key: string) => key }) }));
+jest.mock('@react-native-community/datetimepicker', () => ({ __esModule: true, default: () => null }));
 
 const { WorkShiftCreateForm } = require('@/features/work/components/WorkShiftCreateForm') as typeof import('@/features/work/components/WorkShiftCreateForm');
 
@@ -25,16 +26,19 @@ async function renderForm(onCancel = jest.fn()) {
 describe('WorkShiftCreateForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2026, 6, 29, 12));
     mockCreateState = state('idle');
     mockSubmit.mockResolvedValue(undefined);
     mockReconcile.mockResolvedValue(undefined);
   });
 
-  afterEach(cleanup);
+  afterEach(() => { cleanup(); jest.useRealTimers(); });
 
   test('renders required fields and all six verified platforms', async () => {
     const view = await renderForm();
-    expect(view.getByTestId('work-create-date')).toBeTruthy();
+    expect(view.getByTestId('work-create-date').props.accessibilityRole).toBe('button');
+    expect(view.getByTestId('work-create-date').props.onChangeText).toBeUndefined();
     expect(view.getByTestId('work-create-km')).toBeTruthy();
     expect(view.getByTestId('work-create-hours')).toBeTruthy();
     for (const platform of ['uber', 'wolt', 'bolt', 'glovo', 'stuart', 'other']) expect(view.getByTestId(`work-platform-${platform}`)).toBeTruthy();

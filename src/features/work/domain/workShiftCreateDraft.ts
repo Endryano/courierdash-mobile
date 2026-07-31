@@ -1,6 +1,7 @@
 import type { WorkShiftValidationResult } from './workShiftValidation';
 import { validateWorkShiftCreate } from './workShiftValidation';
 import { workPlatformKeys, type OtherWorkPlatformInput, type WorkPlatformInput, type WorkShiftCreateInput } from './workShiftCreate';
+import { toCanonicalWorkShiftDate } from './workShiftDate';
 
 export type WorkPlatformDraft = {
   enabled: boolean;
@@ -27,7 +28,7 @@ function createPlatformDraft(): WorkPlatformDraft {
 export function createEmptyWorkShiftCreateDraft(): WorkShiftCreateDraft {
   const platform = createPlatformDraft;
   return {
-    date: '',
+    date: toCanonicalWorkShiftDate(new Date()),
     km: '0',
     hours: '0',
     platforms: { uber: platform(), wolt: platform(), bolt: platform(), glovo: platform(), stuart: platform(), other: { ...platform(), name: '' } },

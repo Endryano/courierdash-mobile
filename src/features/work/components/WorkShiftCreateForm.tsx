@@ -12,6 +12,7 @@ import { workPlatformKeys, type WorkPlatformKey } from '../domain/workShiftCreat
 import { createEmptyWorkShiftCreateDraft, validateWorkShiftCreateDraft, type WorkShiftCreateDraft } from '../domain/workShiftCreateDraft';
 import type { WorkShiftValidationError } from '../domain/workShiftValidation';
 import { useWorkShiftCreate } from '../hooks/useWorkShiftCreate';
+import { WorkShiftDateField } from './WorkShiftDateField';
 
 type Props = { onCancel: () => void };
 const metricKeys = ['income', 'orders', 'appTips', 'cashTips', 'bonuses'] as const;
@@ -47,7 +48,7 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
   const validationDetailKey = validationError === 'invalid_date' ? 'work.create.validation.date' : validationError === 'no_platform' ? 'work.create.validation.platform' : validationError === 'invalid_number' ? 'work.create.validation.number' : validationError === 'negative_number' ? 'work.create.validation.nonNegative' : validationError === 'fractional_orders' ? 'work.create.validation.ordersInteger' : validationError === 'other_name_required' ? 'work.create.validation.otherName' : null;
   return <Screen><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: spacing.xl, gap: spacing.md }}>
     <AppText variant="title">{t('work.create.title')}</AppText>
-    <AppInput label={t('work.create.date')} value={input.date} onChangeText={(date) => { setFormError(null); setInput((current) => ({ ...current, date })); }} testID="work-create-date" />
+    <WorkShiftDateField label={t('work.create.date')} value={input.date} onChange={(date) => { setFormError(null); setInput((current) => ({ ...current, date })); }} testID="work-create-date" />
     <AppInput label={t('work.create.km')} value={input.km} keyboardType="decimal-pad" onChangeText={(km) => { setFormError(null); setInput((current) => ({ ...current, km })); }} testID="work-create-km" />
     <AppInput label={t('work.create.hours')} value={input.hours} keyboardType="decimal-pad" onChangeText={(hours) => { setFormError(null); setInput((current) => ({ ...current, hours })); }} testID="work-create-hours" />
     {workPlatformKeys.map((platform) => { const value = input.platforms[platform]; return <View key={platform} style={{ gap: spacing.xs }}>

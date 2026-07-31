@@ -12,6 +12,7 @@ export type TranslationKey =
   | 'navigation.loading' | 'navigation.profileError.title' | 'navigation.profileError.description' | 'navigation.blocked.title' | 'navigation.blocked.description' | 'navigation.retry' | 'navigation.retrying' | 'navigation.tab.dashboard' | 'navigation.tab.work' | 'navigation.tab.more' | 'navigation.more.title' | 'navigation.more.description' | 'navigation.more.statistics' | 'navigation.backToWork' | 'app.placeholder.title' | 'app.placeholder.nickname'
   | 'work.loading' | 'work.empty.title' | 'work.empty.description' | 'work.list.title' | 'work.shift.hours' | 'work.shift.km' | 'work.error.title' | 'work.error.description' | 'work.blocked.title' | 'work.blocked.description' | 'work.retry'
   | 'work.create.action' | 'work.create.title' | 'work.create.date' | 'work.create.km' | 'work.create.hours' | 'work.create.otherName' | 'work.create.submit' | 'work.create.submitting' | 'work.create.cancel' | 'work.create.validation' | 'work.create.validation.date' | 'work.create.validation.platform' | 'work.create.validation.number' | 'work.create.validation.nonNegative' | 'work.create.validation.ordersInteger' | 'work.create.validation.otherName' | 'work.create.duplicate' | 'work.create.recoverable' | 'work.create.reconciliation' | 'work.create.reconcile' | 'work.create.blocked' | 'work.create.success'
+  | 'work.date.cancel' | 'work.date.confirm' | 'work.date.invalid'
   | 'work.platform.uber' | 'work.platform.wolt' | 'work.platform.bolt' | 'work.platform.glovo' | 'work.platform.stuart' | 'work.platform.other' | 'work.metric.income' | 'work.metric.orders' | 'work.metric.appTips' | 'work.metric.cashTips' | 'work.metric.bonuses'
   | 'work.edit.action' | 'work.edit.title' | 'work.edit.loading' | 'work.edit.save' | 'work.edit.saving' | 'work.edit.cancel' | 'work.edit.validation' | 'work.edit.duplicate' | 'work.edit.recoverable' | 'work.edit.blocked' | 'work.edit.notFound' | 'work.edit.reconciliation' | 'work.edit.reconcile'
   | 'work.delete.action' | 'work.delete.title' | 'work.delete.body' | 'work.delete.confirm' | 'work.delete.cancel' | 'work.delete.deleting' | 'work.delete.recoverable' | 'work.delete.blocked' | 'work.delete.reconciliation' | 'work.delete.reconcile'
@@ -97,10 +98,18 @@ const workShiftCreateValidationTranslations = {
   },
 } as const;
 
+const workShiftDateTranslations = {
+  pl: { 'work.date.cancel': 'Anuluj', 'work.date.confirm': 'Gotowe', 'work.date.invalid': 'Nieprawidłowa data' },
+  uk: { 'work.date.cancel': 'Скасувати', 'work.date.confirm': 'Готово', 'work.date.invalid': 'Некоректна дата' },
+  en: { 'work.date.cancel': 'Cancel', 'work.date.confirm': 'Done', 'work.date.invalid': 'Invalid date' },
+  ru: { 'work.date.cancel': 'Отмена', 'work.date.confirm': 'Готово', 'work.date.invalid': 'Некорректная дата' },
+} as const;
+
 export const translations = {
   pl: {
     ...navigationTranslations.pl,
     ...workShiftCreateValidationTranslations.pl,
+    ...workShiftDateTranslations.pl,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Podstawa motywu i lokalizacji jest gotowa.',
     'foundation.languageLabel': 'Język',
@@ -120,6 +129,7 @@ export const translations = {
   uk: {
     ...navigationTranslations.uk,
     ...workShiftCreateValidationTranslations.uk,
+    ...workShiftDateTranslations.uk,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основу теми та локалізації підготовлено.',
     'foundation.languageLabel': 'Мова',
@@ -139,6 +149,7 @@ export const translations = {
   en: {
     ...navigationTranslations.en,
     ...workShiftCreateValidationTranslations.en,
+    ...workShiftDateTranslations.en,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Theme and localization foundation is ready.',
     'foundation.languageLabel': 'Language',
@@ -158,6 +169,7 @@ export const translations = {
   ru: {
     ...navigationTranslations.ru,
     ...workShiftCreateValidationTranslations.ru,
+    ...workShiftDateTranslations.ru,
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основа темы и локализации готова.',
     'foundation.languageLabel': 'Язык',

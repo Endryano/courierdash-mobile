@@ -11,11 +11,22 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["pl", "uk", "en", "ru"],
-            "android": ["pl", "uk", "en", "ru"]
+            "ios": [
+              "pl",
+              "uk",
+              "en",
+              "ru"
+            ],
+            "android": [
+              "pl",
+              "uk",
+              "en",
+              "ru"
+            ]
           }
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ]
   }
 }
