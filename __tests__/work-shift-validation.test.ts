@@ -53,11 +53,18 @@ describe('work shift create validation', () => {
     expect(validateWorkShiftCreate(other)).toMatchObject({ isValid: true, value: expect.objectContaining({ platforms: expect.objectContaining({ other: expect.objectContaining({ name: 'Other App' }) }) }) });
   });
 
-  test('requires a non-whitespace Other name whenever Other is enabled or has metrics', () => {
+  test('requires a non-whitespace Other name when Other is enabled', () => {
     const enabledOther = validInput(); enabledOther.platforms.uber.enabled = false; enabledOther.platforms.other.enabled = true; enabledOther.platforms.other.name = '   ';
     expect(validateWorkShiftCreate(enabledOther)).toMatchObject({ isValid: false, error: 'other_name_required' });
 
-    const staleOtherMetrics = validInput(); staleOtherMetrics.platforms.other.income = 1;
-    expect(validateWorkShiftCreate(staleOtherMetrics)).toMatchObject({ isValid: false, error: 'other_name_required' });
+    const disabledOtherMetrics = validInput(); disabledOtherMetrics.platforms.other.income = 1;
+    expect(validateWorkShiftCreate(disabledOtherMetrics)).toMatchObject({ isValid: true, value: expect.objectContaining({ platforms: expect.objectContaining({ other: expect.objectContaining({ enabled: false, income: 0, name: '' }) }) }) });
+  });
+
+  test('does not validate disabled platform metrics and returns their zeroed create values', () => {
+    const input = validInput();
+    input.platforms.wolt.income = Number.NaN;
+    input.platforms.wolt.orders = 1.5;
+    expect(validateWorkShiftCreate(input)).toMatchObject({ isValid: true, value: expect.objectContaining({ platforms: expect.objectContaining({ wolt: { enabled: false, income: 0, orders: 0, appTips: 0, cashTips: 0, bonuses: 0 } }) }) });
   });
 });

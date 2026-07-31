@@ -40,21 +40,35 @@ describe('WorkShiftCreateForm', () => {
     for (const platform of ['uber', 'wolt', 'bolt', 'glovo', 'stuart', 'other']) expect(view.getByTestId(`work-platform-${platform}`)).toBeTruthy();
   });
 
-  test('submits typed form input and keeps zero metrics representable', async () => {
+  test('submits native decimal text as finite numeric input', async () => {
     const view = await renderForm();
     await act(async () => { fireEvent.changeText(view.getByTestId('work-create-date'), '2026-07-29'); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-create-km'), '12,5'); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-create-hours'), '8.25'); });
     await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-income'), '100,5'); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-orders'), '3'); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-appTips'), '4.25'); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-cashTips'), '5,75'); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-bonuses'), '6'); });
     await act(async () => { fireEvent.press(view.getByTestId('work-create-submit')); });
-    expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ date: '2026-07-29', km: 0, hours: 0, platforms: expect.objectContaining({ uber: expect.objectContaining({ enabled: true, income: 0 }) }) }));
+    expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ date: '2026-07-29', km: 12.5, hours: 8.25, platforms: expect.objectContaining({ uber: expect.objectContaining({ enabled: true, income: 100.5, orders: 3, appTips: 4.25, cashTips: 5.75, bonuses: 6 }) }) }));
   });
 
-  test('uses NaN for an empty numeric field instead of silently changing it to zero', async () => {
+  test('keeps cleared numeric fields as empty text and never renders NaN', async () => {
     const view = await renderForm();
     await act(async () => { fireEvent.changeText(view.getByTestId('work-create-km'), ''); });
-    await act(async () => { fireEvent.changeText(view.getByTestId('work-create-date'), '2026-07-29'); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-create-hours'), ''); });
     await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    for (const metric of ['income', 'orders', 'appTips', 'cashTips', 'bonuses']) await act(async () => { fireEvent.changeText(view.getByTestId(`work-uber-${metric}`), ''); });
     await act(async () => { fireEvent.press(view.getByTestId('work-create-submit')); });
-    expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ km: Number.NaN }));
+    for (const testId of ['work-create-km', 'work-create-hours', 'work-uber-income', 'work-uber-orders', 'work-uber-appTips', 'work-uber-cashTips', 'work-uber-bonuses']) {
+      expect(view.getByTestId(testId).props.value).toBe('');
+      expect(view.getByTestId(testId).props.value).not.toBe('NaN');
+    }
+    expect(mockSubmit).not.toHaveBeenCalled();
+    expect(view.getByText('work.create.validation')).toBeTruthy();
+    expect(view.getByText('work.create.validation.number')).toBeTruthy();
   });
 
   test('shows safe reconciliation UI and does not offer another insert', async () => {

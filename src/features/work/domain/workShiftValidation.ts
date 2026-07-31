@@ -29,14 +29,18 @@ export function validateWorkShiftCreate(input: WorkShiftCreateInput): WorkShiftV
   if (!platforms.some((platform) => platform.enabled)) return { isValid: false, error: 'no_platform' };
 
   for (const platform of platforms) {
+    if (!platform.enabled) continue;
     const error = validateMetrics(platform);
     if (error) return { isValid: false, error };
   }
 
   const other = input.platforms.other;
   const otherName = other.name.trim();
-  const otherHasMetrics = [other.income, other.orders, other.appTips, other.cashTips, other.bonuses].some((value) => value !== 0);
-  if ((other.enabled || otherHasMetrics) && !otherName) return { isValid: false, error: 'other_name_required' };
+  if (other.enabled && !otherName) return { isValid: false, error: 'other_name_required' };
 
-  return { isValid: true, value: { ...input, platforms: { ...input.platforms, other: { ...other, name: otherName } }, __validated: true } };
+  const zeroedPlatforms = Object.fromEntries(
+    Object.entries(input.platforms).map(([key, platform]) => [key, platform.enabled ? platform : { enabled: false, income: 0, orders: 0, appTips: 0, cashTips: 0, bonuses: 0 }]),
+  ) as WorkShiftCreateInput['platforms'];
+
+  return { isValid: true, value: { ...input, platforms: { ...zeroedPlatforms, other: { ...zeroedPlatforms.other, name: other.enabled ? otherName : '' } }, __validated: true } };
 }
