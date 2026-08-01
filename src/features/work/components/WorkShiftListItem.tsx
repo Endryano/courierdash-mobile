@@ -1,6 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
+import { AppCard } from '@/components/ui/AppCard';
 import { AppText } from '@/components/ui/AppText';
 import { useLocalization } from '@/i18n/LocalizationProvider';
 import { formatNumber } from '@/lib/formatters';
@@ -17,40 +18,28 @@ type WorkShiftListItemProps = {
 
 export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItemProps) {
   const { locale, t } = useLocalization();
-  const { colors, radii, spacing } = useTheme();
+  const { spacing } = useTheme();
   const date = formatWorkShiftDate(shift.date, locale) ?? t('work.date.invalid');
   const hours = formatNumber(locale, shift.hours, 2);
   const kilometres = formatNumber(locale, shift.km, 2);
 
   return (
-    <View
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderRadius: radii.md,
-          gap: spacing.sm,
-          padding: spacing.md,
-        },
-      ]}
-      testID={`work-shift-${shift.id}`}
-    >
+    <AppCard padding="md" style={{ gap: spacing.md }} testID={`work-shift-${shift.id}`}>
       <View style={{ gap: spacing.xxs }}>
         <AppText accessibilityLabel={`${t('work.create.date')}: ${date}`} variant="body">{date}</AppText>
-        <AppText muted>{`${t('work.shift.hours')}: ${hours}`}</AppText>
-        <AppText muted>{`${t('work.shift.km')}: ${kilometres}`}</AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          <AppText accessibilityLabel={`${t('work.shift.hours')}: ${hours}`} muted variant="label">{`${t('work.shift.hours')}: ${hours}`}</AppText>
+          <AppText accessibilityLabel={`${t('work.shift.km')}: ${kilometres}`} muted variant="label">{`${t('work.shift.km')}: ${kilometres}`}</AppText>
+        </View>
       </View>
-      <View style={{ gap: spacing.xs }}>
-        <AppButton label={t('work.edit.action')} onPress={() => onEdit(shift.id)} testID={`work-edit-${shift.id}`} />
-        <AppButton label={t('work.delete.action')} onPress={() => onDelete(shift)} testID={`work-delete-${shift.id}`} />
+      <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+        <View style={{ flex: 1 }}>
+          <AppButton accessibilityLabel={t('work.edit.action')} label={t('work.edit.action')} onPress={() => onEdit(shift.id)} testID={`work-edit-${shift.id}`} variant="secondary" />
+        </View>
+        <View style={{ flex: 1 }}>
+          <AppButton accessibilityLabel={t('work.delete.action')} label={t('work.delete.action')} onPress={() => onDelete(shift)} testID={`work-delete-${shift.id}`} variant="danger" />
+        </View>
       </View>
-    </View>
+    </AppCard>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-});

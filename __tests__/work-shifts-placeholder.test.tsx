@@ -30,6 +30,7 @@ describe('WorkShiftsPlaceholder', () => {
   test('renders loading, empty, and a scrollable ready history without calculations', async () => {
     const view = await renderPlaceholder();
     expect(screen.getByText('work.loading')).toBeTruthy();
+    expect(screen.getByTestId('app-state-loading')).toBeTruthy();
 
     mockWorkState = { status: 'empty', shifts: [], retry: mockRetry };
     await view.rerender(<ThemeProvider><WorkShiftsPlaceholder /></ThemeProvider>);
@@ -55,6 +56,8 @@ describe('WorkShiftsPlaceholder', () => {
     expect(screen.getByText('work.shift.km: 20.25')).toBeTruthy();
     expect(screen.getByText('work.shift.hours: 0')).toBeTruthy();
     expect(screen.getByText('work.shift.km: 0')).toBeTruthy();
+    expect(screen.getByTestId('work-shift-2').props.onPress).toBeUndefined();
+    expect(screen.queryByText(/PLN|gross|hourly/i)).toBeNull();
   });
 
   test('renders safe errors and delegates retry without raw backend content', async () => {
@@ -94,6 +97,8 @@ describe('WorkShiftsPlaceholder', () => {
     await renderPlaceholder();
 
     expect(screen.getByTestId('work-edit-1')).toBeTruthy();
+    expect(screen.getByTestId('work-edit-1').props.accessibilityLabel).toBe('work.edit.action');
+    expect(screen.getByTestId('work-delete-1').props.accessibilityLabel).toBe('work.delete.action');
     await fireEvent.press(screen.getByTestId('work-edit-1'));
     expect(mockPush).toHaveBeenCalledWith('/work/1/edit');
     await fireEvent.press(screen.getByTestId('work-delete-1'));

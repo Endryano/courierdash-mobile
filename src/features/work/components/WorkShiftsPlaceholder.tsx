@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 
 import { AppButton } from '@/components/ui/AppButton';
+import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
 import { useLocalization } from '@/i18n/LocalizationProvider';
@@ -36,22 +37,18 @@ export function WorkShiftsPlaceholder() {
   if (deletion.status !== 'idle') return <WorkShiftDeleteConfirmation />;
 
   if (status === 'loading' || status === 'idle') {
-    return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl }}><AppText>{t('work.loading')}</AppText></View></Screen>;
+    return <Screen><AppStateSurface loading><AppText>{t('work.loading')}</AppText></AppStateSurface></Screen>;
   }
 
   if (status === 'recoverable_error' || status === 'blocked') {
     const blocked = status === 'blocked';
     return (
-      <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl, gap: spacing.md }}>
-        <AppText variant="title">{t(blocked ? 'work.blocked.title' : 'work.error.title')}</AppText>
-        <AppText muted>{t(blocked ? 'work.blocked.description' : 'work.error.description')}</AppText>
-        <AppButton disabled={isRetrying} label={t('work.retry')} onPress={() => void retryWorkShifts()} testID="work-retry" />
-      </View></Screen>
+      <Screen><AppStateSurface action={{ disabled: isRetrying, label: t('work.retry'), onPress: () => void retryWorkShifts(), testID: 'work-retry' }} description={t(blocked ? 'work.blocked.description' : 'work.error.description')} title={t(blocked ? 'work.blocked.title' : 'work.error.title')} /></Screen>
     );
   }
 
   if (status === 'empty') {
-    return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl, gap: spacing.md }}><AppText variant="title">{t('work.empty.title')}</AppText><AppText muted>{t('work.empty.description')}</AppText><AppButton label={t('work.create.action')} onPress={() => router.push('/work/create')} testID="work-create-action" /></View></Screen>;
+    return <Screen><AppStateSurface action={{ label: t('work.create.action'), onPress: () => router.push('/work/create'), testID: 'work-create-action' }} description={t('work.empty.description')} title={t('work.empty.title')} /></Screen>;
   }
 
   return (
