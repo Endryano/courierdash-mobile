@@ -24,3 +24,11 @@ export function signInWithEmail(input: SignInInput): Promise<Session | null> {
 export function signUpWithEmail(input: SignInInput): Promise<Session | null> {
   return runAuthRequest(() => supabase.auth.signUp({ email: input.email.trim(), password: input.password }));
 }
+
+export async function signOut(): Promise<void> {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    throw new AuthApiError(mapAuthError(error));
+  }
+}

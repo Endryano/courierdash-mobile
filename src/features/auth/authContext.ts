@@ -2,4 +2,8 @@ import { createContext } from 'react';
 
 import type { AuthState } from './authTypes';
 
-export const AuthContext = createContext<AuthState | null>(null);
+export type AuthContextValue = AuthState & {
+  signOut: () => Promise<void>;
+};
+
+export const AuthContext = createContext<AuthContextValue | null>(null);

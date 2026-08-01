@@ -3,7 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { supabase } from '@/lib/supabase/client';
 
-import { AuthContext } from './authContext';
+import { signOut as signOutFromApi } from './authApi';
+import { AuthContext, type AuthContextValue } from './authContext';
 import type { AuthState } from './authTypes';
 import { subscribeToAppStateAutoRefresh } from './sessionLifecycle';
 
@@ -61,7 +62,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  const value = useMemo(() => authState, [authState]);
+  const value = useMemo<AuthContextValue>(() => ({ ...authState, signOut: signOutFromApi }), [authState]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

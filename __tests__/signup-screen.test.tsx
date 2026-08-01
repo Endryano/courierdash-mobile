@@ -109,12 +109,16 @@ describe('SignupScreen', () => {
     expect(screen.queryByText(rawMessage)).toBeNull();
   });
 
-  test('opens the canonical login route from the Auth mode switch', async () => {
+  test('switches to Login locally without router navigation', async () => {
     await renderSignup();
 
     await fireEvent.press(screen.getByTestId('auth-mode-login'));
 
-    expect(mockRouterPush).toHaveBeenCalledWith('/login');
+    expect(screen.getByTestId('login-email')).toBeTruthy();
+    expect(screen.getByTestId('login-password')).toBeTruthy();
+    expect(screen.queryByTestId('signup-confirm-password')).toBeNull();
+    expect(screen.getByTestId('auth-mode-login').props.accessibilityState).toEqual({ selected: true });
+    expect(mockRouterPush).not.toHaveBeenCalled();
   });
 
   test('preserves secure new-password metadata and does not render password recovery', async () => {

@@ -93,12 +93,33 @@ describe('LoginScreen', () => {
     expect(screen.queryByText(rawMessage)).toBeNull();
   });
 
-  test('opens the canonical signup route from the Auth mode switch', async () => {
+  test('switches to Signup locally without router navigation', async () => {
     await renderLogin();
 
     await fireEvent.press(screen.getByTestId('auth-mode-signup'));
 
-    expect(mockRouterPush).toHaveBeenCalledWith('/signup');
+    expect(screen.getByTestId('signup-email')).toBeTruthy();
+    expect(screen.getByTestId('signup-password')).toBeTruthy();
+    expect(screen.getByTestId('signup-confirm-password')).toBeTruthy();
+    expect(screen.queryByTestId('login-email')).toBeNull();
+    expect(screen.getByTestId('auth-mode-signup').props.accessibilityState).toEqual({ selected: true });
+    expect(mockRouterPush).not.toHaveBeenCalled();
+  });
+
+  test('keeps separate Login and Signup values while the shared shell remains mounted', async () => {
+    await renderLogin();
+    const authShell = screen.getByTestId('auth-shell');
+
+    await fireEvent.changeText(screen.getByTestId('login-email'), 'login@example.com');
+    await fireEvent.press(screen.getByTestId('auth-mode-signup'));
+    await fireEvent.changeText(screen.getByTestId('signup-email'), 'signup@example.com');
+    await fireEvent.press(screen.getByTestId('auth-mode-login'));
+
+    expect(screen.getByTestId('auth-shell')).toBe(authShell);
+    expect(screen.getByTestId('login-email').props.value).toBe('login@example.com');
+    await fireEvent.press(screen.getByTestId('auth-mode-signup'));
+    expect(screen.getByTestId('signup-email').props.value).toBe('signup@example.com');
+    expect(mockRouterPush).not.toHaveBeenCalled();
   });
 
   test('preserves native credential metadata and does not render password recovery', async () => {

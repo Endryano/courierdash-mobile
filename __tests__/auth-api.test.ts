@@ -5,6 +5,7 @@ type AuthResponse = { data: { session: Session | null }; error: unknown };
 
 const mockSignInWithPassword = jest.fn<(input: { email: string; password: string }) => Promise<AuthResponse>>();
 const mockSignUp = jest.fn<(input: { email: string; password: string }) => Promise<AuthResponse>>();
+const mockSignOut = jest.fn<() => Promise<{ error: unknown }>>();
 const mockFetch = jest.fn();
 
 jest.mock('@/lib/supabase/client', () => ({
@@ -12,11 +13,12 @@ jest.mock('@/lib/supabase/client', () => ({
     auth: {
       signInWithPassword: mockSignInWithPassword,
       signUp: mockSignUp,
+      signOut: mockSignOut,
     },
   },
 }));
 
-const { AuthApiError, signInWithEmail, signUpWithEmail } = require('@/features/auth/authApi') as typeof import('@/features/auth/authApi');
+const { AuthApiError, signInWithEmail, signOut, signUpWithEmail } = require('@/features/auth/authApi') as typeof import('@/features/auth/authApi');
 
 describe('auth API', () => {
   beforeEach(() => {
@@ -24,6 +26,7 @@ describe('auth API', () => {
     global.fetch = mockFetch as unknown as typeof fetch;
     mockSignInWithPassword.mockResolvedValue({ data: { session: null }, error: null });
     mockSignUp.mockResolvedValue({ data: { session: null }, error: null });
+    mockSignOut.mockResolvedValue({ error: null });
   });
 
   test('signs in with a trimmed email and an unchanged password', async () => {
@@ -47,6 +50,15 @@ describe('auth API', () => {
     await expect(signInWithEmail({ email: 'courier@example.com', password: 'secret' })).rejects.toMatchObject({
       key: 'auth.error.invalidCredentials',
     } satisfies Partial<InstanceType<typeof AuthApiError>>);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  test('signs out through Supabase Auth and maps failures safely', async () => {
+    await expect(signOut()).resolves.toBeUndefined();
+    expect(mockSignOut).toHaveBeenCalledTimes(1);
+
+    mockSignOut.mockResolvedValue({ error: { message: 'network request failed access_token=secret' } });
+    await expect(signOut()).rejects.toMatchObject({ key: 'auth.error.network' } satisfies Partial<InstanceType<typeof AuthApiError>>);
     expect(mockFetch).not.toHaveBeenCalled();
   });
 });
