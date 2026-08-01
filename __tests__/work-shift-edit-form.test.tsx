@@ -26,6 +26,10 @@ function readyState(): WorkShiftEditContextValue {
   return { status: 'ready', shift: { id: 1, ...input }, input, submit: mockSubmit, load: jest.fn(), reconcile: jest.fn(), reset: jest.fn(), subjectUserId: 'user-a' } as WorkShiftEditContextValue;
 }
 
+function terminalState(status: 'loading' | 'recoverable_error' | 'blocked' | 'not_found'): WorkShiftEditContextValue {
+  return { status, submit: mockSubmit, load: jest.fn(), reconcile: jest.fn(), reset: jest.fn(), subjectUserId: 'user-a' } as WorkShiftEditContextValue;
+}
+
 describe('WorkShiftEditForm', () => {
   beforeEach(() => { jest.clearAllMocks(); mockSubmit.mockResolvedValue(undefined); mockEditState = readyState(); });
 
@@ -77,5 +81,44 @@ describe('WorkShiftEditForm', () => {
     expect(submitted?.platforms.uber.orders).toBeNull();
     expect(submitted?.platforms.uber.appTips).toBeNull();
     expect(submitted?.platforms.uber.bonuses).toBeNull();
+  });
+
+  test('uses selected controls and preserves hidden Edit values after deselection', async () => {
+    const editableState = readyState();
+    if (!('input' in editableState)) throw new Error('ready state expected');
+    editableState.input.platforms.wolt = { enabled: true, income: 6, orders: 7, appTips: 8, cashTips: 9, bonuses: 10 };
+    mockEditState = editableState;
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+
+    expect(view.getByTestId('work-edit-platform-wolt').props.accessibilityState).toEqual({ disabled: false, selected: true });
+    expect(view.getByTestId('work-edit-platform-card-wolt')).toBeTruthy();
+    await act(async () => { fireEvent.press(view.getByTestId('work-edit-platform-wolt')); });
+    expect(view.getByTestId('work-edit-platform-wolt').props.accessibilityState).toEqual({ disabled: false, selected: false });
+    expect(view.queryByTestId('work-edit-platform-card-wolt')).toBeNull();
+    await act(async () => { fireEvent.press(view.getByTestId('work-edit-submit')); });
+
+    expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ platforms: expect.objectContaining({ wolt: { enabled: false, income: 6, orders: 7, appTips: 8, cashTips: 9, bonuses: 10 } }) }));
+  });
+
+  test('renders general fields before the platform selector and actions after platform cards', async () => {
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+    const tree = JSON.stringify(view.toJSON());
+
+    expect(tree.indexOf('work-edit-general')).toBeLessThan(tree.indexOf('work-edit-platforms'));
+    expect(tree.indexOf('work-edit-date')).toBeLessThan(tree.indexOf('work-edit-hours'));
+    expect(tree.indexOf('work-edit-hours')).toBeLessThan(tree.indexOf('work-edit-km'));
+    expect(tree.indexOf('work-edit-platform-card-uber')).toBeLessThan(tree.indexOf('work-edit-form-actions'));
+  });
+
+  test.each([
+    ['loading', 'work.edit.loading'],
+    ['not_found', 'work.edit.notFound'],
+    ['recoverable_error', 'work.edit.recoverable'],
+    ['blocked', 'work.edit.blocked'],
+  ])('renders the safe %s full-screen state', async (status, message) => {
+    mockEditState = terminalState(status as 'loading' | 'recoverable_error' | 'blocked' | 'not_found');
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+
+    expect(view.getByText(message)).toBeTruthy();
   });
 });

@@ -37,11 +37,44 @@ describe('WorkShiftCreateForm', () => {
 
   test('renders required fields and all six verified platforms', async () => {
     const view = await renderForm();
+    expect(view.getByTestId('work-create-general')).toBeTruthy();
+    expect(view.getByTestId('work-create-platforms')).toBeTruthy();
     expect(view.getByTestId('work-create-date').props.accessibilityRole).toBe('button');
     expect(view.getByTestId('work-create-date').props.onChangeText).toBeUndefined();
     expect(view.getByTestId('work-create-km')).toBeTruthy();
     expect(view.getByTestId('work-create-hours')).toBeTruthy();
     for (const platform of ['uber', 'wolt', 'bolt', 'glovo', 'stuart', 'other']) expect(view.getByTestId(`work-platform-${platform}`)).toBeTruthy();
+  });
+
+  test('uses selectable platform controls and keeps deselected draft metrics out of the Create payload', async () => {
+    const view = await renderForm();
+    const uber = view.getByTestId('work-platform-uber');
+    expect(uber.props.accessibilityState).toEqual({ disabled: false, selected: false });
+
+    await act(async () => { fireEvent.press(uber); });
+    expect(view.getByTestId('work-platform-uber').props.accessibilityState).toEqual({ disabled: false, selected: true });
+    expect(view.getByTestId('work-create-platform-card-uber')).toBeTruthy();
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-income'), '42'); });
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    expect(view.queryByTestId('work-create-platform-card-uber')).toBeNull();
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-wolt')); });
+    await act(async () => { fireEvent.press(view.getByTestId('work-create-submit')); });
+
+    expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ platforms: expect.objectContaining({ uber: expect.objectContaining({ enabled: false, income: 0, orders: 0, appTips: 0, cashTips: 0, bonuses: 0 }) }) }));
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    expect(view.getByTestId('work-uber-income').props.value).toBe('42');
+  });
+
+  test('keeps Other name before its metric fields and actions after selected platform cards', async () => {
+    const view = await renderForm();
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-other')); });
+
+    const tree = JSON.stringify(view.toJSON());
+    expect(tree.indexOf('work-create-general')).toBeLessThan(tree.indexOf('work-create-platforms'));
+    expect(tree.indexOf('work-create-date')).toBeLessThan(tree.indexOf('work-create-hours'));
+    expect(tree.indexOf('work-create-hours')).toBeLessThan(tree.indexOf('work-create-km'));
+    expect(tree.indexOf('work-other-name')).toBeLessThan(tree.indexOf('work-other-income'));
+    expect(tree.indexOf('work-create-platform-card-other')).toBeLessThan(tree.indexOf('work-create-form-actions'));
   });
 
   test('submits native decimal text as finite numeric input', async () => {
