@@ -5,6 +5,7 @@
 - Read only task-relevant `docs/ai/` material; do not load the whole knowledge base by default.
 - Architecture/providers: `docs/ai/architecture.md`; accepted decisions: `docs/ai/architecture-decisions.md`; domain/backend: `docs/ai/domain-contracts.md`.
 - Workflow: `docs/ai/workflow.md`; Git: `docs/ai/commit-policy.md`; evolving state: `docs/ai/project-state.md`.
+- For cross-side, backend, schema, Auth, business-rule, date, financial-formula, migration, or compatibility work, read only the relevant files in `docs/shared/`. It is a derivative, read-only Mobile import: versioned packages come from the shared-contract process, Mobile must not edit them or independently author shared schema, generated backend contracts, or migrations. Canonical ownership follows the imported contract; approved cross-side updates are required for a new shared version or shared/backend change. Local presentation-only work need not load this package.
 
 ## Scope and workflow
 

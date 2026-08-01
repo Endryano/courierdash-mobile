@@ -1,0 +1,76 @@
+{
+  "fixtureType": "income",
+  "contractVersion": "0.2.0-draft",
+  "status": "verified",
+  "cases": [
+    {
+      "ruleId": "STAT-BRUTTO-001",
+      "caseId": "income-all-platforms",
+      "title": "Aggregate all six supported platforms",
+      "status": "verified",
+      "input": {
+        "platforms": {
+          "uber": { "baseIncome": 100, "appTips": 10, "cashTips": 5, "bonuses": 0, "orders": 4 },
+          "wolt": { "baseIncome": 200, "appTips": 20, "cashTips": 0, "bonuses": 10, "orders": 8 },
+          "bolt": { "baseIncome": 150, "appTips": 0, "cashTips": 15, "bonuses": 5, "orders": 6 },
+          "glovo": { "baseIncome": 120, "appTips": 12, "cashTips": 0, "bonuses": 8, "orders": 5 },
+          "stuart": { "baseIncome": 80, "appTips": 8, "cashTips": 2, "bonuses": 0, "orders": 3 },
+          "other": { "baseIncome": 50, "appTips": 0, "cashTips": 5, "bonuses": 5, "orders": 2 }
+        }
+      },
+      "expected": { "baseIncome": 700, "appTips": 50, "cashTips": 27, "bonuses": 28, "brutto": 805, "orders": 28 },
+      "explanation": "Brutto is base income plus app tips, cash tips, and bonuses; every supported platform participates.",
+      "verifiedAgainst": ["web-unit-tests", "web-calculation-source"],
+      "evidenceRefs": ["lib/work-platforms.ts", "app/work/year/annual-report-calculations.ts"],
+      "introduced": "0.2.0-draft"
+    },
+    {
+      "ruleId": "STAT-BRUTTO-001",
+      "caseId": "income-zero-values",
+      "title": "Zero values remain zero",
+      "status": "verified",
+      "input": { "records": [{ "baseIncome": 0, "appTips": 0, "cashTips": 0, "bonuses": 0, "orders": 0 }] },
+      "expected": { "baseIncome": 0, "appTips": 0, "cashTips": 0, "bonuses": 0, "brutto": 0, "orders": 0 },
+      "explanation": "Zero is a valid numeric value and does not require a special branch.",
+      "verifiedAgainst": ["web-unit-tests", "web-calculation-source"],
+      "evidenceRefs": ["lib/work-platforms.ts", "app/work/year/annual-report-calculations.ts"],
+      "introduced": "0.2.0-draft"
+    },
+    {
+      "ruleId": "MONEY-ROUNDING-001",
+      "caseId": "income-decimal-values",
+      "title": "Decimal arithmetic without contract rounding",
+      "status": "verified",
+      "input": { "records": [{ "baseIncome": 10.25, "appTips": 1.5, "cashTips": 0.25, "bonuses": 2, "orders": 1 }] },
+      "expected": { "brutto": 14, "orders": 1, "roundingApplied": false },
+      "explanation": "The arithmetic result is exact for these inputs; this case does not define persistence or display rounding.",
+      "verifiedAgainst": ["web-calculation-source"],
+      "evidenceRefs": ["app/work/year/annual-report-calculations.ts"],
+      "introduced": "0.2.0-draft"
+    },
+    {
+      "ruleId": "WORK-RECORDED-INCOME-001",
+      "caseId": "income-null-and-missing",
+      "title": "Null and missing numeric fields aggregate as zero",
+      "status": "verified",
+      "input": { "platforms": { "uber": { "baseIncome": null, "appTips": null }, "other": { "orders": null } } },
+      "expected": { "baseIncome": 0, "appTips": 0, "cashTips": 0, "bonuses": 0, "brutto": 0, "orders": 0 },
+      "explanation": "The Web numeric normalization converts null, undefined, and non-finite numeric inputs to zero.",
+      "verifiedAgainst": ["web-unit-tests", "web-calculation-source"],
+      "evidenceRefs": ["lib/work-platforms.ts", "app/work/year/annual-report-calculations.test.ts"],
+      "introduced": "0.2.0-draft"
+    },
+    {
+      "ruleId": "STAT-BRUTTO-001",
+      "caseId": "income-multiple-records",
+      "title": "Aggregate multiple work records",
+      "status": "verified",
+      "input": { "records": [{ "baseIncome": 40, "appTips": 4, "cashTips": 1, "bonuses": 0, "orders": 2 }, { "baseIncome": 60, "appTips": 6, "cashTips": 2, "bonuses": 3, "orders": 3 }] },
+      "expected": { "baseIncome": 100, "appTips": 10, "cashTips": 3, "bonuses": 3, "brutto": 116, "orders": 5 },
+      "explanation": "Totals are additive across records before any presentation formatting.",
+      "verifiedAgainst": ["web-unit-tests", "web-calculation-source"],
+      "evidenceRefs": ["app/work/year/annual-report-calculations.ts"],
+      "introduced": "0.2.0-draft"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "fixtureType": "report",
+  "contractVersion": "0.2.0-draft",
+  "status": "verified",
+  "cases": [
+    {
+      "ruleId": "REPORT-ANNUAL-001",
+      "caseId": "report-six-platform-summary",
+      "title": "Annual summary includes Stuart, Other, cash tips, and orders",
+      "status": "verified",
+      "input": {
+        "platforms": {
+          "uber": { "baseIncome": 100, "appTips": 10, "cashTips": 5, "bonuses": 0, "orders": 4 },
+          "wolt": { "baseIncome": 200, "appTips": 20, "cashTips": 0, "bonuses": 10, "orders": 8 },
+          "bolt": { "baseIncome": 150, "appTips": 0, "cashTips": 15, "bonuses": 5, "orders": 6 },
+          "glovo": { "baseIncome": 120, "appTips": 12, "cashTips": 0, "bonuses": 8, "orders": 5 },
+          "stuart": { "baseIncome": 80, "appTips": 8, "cashTips": 2, "bonuses": 0, "orders": 3 },
+          "other": { "baseIncome": 50, "appTips": 0, "cashTips": 5, "bonuses": 5, "orders": 2 }
+        }
+      },
+      "expected": { "totalIncome": 805, "orders": 28, "averagePerOrder": 28.75, "stuartIncome": 90, "stuartOrders": 3, "otherIncome": 60, "otherOrders": 2 },
+      "explanation": "The total uses Brutto semantics and safe average divides 805 by 28.",
+      "verifiedAgainst": ["web-unit-tests", "web-calculation-source"],
+      "evidenceRefs": ["app/work/year/annual-report-calculations.ts", "app/work/year/annual-report-calculations.test.ts"],
+      "introduced": "0.2.0-draft"
+    },
+    {
+      "ruleId": "REPORT-ANNUAL-001",
+      "caseId": "report-zero-denominator",
+      "title": "Zero orders produce a zero average",
+      "status": "verified",
+      "input": { "totalIncome": 0, "orders": 0 },
+      "expected": { "averagePerOrder": 0, "error": false },
+      "explanation": "Safe average returns zero instead of dividing by zero.",
+      "verifiedAgainst": ["web-unit-tests", "web-calculation-source"],
+      "evidenceRefs": ["app/work/year/annual-report-calculations.ts", "app/work/year/annual-report-calculations.test.ts"],
+      "introduced": "0.2.0-draft"
+    }
+  ]
+}

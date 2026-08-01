@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://courierdash.invalid/schemas/contract-manifest.schema.json",
+  "title": "CourierDash shared contract manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifestSchemaVersion",
+    "contractName",
+    "contractVersion",
+    "snapshotId",
+    "snapshotVersion",
+    "status",
+    "canonicalLocation",
+    "developmentPhase",
+    "generatedFromEnvironment",
+    "sourceWebCommit",
+    "schemaRevision",
+    "latestMigration",
+    "generatedAt",
+    "compatibility",
+    "artifacts",
+    "sharedFlows",
+    "blockers",
+    "mismatches",
+    "breakingChanges",
+    "sanitization"
+  ],
+  "properties": {
+    "manifestSchemaVersion": { "const": "1.0.0" },
+    "contractName": { "const": "courierdash-shared-contract" },
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "snapshotId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]+$" },
+    "snapshotVersion": { "type": "string", "minLength": 1 },
+    "status": { "$ref": "#/$defs/evidenceStatus" },
+    "canonicalLocation": { "const": "docs/shared" },
+    "developmentPhase": { "const": "mobile_catch_up" },
+    "generatedFromEnvironment": { "const": "staging" },
+    "sourceWebCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "schemaRevision": { "type": ["string", "null"] },
+    "latestMigration": { "type": ["string", "null"] },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "compatibility": { "$ref": "#/$defs/compatibility" },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact" },
+      "minItems": 1
+    },
+    "sharedFlows": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/flow" },
+      "minItems": 7
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/blocker" }
+    },
+    "mismatches": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/mismatch" }
+    },
+    "breakingChanges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/breakingChange" }
+    },
+    "sanitization": { "$ref": "#/$defs/sanitization" }
+  },
+  "$defs": {
+    "evidenceStatus": {
+      "enum": [
+        "verified",
+        "reported_pending_snapshot",
+        "inferred",
+        "proposed",
+        "unresolved",
+        "deferred_for_mobile",
+        "not_implemented_on_mobile",
+        "blocked",
+        "draft_pending_schema_snapshot",
+        "partially_verified",
+        "not_used"
+      ]
+    },
+    "artifactStatus": { "enum": ["present", "missing", "blocked", "not_used"] },
+    "stagingStatus": { "enum": ["not_checked", "verified", "mismatch", "not_applicable"] },
+    "productionStatus": { "enum": ["not_checked", "not_applied", "applied", "not_applicable"] },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "status", "sourceRefs", "generatedAt", "stagingStatus", "productionStatus", "verificationStatus"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^(?![A-Za-z]:|/|\\\\).+" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "status": { "$ref": "#/$defs/artifactStatus" },
+        "sourceRefs": { "type": "array", "items": { "type": "string" } },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "stagingStatus": { "$ref": "#/$defs/stagingStatus" },
+        "productionStatus": { "$ref": "#/$defs/productionStatus" },
+        "verificationStatus": { "$ref": "#/$defs/evidenceStatus" }
+      }
+    },
+    "implementationStatus": {
+      "enum": ["not_started", "planned", "implementing", "implemented_unverified", "contract_verified", "staging_verified", "blocked", "deferred"]
+    },
+    "reviewStatus": { "enum": ["not_reviewed", "pending", "passed", "failed"] },
+    "acceptanceStatus": { "enum": ["not_assessed", "accepted_by_web", "accepted_by_mobile", "accepted_by_both", "rejected"] },
+    "flow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "implementationStatus", "implementationCommit", "reviewStatus", "acceptanceStatus", "contractVersion", "verificationStatus", "supportedCapabilities", "missingCapabilities", "blockers", "evidenceRefs"],
+      "properties": {
+        "id": { "enum": ["auth", "profile", "work", "statistics", "reports", "expenses", "vehicle_rental"] },
+        "implementationStatus": { "$ref": "#/$defs/implementationStatus" },
+        "implementationCommit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{40}$" },
+        "reviewStatus": { "$ref": "#/$defs/reviewStatus" },
+        "acceptanceStatus": { "$ref": "#/$defs/acceptanceStatus" },
+        "contractVersion": { "type": "string" },
+        "verificationStatus": { "$ref": "#/$defs/evidenceStatus" },
+        "supportedCapabilities": { "type": "array", "items": { "type": "string" } },
+        "missingCapabilities": { "type": "array", "items": { "type": "string" } },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "severity": { "enum": ["low", "medium", "high", "blocker"] },
+    "blockerStatus": { "enum": ["open", "resolved", "accepted_risk"] },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "area", "severity", "status", "description", "blocksFlows", "evidenceRefs", "requiredResolution"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^RISK-[0-9]{3}$" },
+        "area": { "type": "string" },
+        "severity": { "$ref": "#/$defs/severity" },
+        "status": { "$ref": "#/$defs/blockerStatus" },
+        "description": { "type": "string" },
+        "blocksFlows": { "type": "array", "items": { "type": "string" } },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+        "requiredResolution": { "type": "string" }
+      }
+    },
+    "breakingChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "class", "description", "affectedFlows", "migrationRequired"],
+      "properties": {
+        "id": { "type": "string" },
+        "class": { "enum": ["C", "D"] },
+        "description": { "type": "string" },
+        "affectedFlows": { "type": "array", "items": { "type": "string" } },
+        "migrationRequired": { "type": "boolean" }
+      }
+    },
+    "mismatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "status", "summary", "evidenceRefs", "impact", "mobileStop", "recommendation", "flows"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^MISMATCH-[0-9]{3}$" },
+        "severity": { "$ref": "#/$defs/severity" },
+        "status": { "$ref": "#/$defs/blockerStatus" },
+        "summary": { "type": "string" },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+        "impact": { "type": "string" },
+        "mobileStop": { "type": "boolean" },
+        "recommendation": { "type": "string" },
+        "flows": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semverRangeFormat", "web", "mobile", "postPublicSupport", "rolloutStrategy"],
+      "properties": {
+        "semverRangeFormat": { "const": "npm-semver" },
+        "web": { "type": "string" },
+        "mobile": { "type": "string" },
+        "postPublicSupport": { "const": "future_release_gate" },
+        "rolloutStrategy": { "const": "expand-migrate-verify-deprecate-remove" }
+      }
+    },
+    "sanitization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "scannedAt", "checks", "findings"],
+      "properties": {
+        "status": { "enum": ["pending", "passed", "failed"] },
+        "scannedAt": { "type": ["string", "null"], "format": "date-time" },
+        "checks": { "type": "array", "items": { "type": "string" } },
+        "findings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

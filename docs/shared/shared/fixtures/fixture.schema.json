@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://courierdash.invalid/schemas/fixture.schema.json",
+  "title": "CourierDash shared calculation fixture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixtureType", "contractVersion", "status", "cases"],
+  "properties": {
+    "fixtureType": { "enum": ["income", "expense", "rental", "report", "timezone"] },
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": ["verified", "reported_pending_snapshot", "proposed", "unresolved", "blocked", "draft_pending_schema_snapshot"]
+    },
+    "cases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/case" }
+    }
+  },
+  "$defs": {
+    "jsonValue": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "boolean" },
+        { "type": "number" },
+        { "type": "string" },
+        { "type": "array", "items": { "$ref": "#/$defs/jsonValue" } },
+        { "type": "object", "additionalProperties": { "$ref": "#/$defs/jsonValue" } }
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruleId", "caseId", "title", "status", "input", "expected", "explanation", "verifiedAgainst", "evidenceRefs", "introduced"],
+      "properties": {
+        "ruleId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "status": {
+          "enum": ["verified", "reported_pending_snapshot", "proposed", "unresolved", "blocked", "draft_pending_schema_snapshot"]
+        },
+        "input": { "$ref": "#/$defs/jsonValue" },
+        "expected": { "$ref": "#/$defs/jsonValue" },
+        "explanation": { "type": "string" },
+        "verifiedAgainst": { "type": "array", "items": { "type": "string" } },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+        "introduced": { "type": "string" }
+      }
+    }
+  }
+}
