@@ -33,7 +33,7 @@ export function WorkShiftsPlaceholder() {
     }
   }
 
-  if (deletion.status !== 'idle' && deletion.status !== 'success') return <WorkShiftDeleteConfirmation />;
+  if (deletion.status !== 'idle') return <WorkShiftDeleteConfirmation />;
 
   if (status === 'loading' || status === 'idle') {
     return <Screen><View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl }}><AppText>{t('work.loading')}</AppText></View></Screen>;

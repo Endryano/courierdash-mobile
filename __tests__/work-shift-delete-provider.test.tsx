@@ -68,11 +68,11 @@ describe('WorkShiftDeleteProvider', () => {
     expect(mockRefresh).not.toHaveBeenCalled();
   });
 
-  test('deletes once and publishes success only after canonical refresh', async () => {
+  test('deletes once, refreshes canonically, and returns to an idle lifecycle', async () => {
     await render(<WorkShiftDeleteProvider><Probe /></WorkShiftDeleteProvider>);
     await act(async () => { screen.getByTestId('request-a').props.onPress(); });
     await act(async () => { screen.getByTestId('confirm').props.onPress(); screen.getByTestId('confirm').props.onPress(); });
-    expect(await screen.findByText('success:none')).toBeTruthy();
+    expect(await screen.findByText('idle:none')).toBeTruthy();
     expect(mockDelete).toHaveBeenCalledWith('user-a', 1);
     expect(mockDelete).toHaveBeenCalledTimes(1);
     expect(mockRefresh).toHaveBeenCalledTimes(1);
@@ -98,7 +98,7 @@ describe('WorkShiftDeleteProvider', () => {
 
     mockRefresh.mockResolvedValueOnce(undefined);
     await act(async () => { screen.getByTestId('reconcile').props.onPress(); screen.getByTestId('reconcile').props.onPress(); });
-    expect(await screen.findByText('success:none')).toBeTruthy();
+    expect(await screen.findByText('idle:none')).toBeTruthy();
     expect(mockDelete).toHaveBeenCalledTimes(1);
     expect(mockRefresh).toHaveBeenCalledTimes(2);
   });

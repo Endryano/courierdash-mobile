@@ -13,7 +13,7 @@ export function WorkShiftDeleteConfirmation() {
   const { t } = useLocalization();
   const { spacing } = useTheme();
 
-  if (deletion.status === 'idle' || deletion.status === 'success') return null;
+  if (deletion.status === 'idle') return null;
 
   const isConfirming = deletion.status === 'confirming';
   const isDeleting = deletion.status === 'deleting';
