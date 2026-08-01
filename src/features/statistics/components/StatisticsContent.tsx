@@ -1,7 +1,10 @@
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useState } from 'react';
 
-import { AppButton } from '@/components/ui/AppButton';
+import { AppCard } from '@/components/ui/AppCard';
+import { AppMetricCard } from '@/components/ui/AppMetricCard';
+import { AppSegmentedControl } from '@/components/ui/AppSegmentedControl';
+import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
 import { defaultWorkShiftPeriod, type WorkShiftPeriod } from '@/features/work/domain/workShiftPeriod';
@@ -34,20 +37,8 @@ const platformTranslationKeys: Readonly<Record<WorkPlatformKey, TranslationKey>>
   other: 'work.platform.other',
 };
 
-function MetricCard({ label, value }: MetricCardProps) {
-  const { colors, radii, spacing } = useTheme();
-
-  return (
-    <View accessibilityLabel={`${label}: ${value}`} style={[styles.metricCard, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.md, padding: spacing.md }]}>
-      <AppText muted variant="label">{label}</AppText>
-      <AppText variant="body">{value}</AppText>
-    </View>
-  );
-}
-
 function StatisticsMessage({ titleKey, descriptionKey, retry }: { readonly titleKey: TranslationKey; readonly descriptionKey: TranslationKey; readonly retry?: () => Promise<void> }) {
   const { t } = useLocalization();
-  const { spacing } = useTheme();
 
   function retryStatistics() {
     if (retry === undefined) return;
@@ -57,44 +48,25 @@ function StatisticsMessage({ titleKey, descriptionKey, retry }: { readonly title
     });
   }
 
-  return (
-    <Screen><View style={[styles.message, { gap: spacing.md, padding: spacing.xl }]}>
-      <AppText variant="title">{t(titleKey)}</AppText>
-      <AppText muted>{t(descriptionKey)}</AppText>
-      {retry === undefined ? null : <AppButton label={t('statistics.retry')} onPress={retryStatistics} testID="statistics-retry" />}
-    </View></Screen>
-  );
+  return <Screen><AppStateSurface action={retry === undefined ? undefined : { label: t('statistics.retry'), onPress: retryStatistics, testID: 'statistics-retry' }} description={t(descriptionKey)} title={t(titleKey)} /></Screen>;
 }
 
 function StatisticsPeriodSelector({ period, onChange }: { readonly period: WorkShiftPeriod; readonly onChange: (period: WorkShiftPeriod) => void }) {
   const { t } = useLocalization();
-  const { colors, radii, spacing } = useTheme();
 
   return (
-    <View accessibilityLabel={t('statistics.period.label')} accessibilityRole="tablist" style={[styles.periodSelector, { gap: spacing.xs }]}>
-      {periodKeys.map((option) => {
-        const selected = option === period;
-
-        return (
-          <Pressable
-            accessibilityRole="tab"
-            accessibilityState={{ selected }}
-            key={option}
-            onPress={() => onChange(option)}
-            style={({ pressed }) => [styles.periodOption, { backgroundColor: selected ? colors.accent : colors.surface, borderColor: colors.border, borderRadius: radii.md, opacity: pressed ? 0.8 : 1, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs }]}
-            testID={`statistics-period-${option}`}
-          >
-            <AppText muted={!selected} style={{ color: selected ? colors.background : undefined }} variant="label">{t(periodTranslationKeys[option])}</AppText>
-          </Pressable>
-        );
-      })}
-    </View>
+    <AppSegmentedControl
+      accessibilityLabel={t('statistics.period.label')}
+      onChange={onChange}
+      options={periodKeys.map((option) => ({ label: t(periodTranslationKeys[option]), testID: `statistics-period-${option}`, value: option }))}
+      value={period}
+    />
   );
 }
 
 function PlatformBreakdown({ metrics }: { readonly metrics: StatisticsMetrics }) {
   const { locale, t } = useLocalization();
-  const { colors, radii, spacing } = useTheme();
+  const { spacing } = useTheme();
 
   return (
     <View style={{ gap: spacing.sm }}>
@@ -106,11 +78,11 @@ function PlatformBreakdown({ metrics }: { readonly metrics: StatisticsMetrics })
         const orders = formatNumber(locale, item.orders, 0);
 
         return (
-          <View accessibilityLabel={`${label}: ${t('statistics.platform.brutto')} ${brutto}, ${t('statistics.platform.orders')} ${orders}`} key={platform} style={[styles.platformRow, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.md, padding: spacing.md }]}>
+          <AppCard accessibilityLabel={`${label}: ${t('statistics.platform.brutto')} ${brutto}, ${t('statistics.platform.orders')} ${orders}`} key={platform} style={{ gap: spacing.xxs }}>
             <AppText variant="label">{label}</AppText>
             <AppText muted>{`${t('statistics.platform.brutto')}: ${brutto}`}</AppText>
             <AppText muted>{`${t('statistics.platform.orders')}: ${orders}`}</AppText>
-          </View>
+          </AppCard>
         );
       })}
     </View>
@@ -124,7 +96,7 @@ export function StatisticsContent() {
   const { spacing } = useTheme();
 
   if (statistics.status === 'loading') {
-    return <Screen><View style={[styles.message, { padding: spacing.xl }]}><AppText>{t('statistics.loading')}</AppText></View></Screen>;
+    return <Screen><AppStateSurface><AppText>{t('statistics.loading')}</AppText></AppStateSurface></Screen>;
   }
   if (statistics.status === 'empty') return <StatisticsMessage descriptionKey="statistics.empty.description" titleKey="statistics.empty.title" />;
   if (statistics.status === 'recoverable_error') return <StatisticsMessage descriptionKey="statistics.error.description" retry={statistics.retry} titleKey="statistics.error.title" />;
@@ -157,7 +129,7 @@ export function StatisticsContent() {
       <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
         <AppText variant="title">{t('statistics.title')}</AppText>
         <StatisticsPeriodSelector onChange={setPeriod} period={period} />
-        <View style={{ gap: spacing.sm }}>{cards.map((card) => <MetricCard key={card.label} {...card} />)}</View>
+        <View style={{ gap: spacing.sm }}>{cards.map((card) => <AppMetricCard key={card.label} {...card} />)}</View>
         <PlatformBreakdown metrics={metrics} />
       </ScrollView>
     </Screen>
@@ -165,9 +137,8 @@ export function StatisticsContent() {
 }
 
 const styles = StyleSheet.create({
-  message: { flex: 1, justifyContent: 'center' },
-  metricCard: { borderWidth: StyleSheet.hairlineWidth, gap: 4, minHeight: 76, justifyContent: 'center' },
-  periodSelector: { flexDirection: 'row', flexWrap: 'wrap' },
-  periodOption: { borderWidth: StyleSheet.hairlineWidth },
-  platformRow: { borderWidth: StyleSheet.hairlineWidth, gap: 4 },
+  message: {
+    flex: 1,
+    justifyContent: 'center',
+  },
 });

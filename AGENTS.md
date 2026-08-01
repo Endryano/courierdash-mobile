@@ -28,6 +28,7 @@
 - Keep route-specific validation and route-param parsing in the route wrapper, not the domain layer.
 - Keep local UI state local only when it is not canonical domain, session, or navigation state.
 - Prefer existing primitives: `Screen`, `AppText`, `AppButton`, `AppInput`.
+- For shared UI or presentation work, consult `docs/design/MOBILE_DESIGN_SYSTEM.md`; provisional design entries are not product contracts.
 - Preserve the dark-only semantic theme; do not add light/system theme without approval.
 - User-visible strings and accessibility labels must use typed localization keys.
 - Supported locales are `pl`, `uk`, `en`, `ru`; every new key requires all four entries.

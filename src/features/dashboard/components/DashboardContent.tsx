@@ -1,7 +1,9 @@
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useState } from 'react';
 
-import { AppButton } from '@/components/ui/AppButton';
+import { AppMetricCard } from '@/components/ui/AppMetricCard';
+import { AppSegmentedControl } from '@/components/ui/AppSegmentedControl';
+import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
 import { useDashboardMetrics } from '@/features/dashboard/hooks/useDashboardMetrics';
@@ -11,10 +13,7 @@ import type { TranslationKey } from '@/i18n/translations';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { useTheme } from '@/theme/ThemeProvider';
 
-type MetricCardProps = {
-  readonly label: string;
-  readonly value: string;
-};
+type MetricCardProps = { readonly label: string; readonly value: string };
 
 const periodKeys: readonly DashboardPeriod[] = ['today', 'week', 'month', 'allTime'];
 
@@ -27,20 +26,8 @@ const periodTranslationKeys: Readonly<Record<DashboardPeriod, TranslationKey>> =
 
 export { formatCurrency as formatDashboardCurrency, formatNumber as formatDashboardNumber } from '@/lib/formatters';
 
-function MetricCard({ label, value }: MetricCardProps) {
-  const { colors, radii, spacing } = useTheme();
-
-  return (
-    <View accessibilityLabel={`${label}: ${value}`} style={[styles.metricCard, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.md, padding: spacing.md }]}>
-      <AppText muted variant="label">{label}</AppText>
-      <AppText variant="body">{value}</AppText>
-    </View>
-  );
-}
-
 function DashboardMessage({ titleKey, descriptionKey, retry }: { readonly titleKey: TranslationKey; readonly descriptionKey: TranslationKey; readonly retry?: () => Promise<void> }) {
   const { t } = useLocalization();
-  const { spacing } = useTheme();
 
   function retryDashboard() {
     if (retry === undefined) return;
@@ -50,37 +37,18 @@ function DashboardMessage({ titleKey, descriptionKey, retry }: { readonly titleK
     });
   }
 
-  return (
-    <Screen><View style={[styles.message, { gap: spacing.md, padding: spacing.xl }]}>
-      <AppText variant="title">{t(titleKey)}</AppText>
-      <AppText muted>{t(descriptionKey)}</AppText>
-      {retry === undefined ? null : <AppButton label={t('dashboard.retry')} onPress={retryDashboard} testID="dashboard-retry" />}
-    </View></Screen>
-  );
+  return <Screen><AppStateSurface action={retry === undefined ? undefined : { label: t('dashboard.retry'), onPress: retryDashboard, testID: 'dashboard-retry' }} description={t(descriptionKey)} title={t(titleKey)} /></Screen>;
 }
 
 function DashboardPeriodSelector({ period, onChange }: { readonly period: DashboardPeriod; readonly onChange: (period: DashboardPeriod) => void }) {
   const { t } = useLocalization();
-  const { colors, radii, spacing } = useTheme();
 
   return (
-    <View accessibilityRole="tablist" style={[styles.periodSelector, { gap: spacing.xs }]}>
-      {periodKeys.map((option) => {
-        const selected = option === period;
-        return (
-          <Pressable
-            accessibilityRole="tab"
-            accessibilityState={{ selected }}
-            key={option}
-            onPress={() => onChange(option)}
-            style={({ pressed }) => [styles.periodOption, { backgroundColor: selected ? colors.accent : colors.surface, borderColor: colors.border, borderRadius: radii.md, opacity: pressed ? 0.8 : 1, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs }]}
-            testID={`dashboard-period-${option}`}
-          >
-            <AppText muted={!selected} style={{ color: selected ? colors.background : undefined }} variant="label">{t(periodTranslationKeys[option])}</AppText>
-          </Pressable>
-        );
-      })}
-    </View>
+    <AppSegmentedControl
+      onChange={onChange}
+      options={periodKeys.map((option) => ({ label: t(periodTranslationKeys[option]), testID: `dashboard-period-${option}`, value: option }))}
+      value={period}
+    />
   );
 }
 
@@ -91,7 +59,7 @@ export function DashboardContent() {
   const { spacing } = useTheme();
 
   if (dashboard.status === 'loading') {
-    return <Screen><View style={[styles.message, { padding: spacing.xl }]}><AppText>{t('dashboard.loading')}</AppText></View></Screen>;
+    return <Screen><AppStateSurface><AppText>{t('dashboard.loading')}</AppText></AppStateSurface></Screen>;
   }
 
   if (dashboard.status === 'empty') {
@@ -130,7 +98,7 @@ export function DashboardContent() {
         <AppText variant="title">{t('dashboard.title')}</AppText>
         <DashboardPeriodSelector onChange={setPeriod} period={period} />
         <View style={{ gap: spacing.sm }}>
-          {cards.map((card) => <MetricCard key={card.label} {...card} />)}
+          {cards.map((card) => <AppMetricCard key={card.label} {...card} />)}
         </View>
       </ScrollView>
     </Screen>
@@ -141,18 +109,5 @@ const styles = StyleSheet.create({
   message: {
     flex: 1,
     justifyContent: 'center',
-  },
-  metricCard: {
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: 4,
-    minHeight: 76,
-    justifyContent: 'center',
-  },
-  periodSelector: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  periodOption: {
-    borderWidth: StyleSheet.hairlineWidth,
   },
 });

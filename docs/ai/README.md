@@ -10,6 +10,7 @@ Durable repository knowledge for AI agents. Read only documents relevant to the 
 | [workflow.md](workflow.md) | Discovery, implementation, checkpoint workflow |
 | [commit-policy.md](commit-policy.md) | Git staging, commits, repository safety |
 | [project-state.md](project-state.md) | Evolving baseline, debt, planned work |
+| [../design/MOBILE_DESIGN_SYSTEM.md](../design/MOBILE_DESIGN_SYSTEM.md) | Accepted local Mobile presentation rules; consult for shared UI/design work |
 | [../shared/README.md](../shared/README.md) | Imported read-only shared-contract reference; consult relevant files for cross-side/backend contract work |
 
 `AGENTS.md` contains short mandatory rules; this directory holds the supporting detail.
