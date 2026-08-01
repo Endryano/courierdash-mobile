@@ -1,31 +1,25 @@
 import { defaultLocale, supportedLocales, type SupportedLocale } from './translations';
 
-export const localeStorageKey = 'courierdash.locale.v1';
+export type LocaleLike = {
+  languageCode?: string | null;
+  languageTag?: string | null;
+};
 
-export function isSupportedLocale(value: unknown): value is SupportedLocale {
-  return typeof value === 'string' && supportedLocales.includes(value as SupportedLocale);
+function toLanguageCode(value: string | null | undefined): string | null {
+  if (typeof value !== 'string') return null;
+
+  const languageCode = value.trim().split(/[-_]/)[0]?.toLowerCase();
+  return languageCode === undefined || languageCode === '' ? null : languageCode;
 }
 
-export function resolveLocale(
-  persistedLocale: unknown,
-  deviceLocaleCodes: readonly (string | null | undefined)[],
-): SupportedLocale {
-  if (isSupportedLocale(persistedLocale)) {
-    return persistedLocale;
+export function resolveSupportedLocale(locales: readonly LocaleLike[]): SupportedLocale {
+  for (const locale of locales) {
+    const languageCode = toLanguageCode(locale.languageCode) ?? toLanguageCode(locale.languageTag);
+
+    if (languageCode !== null && supportedLocales.includes(languageCode as SupportedLocale)) {
+      return languageCode as SupportedLocale;
+    }
   }
 
-  const deviceLocale = deviceLocaleCodes.find(isSupportedLocale);
-
-  return deviceLocale ?? defaultLocale;
-}
-
-export async function resolveInitialLocale(
-  readPersistedLocale: () => Promise<string | null>,
-  deviceLocaleCodes: readonly (string | null | undefined)[],
-): Promise<SupportedLocale> {
-  try {
-    return resolveLocale(await readPersistedLocale(), deviceLocaleCodes);
-  } catch {
-    return resolveLocale(null, deviceLocaleCodes);
-  }
+  return defaultLocale;
 }

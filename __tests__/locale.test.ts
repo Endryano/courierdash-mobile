@@ -1,29 +1,32 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { resolveInitialLocale, resolveLocale } from '@/i18n/locale';
+import { resolveSupportedLocale } from '@/i18n/locale';
 import { translations } from '@/i18n/translations';
 
-describe('resolveLocale', () => {
-  test('uses a persisted supported locale before device locales', () => {
-    expect(resolveLocale('uk', ['en', 'pl'])).toBe('uk');
+describe('resolveSupportedLocale', () => {
+  test.each([
+    [{ languageCode: 'pl' }, 'pl'],
+    [{ languageCode: 'pl-PL' }, 'pl'],
+    [{ languageCode: 'uk' }, 'uk'],
+    [{ languageCode: 'uk-UA' }, 'uk'],
+    [{ languageCode: 'en-US' }, 'en'],
+    [{ languageCode: 'en-GB' }, 'en'],
+    [{ languageCode: 'ru-RU' }, 'ru'],
+  ])('resolves %o to %s', (locale, expected) => {
+    expect(resolveSupportedLocale([locale])).toBe(expected);
   });
 
-  test('ignores an invalid persisted locale', () => {
-    expect(resolveLocale('de', ['ru'])).toBe('ru');
+  test('selects the first supported locale after unsupported entries', () => {
+    expect(resolveSupportedLocale([{ languageCode: 'de-DE' }, { languageCode: 'en-US' }])).toBe('en');
   });
 
-  test('finds a supported locale after an unsupported device locale', () => {
-    expect(resolveLocale(null, ['de', 'en'])).toBe('en');
+  test('uses the language tag when language code is unavailable', () => {
+    expect(resolveSupportedLocale([{ languageCode: null, languageTag: 'uk-UA' }])).toBe('uk');
   });
 
-  test('falls back to Polish for unsupported device locales', () => {
-    expect(resolveLocale(null, ['de', 'fr'])).toBe('pl');
-  });
-
-  test('falls back when reading persisted locale fails', async () => {
-    await expect(resolveInitialLocale(async () => Promise.reject(new Error('storage unavailable')), ['en'])).resolves.toBe(
-      'en',
-    );
+  test('skips missing language codes and falls back to Polish', () => {
+    expect(resolveSupportedLocale([{ languageCode: null }, {}, { languageCode: 'fr-FR' }])).toBe('pl');
+    expect(resolveSupportedLocale([])).toBe('pl');
   });
 });
 
