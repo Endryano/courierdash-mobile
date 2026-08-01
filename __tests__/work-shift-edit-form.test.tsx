@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { act, fireEvent, render } from '@testing-library/react-native';
 
+import { validateWorkShiftEdit } from '@/features/work/domain/workShiftEditValidation';
 import type { WorkShiftEditContextValue } from '@/features/work/provider/workShiftEditContext';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
@@ -38,5 +39,43 @@ describe('WorkShiftEditForm', () => {
     if (confirm !== null) await act(async () => { fireEvent.press(confirm); });
     await act(async () => { fireEvent.press(view.getByTestId('work-edit-submit')); });
     expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ date: '2024-02-29' }));
+  });
+
+  test('renders cleared root and platform numeric fields as empty while preserving invalid NaN state', async () => {
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-edit-km'), ''); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-edit-hours'), ''); });
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-edit-uber-income'), ''); });
+
+    expect(view.getByTestId('work-edit-km').props.value).toBe('');
+    expect(view.getByTestId('work-edit-hours').props.value).toBe('');
+    expect(view.getByTestId('work-edit-uber-income').props.value).toBe('');
+    expect(view.queryByDisplayValue('NaN')).toBeNull();
+
+    await act(async () => { fireEvent.press(view.getByTestId('work-edit-submit')); });
+    const submitted = mockSubmit.mock.calls[0]?.[0];
+    expect(submitted).toBeDefined();
+    expect(Number.isNaN(submitted!.km)).toBe(true);
+    expect(Number.isNaN(submitted!.hours)).toBe(true);
+    expect(Number.isNaN(submitted!.platforms.uber.income)).toBe(true);
+    expect(validateWorkShiftEdit(submitted!)).toEqual({ isValid: false, error: 'invalid_number' });
+  });
+
+  test('keeps zero as zero and untouched nullable platform values as empty inputs', async () => {
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+
+    expect(view.getByTestId('work-edit-km').props.value).toBe('0');
+    expect(view.getByTestId('work-edit-hours').props.value).toBe('0');
+    expect(view.getByTestId('work-edit-uber-income').props.value).toBe('0');
+    expect(view.getByTestId('work-edit-uber-orders').props.value).toBe('');
+    expect(view.getByTestId('work-edit-uber-appTips').props.value).toBe('');
+    expect(view.getByTestId('work-edit-uber-bonuses').props.value).toBe('');
+
+    await act(async () => { fireEvent.press(view.getByTestId('work-edit-submit')); });
+    const submitted = mockSubmit.mock.calls[0]?.[0];
+    expect(submitted?.platforms.uber.orders).toBeNull();
+    expect(submitted?.platforms.uber.appTips).toBeNull();
+    expect(submitted?.platforms.uber.bonuses).toBeNull();
   });
 });
