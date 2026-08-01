@@ -1,6 +1,47 @@
 import { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
 import { router } from 'expo-router';
-import { AppButton } from '@/components/ui/AppButton'; import { AppInput } from '@/components/ui/AppInput'; import { AppText } from '@/components/ui/AppText'; import { useLocalization } from '@/i18n/LocalizationProvider';
-import { AuthFormScreen } from '@/features/auth/AuthFormScreen'; import { AuthApiError, signInWithEmail } from '@/features/auth/authApi'; import { validateLoginInput, type AuthFieldErrors } from '@/features/auth/authValidation';
-export default function LoginScreen() { const { t } = useLocalization(); const mounted = useRef(true); useEffect(() => () => { mounted.current = false; }, []); const [email,setEmail]=useState(''); const [password,setPassword]=useState(''); const [errors,setErrors]=useState<AuthFieldErrors>({}); const [serverError,setServerError]=useState<string>(); const [pending,setPending]=useState(false); async function submit(){ if(pending)return; const result=validateLoginInput({email,password}); if(!result.isValid){setErrors(result.fieldErrors);return;} setErrors({});setServerError(undefined);setPending(true);try{await signInWithEmail(result.value);if(mounted.current)setPassword('');}catch(error){if(mounted.current)setServerError(t(error instanceof AuthApiError?error.key:'auth.error.generic'));}finally{if(mounted.current)setPending(false);}} return <AuthFormScreen title={t('auth.loginTitle')}><AppInput label={t('auth.email')} value={email} onChangeText={setEmail} error={errors.email?t(errors.email):undefined} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" testID="login-email"/><AppInput label={t('auth.password')} value={password} onChangeText={setPassword} error={errors.password?t(errors.password):undefined} secureTextEntry autoComplete="current-password" testID="login-password"/>{serverError?<AppText accessibilityRole="alert">{serverError}</AppText>:null}<View><AppButton label={pending?t('auth.loading'):t('auth.login')} disabled={pending} onPress={()=>void submit()} testID="login-submit"/></View><AppButton label={t('auth.goToSignup')} onPress={()=>router.push('/signup')} testID="go-signup"/></AuthFormScreen>; }
+import { AppButton } from '@/components/ui/AppButton';
+import { AppInput } from '@/components/ui/AppInput';
+import { AuthMessage } from '@/features/auth/AuthMessage';
+import { AuthShell } from '@/features/auth/AuthShell';
+import { AuthApiError, signInWithEmail } from '@/features/auth/authApi';
+import { validateLoginInput, type AuthFieldErrors } from '@/features/auth/authValidation';
+import { useLocalization } from '@/i18n/LocalizationProvider';
+
+export default function LoginScreen() {
+  const { t } = useLocalization();
+  const mounted = useRef(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<AuthFieldErrors>({});
+  const [serverError, setServerError] = useState<string>();
+  const [pending, setPending] = useState(false);
+
+  useEffect(() => () => { mounted.current = false; }, []);
+
+  async function submit() {
+    if (pending) return;
+    const result = validateLoginInput({ email, password });
+    if (!result.isValid) { setErrors(result.fieldErrors); return; }
+    setErrors({});
+    setServerError(undefined);
+    setPending(true);
+    try {
+      await signInWithEmail(result.value);
+      if (mounted.current) setPassword('');
+    } catch (error) {
+      if (mounted.current) setServerError(t(error instanceof AuthApiError ? error.key : 'auth.error.generic'));
+    } finally {
+      if (mounted.current) setPending(false);
+    }
+  }
+
+  return (
+    <AuthShell activeMode="login" brand={t('auth.brand')} loginLabel={t('auth.login')} onModeChange={(mode) => { if (mode === 'signup') router.push('/signup'); }} signupLabel={t('auth.signup')} title={t('auth.loginTitle')}>
+      <AppInput autoCapitalize="none" autoComplete="email" autoCorrect={false} error={errors.email ? t(errors.email) : undefined} keyboardType="email-address" label={t('auth.email')} onChangeText={setEmail} testID="login-email" value={email} variant="filled" />
+      <AppInput autoComplete="current-password" error={errors.password ? t(errors.password) : undefined} label={t('auth.password')} onChangeText={setPassword} secureTextEntry testID="login-password" value={password} variant="filled" />
+      {serverError ? <AuthMessage message={serverError} /> : null}
+      <AppButton label={pending ? t('auth.loading') : t('auth.login')} loading={pending} onPress={() => void submit()} testID="login-submit" />
+    </AuthShell>
+  );
+}

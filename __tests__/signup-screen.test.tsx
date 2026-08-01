@@ -79,7 +79,7 @@ describe('SignupScreen', () => {
     await waitFor(() => expect(mockSignUpWithEmail).toHaveBeenCalledTimes(1));
     expect(mockSignUpWithEmail).toHaveBeenCalledWith({ email: 'courier@example.com', password: ' secret ' });
     expect(mockSignUpWithEmail.mock.calls[0][0]).not.toHaveProperty('confirmPassword');
-    expect(screen.getByTestId('signup-submit').props.accessibilityState).toEqual({ disabled: true });
+    expect(screen.getByTestId('signup-submit').props.accessibilityState).toEqual({ disabled: true, busy: true });
 
     await act(async () => { resolveRequest?.(); });
     expect(await screen.findByText('auth.confirmEmail')).toBeTruthy();
@@ -109,12 +109,22 @@ describe('SignupScreen', () => {
     expect(screen.queryByText(rawMessage)).toBeNull();
   });
 
-  test('opens the canonical login route', async () => {
+  test('opens the canonical login route from the Auth mode switch', async () => {
     await renderSignup();
 
-    await fireEvent.press(screen.getByTestId('go-login'));
+    await fireEvent.press(screen.getByTestId('auth-mode-login'));
 
     expect(mockRouterPush).toHaveBeenCalledWith('/login');
+  });
+
+  test('preserves secure new-password metadata and does not render password recovery', async () => {
+    await renderSignup();
+
+    for (const testID of ['signup-password', 'signup-confirm-password']) {
+      expect(screen.getByTestId(testID).props.autoComplete).toBe('new-password');
+      expect(screen.getByTestId(testID).props.secureTextEntry).toBe(true);
+    }
+    expect(screen.queryByText(/forgot|reset|recovery/i)).toBeNull();
   });
 
   test('does not update state after unmounting with a pending request', async () => {

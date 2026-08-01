@@ -71,7 +71,7 @@ describe('LoginScreen', () => {
     await fireEvent.press(screen.getByTestId('login-submit'));
 
     await waitFor(() => expect(mockSignInWithEmail).toHaveBeenCalledTimes(1));
-    expect(screen.getByTestId('login-submit').props.accessibilityState).toEqual({ disabled: true });
+    expect(screen.getByTestId('login-submit').props.accessibilityState).toEqual({ disabled: true, busy: true });
 
     await act(async () => { resolveRequest?.(); });
 
@@ -93,12 +93,21 @@ describe('LoginScreen', () => {
     expect(screen.queryByText(rawMessage)).toBeNull();
   });
 
-  test('opens the canonical signup route', async () => {
+  test('opens the canonical signup route from the Auth mode switch', async () => {
     await renderLogin();
 
-    await fireEvent.press(screen.getByTestId('go-signup'));
+    await fireEvent.press(screen.getByTestId('auth-mode-signup'));
 
     expect(mockRouterPush).toHaveBeenCalledWith('/signup');
+  });
+
+  test('preserves native credential metadata and does not render password recovery', async () => {
+    await renderLogin();
+
+    expect(screen.getByTestId('login-email').props.autoComplete).toBe('email');
+    expect(screen.getByTestId('login-password').props.autoComplete).toBe('current-password');
+    expect(screen.getByTestId('login-password').props.secureTextEntry).toBe(true);
+    expect(screen.queryByText(/forgot|reset|recovery/i)).toBeNull();
   });
 
   test('does not update state after unmounting with a pending request', async () => {
