@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 
 import { AppButton } from '@/components/ui/AppButton';
@@ -11,6 +11,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { useWorkShifts } from '../hooks/useWorkShifts';
 import { useWorkShiftDelete } from '../hooks/useWorkShiftDelete';
 import { WorkShiftDeleteConfirmation } from './WorkShiftDeleteConfirmation';
+import { WorkShiftListItem } from './WorkShiftListItem';
 
 export function WorkShiftsPlaceholder() {
   const { retry, shifts, status } = useWorkShifts();
@@ -54,18 +55,32 @@ export function WorkShiftsPlaceholder() {
   }
 
   return (
-    <Screen><View style={{ flex: 1, padding: spacing.xl, gap: spacing.md }}>
-      <AppText variant="title">{t('work.list.title')}</AppText>
-      <AppButton label={t('work.create.action')} onPress={() => router.push('/work/create')} testID="work-create-action" />
-      {shifts.map((shift) => (
-        <View key={shift.id} style={{ gap: spacing.xs }}>
-          <AppText>{shift.date}</AppText>
-          <AppText muted>{`${t('work.shift.hours')}: ${shift.hours}`}</AppText>
-          <AppText muted>{`${t('work.shift.km')}: ${shift.km}`}</AppText>
-          <AppButton label={t('work.edit.action')} onPress={() => router.push(`/work/${shift.id}/edit`)} testID={`work-edit-${shift.id}`} />
-          <AppButton label={t('work.delete.action')} onPress={() => deletion.requestDelete({ id: shift.id, date: shift.date, hours: shift.hours, km: shift.km })} testID={`work-delete-${shift.id}`} />
-        </View>
-      ))}
-    </View></Screen>
+    <Screen>
+      <FlatList
+        contentContainerStyle={[styles.listContent, { gap: spacing.md, padding: spacing.xl, paddingBottom: spacing.xxl + 64 }]}
+        data={shifts}
+        keyExtractor={(shift) => String(shift.id)}
+        ListHeaderComponent={(
+          <View style={{ gap: spacing.md }}>
+            <AppText variant="title">{t('work.list.title')}</AppText>
+            <AppButton label={t('work.create.action')} onPress={() => router.push('/work/create')} testID="work-create-action" />
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <WorkShiftListItem
+            onDelete={(shift) => deletion.requestDelete(shift)}
+            onEdit={(shiftId) => router.push(`/work/${shiftId}/edit`)}
+            shift={item}
+          />
+        )}
+        testID="work-shifts-list"
+      />
+    </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  listContent: {
+    flexGrow: 1,
+  },
+});

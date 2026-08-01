@@ -10,7 +10,7 @@ let mockWorkState: { status: 'idle' | 'loading' | 'empty' | 'ready' | 'recoverab
 
 jest.mock('@/features/work/hooks/useWorkShifts', () => ({ useWorkShifts: () => mockWorkState }));
 jest.mock('@/features/work/hooks/useWorkShiftDelete', () => ({ useWorkShiftDelete: () => ({ status: 'idle', requestDelete: mockRequestDelete }) }));
-jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ t: (key: string) => key }) }));
+jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ locale: 'en', t: (key: string) => key }) }));
 jest.mock('expo-router', () => ({ router: { push: mockPush } }));
 
 const { WorkShiftsPlaceholder } = require('@/features/work/components/WorkShiftsPlaceholder') as typeof import('@/features/work/components/WorkShiftsPlaceholder');
@@ -27,7 +27,7 @@ describe('WorkShiftsPlaceholder', () => {
     mockWorkState = { status: 'loading', shifts: [], retry: mockRetry };
   });
 
-  test('renders loading, empty, and ready states without calculations', async () => {
+  test('renders loading, empty, and a scrollable ready history without calculations', async () => {
     const view = await renderPlaceholder();
     expect(screen.getByText('work.loading')).toBeTruthy();
 
@@ -35,10 +35,26 @@ describe('WorkShiftsPlaceholder', () => {
     await view.rerender(<ThemeProvider><WorkShiftsPlaceholder /></ThemeProvider>);
     expect(screen.getByText('work.empty.title')).toBeTruthy();
 
-    mockWorkState = { status: 'ready', shifts: [{ id: 1, date: '2026-07-29', hours: 8, km: 20 }], retry: mockRetry };
+    mockWorkState = {
+      status: 'ready',
+      shifts: [
+        { id: 2, date: '2026-07-30', hours: 8.5, km: 20.25 },
+        { id: 1, date: '2026-07-29', hours: 0, km: 0 },
+      ],
+      retry: mockRetry,
+    };
     await view.rerender(<ThemeProvider><WorkShiftsPlaceholder /></ThemeProvider>);
-    expect(screen.getByText('2026-07-29')).toBeTruthy();
-    expect(screen.getByText('work.shift.hours: 8')).toBeTruthy();
+    expect(screen.getByTestId('work-shifts-list')).toBeTruthy();
+    expect(screen.getByTestId('work-shift-2')).toBeTruthy();
+    expect(screen.getByTestId('work-shift-1')).toBeTruthy();
+    expect(screen.getAllByTestId(/work-shift-\d+/).map((item) => item.props.testID)).toEqual(['work-shift-2', 'work-shift-1']);
+    expect(screen.getByText('July 30, 2026')).toBeTruthy();
+    expect(screen.getByLabelText('work.create.date: July 30, 2026')).toBeTruthy();
+    expect(screen.queryByText('2026-07-30')).toBeNull();
+    expect(screen.getByText('work.shift.hours: 8.5')).toBeTruthy();
+    expect(screen.getByText('work.shift.km: 20.25')).toBeTruthy();
+    expect(screen.getByText('work.shift.hours: 0')).toBeTruthy();
+    expect(screen.getByText('work.shift.km: 0')).toBeTruthy();
   });
 
   test('renders safe errors and delegates retry without raw backend content', async () => {
