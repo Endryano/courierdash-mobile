@@ -28,8 +28,11 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
   const requiresReconciliation = status === 'reconciliation_required';
 
   useEffect(() => {
-    if (status === 'success') onCancel();
-  }, [onCancel, status]);
+    if (status !== 'success') return;
+
+    reset();
+    onCancel();
+  }, [onCancel, reset, status]);
 
   function updatePlatform(platform: WorkPlatformKey, patch: Partial<WorkShiftCreateDraft['platforms'][WorkPlatformKey]>) {
     setFormError(null);

@@ -91,6 +91,14 @@ describe('WorkShiftCreateForm', () => {
     expect(view.getByTestId('work-create-cancel').props.accessibilityState).toEqual({ disabled: true });
   });
 
+  test('clears terminal success before returning to Work so a later Create route starts clean', async () => {
+    mockCreateState = state('success');
+    const { onCancel } = await renderForm();
+
+    expect(mockReset).toHaveBeenCalledTimes(1);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
   test('resets deterministically on an available cancel action', async () => {
     const { onCancel, ...view } = await renderForm();
     await act(async () => { fireEvent.press(view.getByTestId('work-create-cancel')); });
