@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { AppInput } from '@/components/ui/AppInput';
@@ -6,6 +7,7 @@ import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
 import { useLocalization } from '@/i18n/LocalizationProvider';
+import { useTheme } from '@/theme/ThemeProvider';
 
 import { editableWorkPlatformKeys, type EditableWorkPlatformKey } from '../domain/workShiftEditable';
 import type { WorkShiftEditInput } from '../domain/workShiftEdit';
@@ -13,12 +15,13 @@ import { useWorkShiftEdit } from '../hooks/useWorkShiftEdit';
 import { WorkShiftDateField } from './WorkShiftDateField';
 import { WorkShiftFormSection } from './WorkShiftFormSection';
 import { WorkShiftFormShell } from './WorkShiftFormShell';
-import { WorkShiftPlatformFieldsCard } from './WorkShiftPlatformFieldsCard';
+import { getWorkPlatformAccent, WorkShiftPlatformFieldsCard } from './WorkShiftPlatformFieldsCard';
 import { WorkShiftPlatformSelector } from './WorkShiftPlatformSelector';
 
 type Props = { onCancel: () => void };
 
 const metrics = ['income', 'orders', 'appTips', 'cashTips', 'bonuses'] as const;
+const optionalMetrics = ['appTips', 'cashTips', 'bonuses'] as const;
 
 const parse = (value: string) => value.trim() === '' ? Number.NaN : Number(value);
 
@@ -29,13 +32,26 @@ function formatEditNumericValue(value: number | null): string {
 export function WorkShiftEditForm({ onCancel }: Props) {
   const edit = useWorkShiftEdit();
   const { t } = useLocalization();
+  const { spacing } = useTheme();
   const [input, setInput] = useState<WorkShiftEditInput | null>(null);
+  const [expandedPlatforms, setExpandedPlatforms] = useState<Set<EditableWorkPlatformKey>>(() => new Set());
+  const initializedDisclosure = useRef(false);
   const pending = edit.status === 'submitting';
   const reconciliation = edit.status === 'reconciliation_required';
+  const currentInput = input ?? ('input' in edit ? edit.input : null);
 
   useEffect(() => {
     if (edit.status === 'success') onCancel();
   }, [edit.status, onCancel]);
+
+  useEffect(() => {
+    if (currentInput === null || initializedDisclosure.current) return;
+    setExpandedPlatforms(new Set(editableWorkPlatformKeys.filter((platform) => optionalMetrics.some((metric) => {
+      const value = currentInput.platforms[platform][metric];
+      return value !== null && value !== 0;
+    }))));
+    initializedDisclosure.current = true;
+  }, [currentInput]);
 
   function returnToWork() {
     edit.reset();
@@ -51,7 +67,6 @@ export function WorkShiftEditForm({ onCancel }: Props) {
     return <Screen><AppStateSurface action={{ label: t('work.edit.cancel'), onPress: returnToWork }} title={t(messageKey)} /></Screen>;
   }
 
-  const currentInput = input ?? ('input' in edit ? edit.input : null);
   if (currentInput === null) return null;
 
   const update = (platform: EditableWorkPlatformKey, patch: Partial<WorkShiftEditInput['platforms'][EditableWorkPlatformKey]>) => {
@@ -62,12 +77,19 @@ export function WorkShiftEditForm({ onCancel }: Props) {
   };
   const statusKey = edit.status === 'validation_error' ? 'work.edit.validation' : edit.status === 'duplicate_date' ? 'work.edit.duplicate' : reconciliation ? 'work.edit.reconciliation' : null;
   const selectedPlatforms = new Set(editableWorkPlatformKeys.filter((platform) => currentInput.platforms[platform].enabled));
+  const togglePlatformDetails = (platform: EditableWorkPlatformKey) => {
+    setExpandedPlatforms((current) => {
+      const next = new Set(current);
+      if (next.has(platform)) next.delete(platform); else next.add(platform);
+      return next;
+    });
+  };
 
   return (
     <WorkShiftFormShell
       actions={(
         <>
-          {reconciliation ? <AppButton label={t('work.edit.reconcile')} onPress={() => void edit.reconcile()} testID="work-edit-reconcile" /> : <AppButton disabled={pending} label={t(pending ? 'work.edit.saving' : 'work.edit.save')} onPress={() => void edit.submit(currentInput)} testID="work-edit-submit" />}
+          {reconciliation ? <AppButton label={t('work.edit.reconcile')} onPress={() => void edit.reconcile()} testID="work-edit-reconcile" variant="warning" /> : <AppButton disabled={pending} label={t(pending ? 'work.edit.saving' : 'work.edit.save')} loading={pending} onPress={() => void edit.submit(currentInput)} testID="work-edit-submit" variant="warning" />}
           <AppButton disabled={pending} label={t('work.edit.cancel')} onPress={returnToWork} testID="work-edit-cancel" variant="secondary" />
         </>
       )}
@@ -75,13 +97,14 @@ export function WorkShiftEditForm({ onCancel }: Props) {
       testID="work-edit-form"
       title={t('work.edit.title')}
     >
-      <WorkShiftFormSection testID="work-edit-general" title={t('work.form.general')}>
+      <WorkShiftFormSection testID="work-edit-general" title={t('work.form.details')}>
         <WorkShiftDateField label={t('work.create.date')} value={currentInput.date} onChange={(date) => setInput((current) => ({ ...(current ?? currentInput), date }))} testID="work-edit-date" />
-        <AppInput label={t('work.create.hours')} value={formatEditNumericValue(currentInput.hours)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), hours: parse(value) }))} testID="work-edit-hours" />
-        <AppInput label={t('work.create.km')} value={formatEditNumericValue(currentInput.km)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), km: parse(value) }))} testID="work-edit-km" />
+        <AppInput label={t('work.create.km')} value={formatEditNumericValue(currentInput.km)} variant="work" keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), km: parse(value) }))} testID="work-edit-km" />
+        <AppInput label={t('work.create.hours')} value={formatEditNumericValue(currentInput.hours)} variant="work" keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), hours: parse(value) }))} testID="work-edit-hours" />
       </WorkShiftFormSection>
-      <WorkShiftFormSection testID="work-edit-platforms" title={t('work.form.platforms')}>
+      <WorkShiftFormSection testID="work-edit-platforms" title={t('work.form.income')}>
         <WorkShiftPlatformSelector
+          disabled={pending}
           getLabel={(platform) => t(`work.platform.${platform}`)}
           getTestID={(platform) => `work-edit-platform-${platform}`}
           onToggle={(platform) => update(platform, { enabled: !currentInput.platforms[platform].enabled })}
@@ -89,18 +112,33 @@ export function WorkShiftEditForm({ onCancel }: Props) {
           selected={selectedPlatforms}
           testID="work-edit-platform-selector"
         />
-      </WorkShiftFormSection>
-      {editableWorkPlatformKeys.map((platform) => {
+        {editableWorkPlatformKeys.map((platform) => {
         const value = currentInput.platforms[platform];
         if (!value.enabled) return null;
 
         return (
-          <WorkShiftPlatformFieldsCard key={platform} testID={`work-edit-platform-card-${platform}`} title={t(`work.platform.${platform}`)}>
-            {platform === 'other' ? <AppInput label={t('work.create.otherName')} value={currentInput.platforms.other.name ?? ''} onChangeText={(name) => update('other', { name })} testID="work-edit-other-name" /> : null}
-            {metrics.map((metric) => <AppInput key={metric} label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} />)}
+          <WorkShiftPlatformFieldsCard
+            accentColor={getWorkPlatformAccent(platform)}
+            detailsExpanded={expandedPlatforms.has(platform)}
+            detailsLabel={t(expandedPlatforms.has(platform) ? 'work.form.hideOptional' : 'work.form.showOptional')}
+            key={platform}
+            onRemove={() => update(platform, { enabled: false })}
+            onToggleDetails={() => togglePlatformDetails(platform)}
+            removeAccessibilityLabel={`${t('work.form.removePlatform')}: ${t(`work.platform.${platform}`)}`}
+            testID={`work-edit-platform-card-${platform}`}
+            title={t(`work.platform.${platform}`)}
+          >
+            {platform === 'other' ? <AppInput label={t('work.create.otherName')} value={currentInput.platforms.other.name ?? ''} variant="work" onChangeText={(name) => update('other', { name })} testID="work-edit-other-name" /> : null}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {metrics.slice(0, 2).map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><AppInput label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} variant="work" keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
+            </View>
+            {expandedPlatforms.has(platform) ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {optionalMetrics.map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><AppInput label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} variant="work" keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
+            </View> : null}
           </WorkShiftPlatformFieldsCard>
         );
-      })}
+        })}
+      </WorkShiftFormSection>
     </WorkShiftFormShell>
   );
 }

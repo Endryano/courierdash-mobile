@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { act, cleanup, fireEvent, render } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import type { WorkShiftCreateContextValue } from '@/features/work/provider/workShiftCreateContext';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { darkTheme } from '@/theme/theme';
 
 const mockSubmit = jest.fn<WorkShiftCreateContextValue['submit']>();
 const mockReconcile = jest.fn<WorkShiftCreateContextValue['reconcile']>();
@@ -72,8 +74,8 @@ describe('WorkShiftCreateForm', () => {
 
     const tree = JSON.stringify(view.toJSON());
     expect(tree.indexOf('work-create-general')).toBeLessThan(tree.indexOf('work-create-platforms'));
-    expect(tree.indexOf('work-create-date')).toBeLessThan(tree.indexOf('work-create-hours'));
-    expect(tree.indexOf('work-create-hours')).toBeLessThan(tree.indexOf('work-create-km'));
+    expect(tree.indexOf('work-create-date')).toBeLessThan(tree.indexOf('work-create-km'));
+    expect(tree.indexOf('work-create-km')).toBeLessThan(tree.indexOf('work-create-hours'));
     expect(tree.indexOf('work-other-name')).toBeLessThan(tree.indexOf('work-other-income'));
     expect(tree.indexOf('work-create-platform-card-other')).toBeLessThan(tree.indexOf('work-create-form-actions'));
   });
@@ -86,6 +88,7 @@ describe('WorkShiftCreateForm', () => {
     await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
     await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-income'), '100,5'); });
     await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-orders'), '3'); });
+    await act(async () => { fireEvent.press(view.getByTestId('work-create-platform-card-uber-details-toggle')); });
     await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-appTips'), '4.25'); });
     await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-cashTips'), '5,75'); });
     await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-bonuses'), '6'); });
@@ -98,6 +101,7 @@ describe('WorkShiftCreateForm', () => {
     await act(async () => { fireEvent.changeText(view.getByTestId('work-create-km'), ''); });
     await act(async () => { fireEvent.changeText(view.getByTestId('work-create-hours'), ''); });
     await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    await act(async () => { fireEvent.press(view.getByTestId('work-create-platform-card-uber-details-toggle')); });
     for (const metric of ['income', 'orders', 'appTips', 'cashTips', 'bonuses']) await act(async () => { fireEvent.changeText(view.getByTestId(`work-uber-${metric}`), ''); });
     await act(async () => { fireEvent.press(view.getByTestId('work-create-submit')); });
     for (const testId of ['work-create-km', 'work-create-hours', 'work-uber-income', 'work-uber-orders', 'work-uber-appTips', 'work-uber-cashTips', 'work-uber-bonuses']) {
@@ -121,7 +125,7 @@ describe('WorkShiftCreateForm', () => {
   test('disables submit and cancel while pending', async () => {
     mockCreateState = state('submitting');
     const view = await renderForm();
-    expect(view.getByTestId('work-create-submit').props.accessibilityState).toEqual({ disabled: true });
+    expect(view.getByTestId('work-create-submit').props.accessibilityState).toMatchObject({ disabled: true, busy: true });
     expect(view.getByTestId('work-create-cancel').props.accessibilityState).toEqual({ disabled: true });
   });
 
@@ -138,5 +142,35 @@ describe('WorkShiftCreateForm', () => {
     await act(async () => { fireEvent.press(view.getByTestId('work-create-cancel')); });
     expect(mockReset).toHaveBeenCalledTimes(1);
     expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps optional values when disclosure collapses and exposes an accessible per-platform remove action', async () => {
+    const view = await renderForm();
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-wolt')); });
+
+    const uberToggle = view.getByTestId('work-create-platform-card-uber-details-toggle');
+    expect(uberToggle.props.accessibilityState).toEqual({ expanded: false });
+    await act(async () => { fireEvent.press(uberToggle); });
+    expect(view.getByTestId('work-create-platform-card-uber-details-toggle').props.accessibilityState).toEqual({ expanded: true });
+    expect(view.queryByTestId('work-wolt-appTips')).toBeNull();
+    await act(async () => { fireEvent.changeText(view.getByTestId('work-uber-appTips'), '5'); });
+    await act(async () => { fireEvent.press(view.getByTestId('work-create-platform-card-uber-details-toggle')); });
+    expect(view.queryByTestId('work-uber-appTips')).toBeNull();
+    await act(async () => { fireEvent.press(view.getByTestId('work-create-platform-card-uber-details-toggle')); });
+    expect(view.getByTestId('work-uber-appTips').props.value).toBe('5');
+
+    const remove = view.getByTestId('work-create-platform-card-uber-remove');
+    expect(remove.props.accessibilityLabel).toContain('work.platform.uber');
+    await act(async () => { fireEvent.press(remove); });
+    expect(view.queryByTestId('work-create-platform-card-uber')).toBeNull();
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    expect(view.getByTestId('work-uber-appTips').props.value).toBe('5');
+  });
+
+  test('uses a positive Create action without changing the secondary Cancel action', async () => {
+    const view = await renderForm();
+    expect(StyleSheet.flatten(view.getByTestId('work-create-submit').props.style)).toMatchObject({ backgroundColor: darkTheme.colors.positive });
+    expect(StyleSheet.flatten(view.getByTestId('work-create-cancel').props.style).backgroundColor).not.toBe(darkTheme.colors.positive);
   });
 });

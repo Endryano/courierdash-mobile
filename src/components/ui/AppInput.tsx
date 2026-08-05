@@ -4,7 +4,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 
 import { AppText } from './AppText';
 
-export type AppInputVariant = 'default' | 'filled';
+export type AppInputVariant = 'default' | 'filled' | 'work';
 
 type Props = TextInputProps & { label: string; error?: string; testID?: string; variant?: AppInputVariant };
 
@@ -21,11 +21,12 @@ export function AppInput({ label, error, testID, style, variant = 'default', ...
         style={[
           styles.input,
           {
-            backgroundColor: variant === 'filled' ? colors.surfaceElevated : 'transparent',
+            backgroundColor: variant === 'default' ? 'transparent' : colors.surfaceElevated,
             borderColor: error ? colors.accent : colors.border,
             borderRadius: radii.md,
             color: colors.textPrimary,
             paddingHorizontal: spacing.md,
+            ...(variant === 'work' ? styles.workInput : null),
           },
           style,
         ]}
@@ -36,4 +37,7 @@ export function AppInput({ label, error, testID, style, variant = 'default', ...
   );
 }
 
-const styles = StyleSheet.create({ input: { borderWidth: 1, minHeight: 48 } });
+const styles = StyleSheet.create({
+  input: { borderWidth: 1, minHeight: 48 },
+  workInput: { borderWidth: 1.5, minHeight: 60 },
+});

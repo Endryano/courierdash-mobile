@@ -10,6 +10,10 @@ export const darkTheme = {
     textSecondary: '#a0a0a0',
     accent: '#00e5ff',
     accentPressed: '#00b8cc',
+    positive: '#00b844',
+    positivePressed: '#009637',
+    warning: '#d88b00',
+    warningPressed: '#ae7000',
     disabled: '#5a5a66',
   },
   spacing: {

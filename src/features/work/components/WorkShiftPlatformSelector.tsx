@@ -31,7 +31,7 @@ export function WorkShiftPlatformSelector<TPlatform extends string>({ disabled =
             style={({ pressed }) => [
               styles.option,
               {
-                backgroundColor: isSelected ? colors.accent : colors.surfaceElevated,
+                backgroundColor: isSelected ? colors.surface : colors.surfaceElevated,
                 borderColor: isSelected ? colors.accent : colors.border,
                 borderRadius: radii.full,
                 opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
@@ -40,8 +40,8 @@ export function WorkShiftPlatformSelector<TPlatform extends string>({ disabled =
             ]}
             testID={getTestID?.(platform)}
           >
-            <AppText style={{ color: isSelected ? colors.background : colors.textPrimary, fontWeight: isSelected ? '700' : '500' }} variant="label">
-              {getLabel(platform)}
+            <AppText style={{ color: colors.textPrimary, fontWeight: isSelected ? '700' : '500' }} variant="label">
+              {isSelected ? `✓ ${getLabel(platform)}` : `+ ${getLabel(platform)}`}
             </AppText>
           </Pressable>
         );

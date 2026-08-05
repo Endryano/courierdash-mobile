@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
@@ -14,18 +14,25 @@ type WorkShiftFormShellProps = {
 };
 
 export function WorkShiftFormShell({ actions, children, message, testID, title }: WorkShiftFormShellProps) {
-  const { spacing } = useTheme();
+  const { colors, radii, spacing } = useTheme();
 
   return (
     <Screen>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ gap: spacing.lg, padding: spacing.xl, paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
           <AppText accessibilityRole="header" variant="title">{title}</AppText>
-          {children}
-          {message === undefined ? null : <View style={{ gap: spacing.xs }}>{message}</View>}
-          <View style={{ gap: spacing.sm }} testID={testID === undefined ? undefined : `${testID}-actions`}>{actions}</View>
+          <View style={[styles.shell, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.lg, gap: spacing.lg, marginTop: spacing.lg, padding: spacing.lg }]}>
+            {children}
+            {message === undefined ? null : <View style={[styles.message, { backgroundColor: colors.surfaceElevated, borderColor: colors.border, borderRadius: radii.md, gap: spacing.xs, padding: spacing.md }]}>{message}</View>}
+            <View style={{ gap: spacing.sm }} testID={testID === undefined ? undefined : `${testID}-actions`}>{actions}</View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  shell: { borderWidth: StyleSheet.hairlineWidth },
+  message: { borderWidth: StyleSheet.hairlineWidth },
+});

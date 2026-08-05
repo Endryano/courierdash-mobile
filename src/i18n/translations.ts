@@ -7,7 +7,7 @@ export type TranslationKey =
   | 'navigation.loading' | 'navigation.profileError.title' | 'navigation.profileError.description' | 'navigation.blocked.title' | 'navigation.blocked.description' | 'navigation.retry' | 'navigation.retrying' | 'navigation.tab.dashboard' | 'navigation.tab.work' | 'navigation.tab.more' | 'navigation.more.title' | 'navigation.more.description' | 'navigation.more.account' | 'navigation.more.analytics' | 'navigation.more.statistics' | 'navigation.backToWork' | 'app.placeholder.title' | 'app.placeholder.nickname'
   | 'work.loading' | 'work.empty.title' | 'work.empty.description' | 'work.list.title' | 'work.shift.hours' | 'work.shift.km' | 'work.error.title' | 'work.error.description' | 'work.blocked.title' | 'work.blocked.description' | 'work.retry'
   | 'work.create.action' | 'work.create.title' | 'work.create.date' | 'work.create.km' | 'work.create.hours' | 'work.create.otherName' | 'work.create.submit' | 'work.create.submitting' | 'work.create.cancel' | 'work.create.validation' | 'work.create.validation.date' | 'work.create.validation.platform' | 'work.create.validation.number' | 'work.create.validation.nonNegative' | 'work.create.validation.ordersInteger' | 'work.create.validation.otherName' | 'work.create.duplicate' | 'work.create.recoverable' | 'work.create.reconciliation' | 'work.create.reconcile' | 'work.create.blocked' | 'work.create.success'
-  | 'work.form.general' | 'work.form.platforms'
+  | 'work.form.general' | 'work.form.platforms' | 'work.form.details' | 'work.form.income' | 'work.form.showOptional' | 'work.form.hideOptional' | 'work.form.removePlatform'
   | 'work.date.cancel' | 'work.date.confirm' | 'work.date.invalid'
   | 'work.platform.uber' | 'work.platform.wolt' | 'work.platform.bolt' | 'work.platform.glovo' | 'work.platform.stuart' | 'work.platform.other' | 'work.metric.income' | 'work.metric.orders' | 'work.metric.appTips' | 'work.metric.cashTips' | 'work.metric.bonuses'
   | 'work.edit.action' | 'work.edit.title' | 'work.edit.loading' | 'work.edit.save' | 'work.edit.saving' | 'work.edit.cancel' | 'work.edit.validation' | 'work.edit.duplicate' | 'work.edit.recoverable' | 'work.edit.blocked' | 'work.edit.notFound' | 'work.edit.reconciliation' | 'work.edit.reconcile'
@@ -109,11 +109,43 @@ const workShiftDateTranslations = {
   ru: { 'work.date.cancel': 'Отмена', 'work.date.confirm': 'Готово', 'work.date.invalid': 'Некорректная дата' },
 } as const;
 
+const workFormPresentationTranslations = {
+  pl: {
+    'work.form.details': 'Szczegóły zmiany',
+    'work.form.income': 'Przychód',
+    'work.form.showOptional': '+ Dodaj napiwki i bonusy',
+    'work.form.hideOptional': '− Ukryj napiwki i bonusy',
+    'work.form.removePlatform': 'Usuń platformę',
+  },
+  uk: {
+    'work.form.details': 'Деталі зміни',
+    'work.form.income': 'Дохід',
+    'work.form.showOptional': '+ Додати чайові та бонуси',
+    'work.form.hideOptional': '− Приховати чайові та бонуси',
+    'work.form.removePlatform': 'Видалити платформу',
+  },
+  en: {
+    'work.form.details': 'Shift details',
+    'work.form.income': 'Income',
+    'work.form.showOptional': '+ Add tips and bonuses',
+    'work.form.hideOptional': '− Hide tips and bonuses',
+    'work.form.removePlatform': 'Remove platform',
+  },
+  ru: {
+    'work.form.details': 'Детали смены',
+    'work.form.income': 'Доход',
+    'work.form.showOptional': '+ Добавить чаевые и бонусы',
+    'work.form.hideOptional': '− Скрыть чаевые и бонусы',
+    'work.form.removePlatform': 'Удалить платформу',
+  },
+} as const;
+
 export const translations = {
   pl: {
     ...navigationTranslations.pl,
     ...workShiftCreateValidationTranslations.pl,
     ...workShiftDateTranslations.pl,
+    ...workFormPresentationTranslations.pl,
     'dashboard.period.label': 'Wybór okresu',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Podstawa motywu i lokalizacji jest gotowa.',
@@ -130,6 +162,7 @@ export const translations = {
     ...navigationTranslations.uk,
     ...workShiftCreateValidationTranslations.uk,
     ...workShiftDateTranslations.uk,
+    ...workFormPresentationTranslations.uk,
     'dashboard.period.label': 'Вибір періоду',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основу теми та локалізації підготовлено.',
@@ -146,6 +179,7 @@ export const translations = {
     ...navigationTranslations.en,
     ...workShiftCreateValidationTranslations.en,
     ...workShiftDateTranslations.en,
+    ...workFormPresentationTranslations.en,
     'dashboard.period.label': 'Period selection',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Theme and localization foundation is ready.',
@@ -162,6 +196,7 @@ export const translations = {
     ...navigationTranslations.ru,
     ...workShiftCreateValidationTranslations.ru,
     ...workShiftDateTranslations.ru,
+    ...workFormPresentationTranslations.ru,
     'dashboard.period.label': 'Выбор периода',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основа темы и локализации готова.',

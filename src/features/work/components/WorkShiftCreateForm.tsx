@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { AppInput } from '@/components/ui/AppInput';
 import { AppText } from '@/components/ui/AppText';
 import { useLocalization } from '@/i18n/LocalizationProvider';
+import { useTheme } from '@/theme/ThemeProvider';
 
 import { workPlatformKeys, type WorkPlatformKey } from '../domain/workShiftCreate';
 import { createEmptyWorkShiftCreateDraft, validateWorkShiftCreateDraft, type WorkShiftCreateDraft } from '../domain/workShiftCreateDraft';
@@ -12,18 +14,21 @@ import { useWorkShiftCreate } from '../hooks/useWorkShiftCreate';
 import { WorkShiftDateField } from './WorkShiftDateField';
 import { WorkShiftFormSection } from './WorkShiftFormSection';
 import { WorkShiftFormShell } from './WorkShiftFormShell';
-import { WorkShiftPlatformFieldsCard } from './WorkShiftPlatformFieldsCard';
+import { getWorkPlatformAccent, WorkShiftPlatformFieldsCard } from './WorkShiftPlatformFieldsCard';
 import { WorkShiftPlatformSelector } from './WorkShiftPlatformSelector';
 
 type Props = { onCancel: () => void };
 const metricKeys = ['income', 'orders', 'appTips', 'cashTips', 'bonuses'] as const;
+const optionalMetricKeys = ['appTips', 'cashTips', 'bonuses'] as const;
 
 export function WorkShiftCreateForm({ onCancel }: Props) {
   const create = useWorkShiftCreate();
   const { submit, reconcile, reset, status } = create;
   const { t } = useLocalization();
+  const { spacing } = useTheme();
   const [input, setInput] = useState<WorkShiftCreateDraft>(createEmptyWorkShiftCreateDraft);
   const [formError, setFormError] = useState<WorkShiftValidationError | null>(null);
+  const [expandedPlatforms, setExpandedPlatforms] = useState<Set<WorkPlatformKey>>(() => new Set());
   const pending = status === 'submitting';
   const requiresReconciliation = status === 'reconciliation_required';
 
@@ -37,6 +42,13 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
   function updatePlatform(platform: WorkPlatformKey, patch: Partial<WorkShiftCreateDraft['platforms'][WorkPlatformKey]>) {
     setFormError(null);
     setInput((current) => ({ ...current, platforms: { ...current.platforms, [platform]: { ...current.platforms[platform], ...patch } } }));
+  }
+  function togglePlatformDetails(platform: WorkPlatformKey) {
+    setExpandedPlatforms((current) => {
+      const next = new Set(current);
+      if (next.has(platform)) next.delete(platform); else next.add(platform);
+      return next;
+    });
   }
   async function submitForm() {
     const validation = validateWorkShiftCreateDraft(input);
@@ -55,7 +67,7 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
     <WorkShiftFormShell
       actions={(
         <>
-          {requiresReconciliation ? <AppButton disabled={pending} label={t('work.create.reconcile')} onPress={() => void reconcile()} testID="work-create-reconcile" /> : <AppButton disabled={pending} label={t(pending ? 'work.create.submitting' : 'work.create.submit')} onPress={() => void submitForm()} testID="work-create-submit" />}
+          {requiresReconciliation ? <AppButton disabled={pending} label={t('work.create.reconcile')} onPress={() => void reconcile()} testID="work-create-reconcile" variant="positive" /> : <AppButton disabled={pending} label={t(pending ? 'work.create.submitting' : 'work.create.submit')} loading={pending} onPress={() => void submitForm()} testID="work-create-submit" variant="positive" />}
           <AppButton disabled={pending} label={t('work.create.cancel')} onPress={cancel} testID="work-create-cancel" variant="secondary" />
         </>
       )}
@@ -63,13 +75,14 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
       testID="work-create-form"
       title={t('work.create.title')}
     >
-      <WorkShiftFormSection testID="work-create-general" title={t('work.form.general')}>
+      <WorkShiftFormSection testID="work-create-general" title={t('work.form.details')}>
         <WorkShiftDateField label={t('work.create.date')} value={input.date} onChange={(date) => { setFormError(null); setInput((current) => ({ ...current, date })); }} testID="work-create-date" />
-        <AppInput label={t('work.create.hours')} value={input.hours} keyboardType="decimal-pad" onChangeText={(hours) => { setFormError(null); setInput((current) => ({ ...current, hours })); }} testID="work-create-hours" />
-        <AppInput label={t('work.create.km')} value={input.km} keyboardType="decimal-pad" onChangeText={(km) => { setFormError(null); setInput((current) => ({ ...current, km })); }} testID="work-create-km" />
+        <AppInput label={t('work.create.km')} value={input.km} variant="work" keyboardType="decimal-pad" onChangeText={(km) => { setFormError(null); setInput((current) => ({ ...current, km })); }} testID="work-create-km" />
+        <AppInput label={t('work.create.hours')} value={input.hours} variant="work" keyboardType="decimal-pad" onChangeText={(hours) => { setFormError(null); setInput((current) => ({ ...current, hours })); }} testID="work-create-hours" />
       </WorkShiftFormSection>
-      <WorkShiftFormSection testID="work-create-platforms" title={t('work.form.platforms')}>
+      <WorkShiftFormSection testID="work-create-platforms" title={t('work.form.income')}>
         <WorkShiftPlatformSelector
+          disabled={pending}
           getLabel={(platform) => t(`work.platform.${platform}`)}
           getTestID={(platform) => `work-platform-${platform}`}
           onToggle={(platform) => updatePlatform(platform, { enabled: !input.platforms[platform].enabled })}
@@ -77,18 +90,33 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
           selected={selectedPlatforms}
           testID="work-create-platform-selector"
         />
-      </WorkShiftFormSection>
-      {workPlatformKeys.map((platform) => {
+        {workPlatformKeys.map((platform) => {
         const value = input.platforms[platform];
         if (!value.enabled) return null;
 
         return (
-          <WorkShiftPlatformFieldsCard key={platform} testID={`work-create-platform-card-${platform}`} title={t(`work.platform.${platform}`)}>
-            {platform === 'other' ? <AppInput label={t('work.create.otherName')} value={input.platforms.other.name} onChangeText={(name) => updatePlatform('other', { name })} testID="work-other-name" /> : null}
-            {metricKeys.map((metric) => <AppInput key={metric} label={t(`work.metric.${metric}`)} value={value[metric]} keyboardType="decimal-pad" onChangeText={(text) => updatePlatform(platform, { [metric]: text })} testID={`work-${platform}-${metric}`} />)}
+          <WorkShiftPlatformFieldsCard
+            accentColor={getWorkPlatformAccent(platform)}
+            detailsExpanded={expandedPlatforms.has(platform)}
+            detailsLabel={t(expandedPlatforms.has(platform) ? 'work.form.hideOptional' : 'work.form.showOptional')}
+            key={platform}
+            onRemove={() => updatePlatform(platform, { enabled: false })}
+            onToggleDetails={() => togglePlatformDetails(platform)}
+            removeAccessibilityLabel={`${t('work.form.removePlatform')}: ${t(`work.platform.${platform}`)}`}
+            testID={`work-create-platform-card-${platform}`}
+            title={t(`work.platform.${platform}`)}
+          >
+            {platform === 'other' ? <AppInput label={t('work.create.otherName')} value={input.platforms.other.name} variant="work" onChangeText={(name) => updatePlatform('other', { name })} testID="work-other-name" /> : null}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {metricKeys.slice(0, 2).map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><AppInput label={t(`work.metric.${metric}`)} value={value[metric]} variant="work" keyboardType="decimal-pad" onChangeText={(text) => updatePlatform(platform, { [metric]: text })} testID={`work-${platform}-${metric}`} /></View>)}
+            </View>
+            {expandedPlatforms.has(platform) ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {optionalMetricKeys.map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><AppInput label={t(`work.metric.${metric}`)} value={value[metric]} variant="work" keyboardType="decimal-pad" onChangeText={(text) => updatePlatform(platform, { [metric]: text })} testID={`work-${platform}-${metric}`} /></View>)}
+            </View> : null}
           </WorkShiftPlatformFieldsCard>
         );
-      })}
+        })}
+      </WorkShiftFormSection>
     </WorkShiftFormShell>
   );
 }

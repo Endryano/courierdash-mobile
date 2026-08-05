@@ -57,7 +57,7 @@ export function WorkShiftDateField({ label, value, onChange, testID }: Props) {
       accessibilityState={{ disabled: !isValid }}
       disabled={!isValid}
       onPress={openPicker}
-      style={({ pressed }) => [{ minHeight: 48, justifyContent: 'center', borderWidth: 1, borderColor: colors.border, borderRadius: radii.md, paddingHorizontal: spacing.md, backgroundColor: pressed ? colors.surface : colors.background }]}
+      style={({ pressed }) => [{ minHeight: 60, justifyContent: 'center', borderWidth: 1.5, borderColor: colors.border, borderRadius: radii.md, paddingHorizontal: spacing.md, backgroundColor: pressed ? colors.surface : colors.surfaceElevated }]}
       testID={testID}
     >
       <AppText>{displayValue}</AppText>

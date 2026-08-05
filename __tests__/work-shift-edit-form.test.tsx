@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { act, fireEvent, render } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { validateWorkShiftEdit } from '@/features/work/domain/workShiftEditValidation';
 import type { WorkShiftEditContextValue } from '@/features/work/provider/workShiftEditContext';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { darkTheme } from '@/theme/theme';
 
 const mockSubmit = jest.fn<WorkShiftEditContextValue['submit']>();
 let mockEditState: WorkShiftEditContextValue;
@@ -74,6 +76,7 @@ describe('WorkShiftEditForm', () => {
     expect(view.getByTestId('work-edit-hours').props.value).toBe('0');
     expect(view.getByTestId('work-edit-uber-income').props.value).toBe('0');
     expect(view.getByTestId('work-edit-uber-orders').props.value).toBe('');
+    await act(async () => { fireEvent.press(view.getByTestId('work-edit-platform-card-uber-details-toggle')); });
     expect(view.getByTestId('work-edit-uber-appTips').props.value).toBe('');
     expect(view.getByTestId('work-edit-uber-bonuses').props.value).toBe('');
 
@@ -106,8 +109,8 @@ describe('WorkShiftEditForm', () => {
     const tree = JSON.stringify(view.toJSON());
 
     expect(tree.indexOf('work-edit-general')).toBeLessThan(tree.indexOf('work-edit-platforms'));
-    expect(tree.indexOf('work-edit-date')).toBeLessThan(tree.indexOf('work-edit-hours'));
-    expect(tree.indexOf('work-edit-hours')).toBeLessThan(tree.indexOf('work-edit-km'));
+    expect(tree.indexOf('work-edit-date')).toBeLessThan(tree.indexOf('work-edit-km'));
+    expect(tree.indexOf('work-edit-km')).toBeLessThan(tree.indexOf('work-edit-hours'));
     expect(tree.indexOf('work-edit-platform-card-uber')).toBeLessThan(tree.indexOf('work-edit-form-actions'));
   });
 
@@ -121,5 +124,27 @@ describe('WorkShiftEditForm', () => {
     const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
 
     expect(view.getByText(message)).toBeTruthy();
+  });
+
+  test('starts expanded for persisted optional values and preserves them after collapse', async () => {
+    const editableState = readyState();
+    if (!('input' in editableState)) throw new Error('ready state expected');
+    editableState.input.platforms.uber.appTips = 8;
+    editableState.input.platforms.uber.bonuses = 10;
+    mockEditState = editableState;
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+
+    expect(view.getByTestId('work-edit-platform-card-uber-details-toggle').props.accessibilityState).toEqual({ expanded: true });
+    expect(view.getByTestId('work-edit-uber-appTips').props.value).toBe('8');
+    await act(async () => { fireEvent.press(view.getByTestId('work-edit-platform-card-uber-details-toggle')); });
+    expect(view.queryByTestId('work-edit-uber-appTips')).toBeNull();
+    await act(async () => { fireEvent.press(view.getByTestId('work-edit-platform-card-uber-details-toggle')); });
+    expect(view.getByTestId('work-edit-uber-bonuses').props.value).toBe('10');
+  });
+
+  test('uses a warning Update action and keeps a localized remove control on selected cards', async () => {
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+    expect(StyleSheet.flatten(view.getByTestId('work-edit-submit').props.style)).toMatchObject({ backgroundColor: darkTheme.colors.warning });
+    expect(view.getByTestId('work-edit-platform-card-uber-remove').props.accessibilityLabel).toContain('work.platform.uber');
   });
 });
