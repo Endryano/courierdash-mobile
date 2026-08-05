@@ -169,7 +169,7 @@ describe('WorkShiftCreateForm', () => {
 
   test('uses a positive Create action without changing the secondary Cancel action', async () => {
     const view = await renderForm();
-    expect(StyleSheet.flatten(view.getByTestId('work-create-submit').props.style)).toMatchObject({ backgroundColor: '#00af42', minHeight: 72 });
-    expect(StyleSheet.flatten(view.getByTestId('work-create-cancel').props.style)).toMatchObject({ backgroundColor: '#233044', minHeight: 68 });
+    expect(StyleSheet.flatten(view.getByTestId('work-create-submit').props.style)).toMatchObject({ backgroundColor: '#00af42', minHeight: 64 });
+    expect(StyleSheet.flatten(view.getByTestId('work-create-cancel').props.style)).toMatchObject({ backgroundColor: '#233044', minHeight: 60 });
   });
 });

@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { AppCard } from '@/components/ui/AppCard';
 import { AppText } from '@/components/ui/AppText';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -15,9 +14,11 @@ export function WorkShiftFormSection({ children, testID, title }: WorkShiftFormS
   const { spacing } = useTheme();
 
   return (
-    <View style={{ gap: spacing.sm }} testID={testID}>
-      {title === undefined ? null : <AppText accessibilityRole="header" variant="body" style={{ fontSize: 27, fontWeight: '800', lineHeight: 32 }}>{title}</AppText>}
-      <AppCard padding="lg" style={{ backgroundColor: '#25262d', borderColor: '#3a4a64', borderRadius: 24, borderWidth: 2, gap: spacing.lg }} variant="elevated">{children}</AppCard>
+    <View style={[styles.section, { borderColor: '#3a4a64', gap: spacing.md, paddingTop: spacing.md }]} testID={testID}>
+      {title === undefined ? null : <AppText accessibilityRole="header" variant="body" style={{ fontSize: 25, fontWeight: '800', lineHeight: 30 }}>{title}</AppText>}
+      <View style={{ gap: spacing.md }}>{children}</View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({ section: { borderTopWidth: 1.5 } });

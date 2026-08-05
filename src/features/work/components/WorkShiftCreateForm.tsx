@@ -75,8 +75,8 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
       <WorkShiftFormSection testID="work-create-general" title={t('work.form.details')}>
         <WorkShiftDateField error={validationError === 'invalid_date' ? t('work.create.validation.date') : undefined} label={t('work.create.date')} value={input.date} onChange={(date) => { setFormError(null); setInput((current) => ({ ...current, date })); }} testID="work-create-date" />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
-          <View style={{ flexGrow: 1, minWidth: 150 }}><WorkFormField label={t('work.create.km')} value={input.km} keyboardType="decimal-pad" onChangeText={(km) => { setFormError(null); setInput((current) => ({ ...current, km })); }} testID="work-create-km" /></View>
-          <View style={{ flexGrow: 1, minWidth: 150 }}><WorkFormField label={t('work.create.hours')} value={input.hours} keyboardType="decimal-pad" onChangeText={(hours) => { setFormError(null); setInput((current) => ({ ...current, hours })); }} testID="work-create-hours" /></View>
+          <View style={{ flexGrow: 1, minWidth: 120 }}><WorkFormField label={t('work.create.km')} value={input.km} keyboardType="decimal-pad" onChangeText={(km) => { setFormError(null); setInput((current) => ({ ...current, km })); }} testID="work-create-km" /></View>
+          <View style={{ flexGrow: 1, minWidth: 120 }}><WorkFormField label={t('work.create.hours')} value={input.hours} keyboardType="decimal-pad" onChangeText={(hours) => { setFormError(null); setInput((current) => ({ ...current, hours })); }} testID="work-create-hours" /></View>
         </View>
       </WorkShiftFormSection>
       <WorkShiftFormSection testID="work-create-platforms" title={t('work.form.income')}>
@@ -107,7 +107,7 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
           >
             {platform === 'other' ? <WorkFormField label={t('work.create.otherName')} value={input.platforms.other.name} onChangeText={(name) => updatePlatform('other', { name })} testID="work-other-name" /> : null}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-              {metricKeys.slice(0, 2).map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><WorkFormField label={t(`work.metric.${metric}`)} value={value[metric]} keyboardType="decimal-pad" onChangeText={(text) => updatePlatform(platform, { [metric]: text })} testID={`work-${platform}-${metric}`} /></View>)}
+              {metricKeys.slice(0, 2).map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 110 }}><WorkFormField label={t(`work.metric.${metric}`)} value={value[metric]} keyboardType="decimal-pad" onChangeText={(text) => updatePlatform(platform, { [metric]: text })} testID={`work-${platform}-${metric}`} /></View>)}
             </View>
             {expandedPlatforms.has(platform) ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
               {optionalMetricKeys.map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><WorkFormField label={t(`work.metric.${metric}`)} value={value[metric]} keyboardType="decimal-pad" onChangeText={(text) => updatePlatform(platform, { [metric]: text })} testID={`work-${platform}-${metric}`} /></View>)}

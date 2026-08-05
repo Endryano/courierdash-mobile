@@ -18,8 +18,8 @@ export function WorkFormActions({ cancelLabel, onCancel, onPrimary, pending, pri
 
 const styles = StyleSheet.create({
   actions: { gap: 14, marginTop: 8 },
-  primary: { alignItems: 'center', borderRadius: 22, justifyContent: 'center', minHeight: 72, paddingHorizontal: 20 },
-  primaryText: { color: '#fff', fontSize: 22, fontWeight: '800' },
-  cancel: { alignItems: 'center', backgroundColor: '#233044', borderColor: '#3b4b65', borderRadius: 22, borderWidth: 2, justifyContent: 'center', minHeight: 68, paddingHorizontal: 20 },
-  cancelText: { color: '#fff', fontSize: 21, fontWeight: '700' },
+  primary: { alignItems: 'center', borderRadius: 18, justifyContent: 'center', minHeight: 64, paddingHorizontal: 20 },
+  primaryText: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  cancel: { alignItems: 'center', backgroundColor: '#233044', borderColor: '#3b4b65', borderRadius: 18, borderWidth: 1.5, justifyContent: 'center', minHeight: 60, paddingHorizontal: 20 },
+  cancelText: { color: '#fff', fontSize: 19, fontWeight: '700' },
 });
