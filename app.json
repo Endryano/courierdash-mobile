@@ -2,6 +2,7 @@
   "expo": {
     "name": "CourierDash Mobile",
     "slug": "courierdash-mobile",
+    "scheme": "courierdashmobile",
     "version": "1.0.0",
     "userInterfaceStyle": "dark",
     "plugins": [
