@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { useWorkShifts } from '@/features/work/hooks/useWorkShifts';
+import { useForegroundDate } from '@/lib/lifecycle/foregroundDate';
 
 import { calculateDashboardMetrics, type DashboardMetrics } from '../domain/dashboardMetrics';
 import { defaultDashboardPeriod, filterWorkShiftsByPeriod, type DashboardPeriod } from '../domain/dashboardPeriod';
@@ -13,11 +14,13 @@ export type DashboardMetricsState =
   | { readonly status: 'recoverable_error'; readonly retry: () => Promise<void> }
   | { readonly status: 'blocked'; readonly retry: () => Promise<void> };
 
-export function useDashboardMetrics(period: DashboardPeriod = defaultDashboardPeriod, now: Date = new Date()): DashboardMetricsState {
+export function useDashboardMetrics(period: DashboardPeriod = defaultDashboardPeriod, now?: Date): DashboardMetricsState {
   const workShifts = useWorkShifts();
+  const foregroundDate = useForegroundDate();
+  const referenceDate = now ?? foregroundDate;
   const filteredShifts = useMemo(
-    () => filterWorkShiftsByPeriod(workShifts.shifts, period, now),
-    [now, period, workShifts.shifts],
+    () => filterWorkShiftsByPeriod(workShifts.shifts, period, referenceDate),
+    [period, referenceDate, workShifts.shifts],
   );
   const metrics = useMemo(
     () => calculateDashboardMetrics(filteredShifts),

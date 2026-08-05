@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { useWorkShifts } from '@/features/work/hooks/useWorkShifts';
+import { useForegroundDate } from '@/lib/lifecycle/foregroundDate';
 import {
   defaultWorkShiftPeriod,
   filterWorkShiftsByPeriod,
@@ -19,12 +20,14 @@ export type StatisticsMetricsState =
 
 export function useStatisticsMetrics(
   period: WorkShiftPeriod = defaultWorkShiftPeriod,
-  now: Date = new Date(),
+  now?: Date,
 ): StatisticsMetricsState {
   const workShifts = useWorkShifts();
+  const foregroundDate = useForegroundDate();
+  const referenceDate = now ?? foregroundDate;
   const filteredShifts = useMemo(
-    () => filterWorkShiftsByPeriod(workShifts.shifts, period, now),
-    [now, period, workShifts.shifts],
+    () => filterWorkShiftsByPeriod(workShifts.shifts, period, referenceDate),
+    [period, referenceDate, workShifts.shifts],
   );
   const metrics = useMemo(() => calculateStatisticsMetrics(filteredShifts), [filteredShifts]);
 

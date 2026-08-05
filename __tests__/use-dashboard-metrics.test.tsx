@@ -7,8 +7,10 @@ import type { WorkShiftsContextValue } from '@/features/work/provider/workShifts
 
 const mockRetry = jest.fn<() => Promise<void>>();
 let mockWorkState: WorkShiftsContextValue;
+let mockForegroundDate: Date;
 
 jest.mock('@/features/work/hooks/useWorkShifts', () => ({ useWorkShifts: () => mockWorkState }));
+jest.mock('@/lib/lifecycle/foregroundDate', () => ({ useForegroundDate: () => mockForegroundDate }));
 
 const { useDashboardMetrics } = require('@/features/dashboard/hooks/useDashboardMetrics') as typeof import('@/features/dashboard/hooks/useDashboardMetrics');
 
@@ -18,7 +20,7 @@ function shift(income: number): WorkShift {
   } } };
 }
 
-function Probe({ period = 'allTime', now = new Date(2026, 6, 29, 12, 0, 0) }: { readonly period?: 'today' | 'week' | 'month' | 'allTime'; readonly now?: Date }) {
+function Probe({ period = 'allTime', now }: { readonly period?: 'today' | 'week' | 'month' | 'allTime'; readonly now?: Date }) {
   const state = useDashboardMetrics(period, now);
   return <Text onPress={'retry' in state ? state.retry : undefined}>{state.status === 'ready' ? `${state.status}:${state.metrics.totalIncome}` : state.status}</Text>;
 }
@@ -27,6 +29,7 @@ describe('useDashboardMetrics', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockRetry.mockResolvedValue(undefined);
+    mockForegroundDate = new Date(2026, 6, 29, 12, 0, 0);
     mockWorkState = { status: 'loading', shifts: [], retry: mockRetry, subjectUserId: 'user-1' };
   });
 
@@ -74,5 +77,29 @@ describe('useDashboardMetrics', () => {
     await view.rerender(<Probe period="week" now={new Date(2026, 6, 20, 12, 0, 0)} />);
     expect(screen.getByText('period_empty')).toBeTruthy();
     expect(mockWorkState.shifts).toHaveLength(2);
+  });
+
+  test('recalculates selected relative periods from the shared foreground date without retrying Work', async () => {
+    mockWorkState = {
+      status: 'ready',
+      shifts: [
+        { ...shift(10), date: '2026-08-02' },
+        { ...shift(20), id: 2, date: '2026-08-03' },
+      ],
+      retry: mockRetry,
+      subjectUserId: 'user-1',
+    };
+    mockForegroundDate = new Date(2026, 7, 2, 12);
+    const view = await render(<Probe period="week" />);
+    expect(screen.getByText('ready:10')).toBeTruthy();
+
+    mockForegroundDate = new Date(2026, 7, 3, 12);
+    await view.rerender(<Probe period="week" />);
+    expect(screen.getByText('ready:20')).toBeTruthy();
+    expect(mockRetry).not.toHaveBeenCalled();
+
+    await view.rerender(<Probe period="allTime" />);
+    expect(screen.getByText('ready:30')).toBeTruthy();
+    expect(mockRetry).not.toHaveBeenCalled();
   });
 });
