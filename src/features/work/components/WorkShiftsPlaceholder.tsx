@@ -59,7 +59,7 @@ export function WorkShiftsPlaceholder() {
         keyExtractor={(shift) => String(shift.id)}
         ListHeaderComponent={(
           <View style={{ gap: spacing.md }}>
-            <AppText variant="title">{t('work.list.title')}</AppText>
+            <AppText accessibilityRole="header" variant="title">{t('work.list.title')}</AppText>
             <AppButton label={t('work.create.action')} onPress={() => router.push('/work/create')} testID="work-create-action" />
           </View>
         )}

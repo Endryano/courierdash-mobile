@@ -37,6 +37,7 @@ describe('WorkShiftCreateForm', () => {
 
   test('renders required fields and all six verified platforms', async () => {
     const view = await renderForm();
+    expect(view.getByText('work.create.title').props.accessibilityRole).toBe('header');
     expect(view.getByTestId('work-create-general')).toBeTruthy();
     expect(view.getByTestId('work-create-platforms')).toBeTruthy();
     expect(view.getByTestId('work-create-date').props.accessibilityRole).toBe('button');

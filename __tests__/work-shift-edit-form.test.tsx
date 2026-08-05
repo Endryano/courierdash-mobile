@@ -35,6 +35,7 @@ describe('WorkShiftEditForm', () => {
 
   test('initializes from the canonical edit date and submits the selected canonical date', async () => {
     const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+    expect(view.getByText('work.edit.title').props.accessibilityRole).toBe('header');
     expect(view.getByTestId('work-edit-date').props.accessibilityLabel).toContain('2026');
     expect(view.getByTestId('work-edit-date').props.onChangeText).toBeUndefined();
     await act(async () => { fireEvent.press(view.getByTestId('work-edit-date')); });

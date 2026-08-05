@@ -46,6 +46,7 @@ describe('WorkShiftsPlaceholder', () => {
     };
     await view.rerender(<ThemeProvider><WorkShiftsPlaceholder /></ThemeProvider>);
     expect(screen.getByTestId('work-shifts-list')).toBeTruthy();
+    expect(screen.getByText('work.list.title').props.accessibilityRole).toBe('header');
     expect(screen.getByTestId('work-shift-2')).toBeTruthy();
     expect(screen.getByTestId('work-shift-1')).toBeTruthy();
     expect(screen.getAllByTestId(/work-shift-\d+/).map((item) => item.props.testID)).toEqual(['work-shift-2', 'work-shift-1']);
