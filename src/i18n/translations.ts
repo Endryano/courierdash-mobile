@@ -4,7 +4,7 @@ export type TranslationKey =
   | 'foundation.description'
   | 'auth.brand' | 'auth.loginTitle' | 'auth.signupTitle' | 'auth.email' | 'auth.password' | 'auth.confirmPassword' | 'auth.login' | 'auth.signup' | 'auth.logout' | 'auth.goToLogin' | 'auth.goToSignup' | 'auth.loading' | 'auth.required' | 'auth.invalidEmail' | 'auth.passwordMismatch' | 'auth.confirmEmail' | 'auth.signedUp' | 'auth.error.generic' | 'auth.error.invalidCredentials' | 'auth.error.accountExists' | 'auth.error.rateLimit' | 'auth.error.network' | 'auth.error.weakPassword'
   | 'profile.nickname.title' | 'profile.nickname.description' | 'profile.nickname.label' | 'profile.nickname.save' | 'profile.nickname.saving' | 'profile.nickname.error.required' | 'profile.nickname.error.tooShort' | 'profile.nickname.error.tooLong' | 'profile.nickname.error.invalidCharacters' | 'profile.nickname.error.conflict' | 'profile.nickname.error.network' | 'profile.nickname.error.forbidden' | 'profile.nickname.error.unknown'
-  | 'navigation.loading' | 'navigation.profileError.title' | 'navigation.profileError.description' | 'navigation.blocked.title' | 'navigation.blocked.description' | 'navigation.retry' | 'navigation.retrying' | 'navigation.tab.dashboard' | 'navigation.tab.work' | 'navigation.tab.more' | 'navigation.more.title' | 'navigation.more.description' | 'navigation.more.statistics' | 'navigation.backToWork' | 'app.placeholder.title' | 'app.placeholder.nickname'
+  | 'navigation.loading' | 'navigation.profileError.title' | 'navigation.profileError.description' | 'navigation.blocked.title' | 'navigation.blocked.description' | 'navigation.retry' | 'navigation.retrying' | 'navigation.tab.dashboard' | 'navigation.tab.work' | 'navigation.tab.more' | 'navigation.more.title' | 'navigation.more.description' | 'navigation.more.account' | 'navigation.more.analytics' | 'navigation.more.statistics' | 'navigation.backToWork' | 'app.placeholder.title' | 'app.placeholder.nickname'
   | 'work.loading' | 'work.empty.title' | 'work.empty.description' | 'work.list.title' | 'work.shift.hours' | 'work.shift.km' | 'work.error.title' | 'work.error.description' | 'work.blocked.title' | 'work.blocked.description' | 'work.retry'
   | 'work.create.action' | 'work.create.title' | 'work.create.date' | 'work.create.km' | 'work.create.hours' | 'work.create.otherName' | 'work.create.submit' | 'work.create.submitting' | 'work.create.cancel' | 'work.create.validation' | 'work.create.validation.date' | 'work.create.validation.platform' | 'work.create.validation.number' | 'work.create.validation.nonNegative' | 'work.create.validation.ordersInteger' | 'work.create.validation.otherName' | 'work.create.duplicate' | 'work.create.recoverable' | 'work.create.reconciliation' | 'work.create.reconcile' | 'work.create.blocked' | 'work.create.success'
   | 'work.form.general' | 'work.form.platforms'
@@ -27,6 +27,8 @@ const navigationTranslations = {
     'navigation.tab.more': 'Więcej',
     'navigation.more.title': 'Więcej',
     'navigation.more.description': 'Dodatkowe sekcje będą dostępne w kolejnych etapach.',
+    'navigation.more.account': 'Konto',
+    'navigation.more.analytics': 'Analityka',
     'navigation.more.statistics': 'Statystyki',
     'navigation.backToWork': 'Wróć do zmian',
   },
@@ -36,6 +38,8 @@ const navigationTranslations = {
     'navigation.tab.more': 'Більше',
     'navigation.more.title': 'Більше',
     'navigation.more.description': 'Додаткові розділи з’являться на наступних етапах.',
+    'navigation.more.account': 'Обліковий запис',
+    'navigation.more.analytics': 'Аналітика',
     'navigation.more.statistics': 'Статистика',
     'navigation.backToWork': 'Повернутися до змін',
   },
@@ -45,6 +49,8 @@ const navigationTranslations = {
     'navigation.tab.more': 'More',
     'navigation.more.title': 'More',
     'navigation.more.description': 'Additional sections will be available in later stages.',
+    'navigation.more.account': 'Account',
+    'navigation.more.analytics': 'Analytics',
     'navigation.more.statistics': 'Statistics',
     'navigation.backToWork': 'Back to work shifts',
   },
@@ -54,6 +60,8 @@ const navigationTranslations = {
     'navigation.tab.more': 'Больше',
     'navigation.more.title': 'Больше',
     'navigation.more.description': 'Дополнительные разделы появятся на следующих этапах.',
+    'navigation.more.account': 'Учётная запись',
+    'navigation.more.analytics': 'Аналитика',
     'navigation.more.statistics': 'Статистика',
     'navigation.backToWork': 'Вернуться к сменам',
   },

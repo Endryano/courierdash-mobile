@@ -38,8 +38,9 @@ jest.mock('expo-router', () => {
 jest.mock('@/i18n/LocalizationProvider', () => ({
   useLocalization: () => ({ t: (key: keyof typeof tabLabels.en) => tabLabels[mockLocale][key] ?? key }),
 }));
-jest.mock('@/features/auth/useAuth', () => ({ useAuth: () => ({ signOut: mockSignOut }) }));
+jest.mock('@/features/auth/useAuth', () => ({ useAuth: () => ({ signOut: mockSignOut, user: { email: 'courier@example.com' } }) }));
 jest.mock('@/features/auth/authApi', () => ({ AuthApiError: MockAuthApiError }));
+jest.mock('@/features/profile/useProfile', () => ({ useProfile: () => ({ profile: { nickname: 'Courier_1' } }) }));
 
 const AppTabsLayout = require('@/app/(app)/(tabs)/_layout').default as typeof import('@/app/(app)/(tabs)/_layout').default;
 const MoreRoute = require('@/app/(app)/(tabs)/more').default as typeof import('@/app/(app)/(tabs)/more').default;
@@ -112,11 +113,12 @@ describe('AppTabsLayout', () => {
     expect(screen.getByText('more:Більше')).toBeTruthy();
   });
 
-  test('keeps More as a localized shell and opens the protected Statistics route', async () => {
+  test('keeps More as a localized account screen and opens the protected Statistics route', async () => {
     await render(<ThemeProvider><MoreRoute /></ThemeProvider>);
 
     expect(screen.getByText('navigation.more.title')).toBeTruthy();
-    expect(screen.getByText('navigation.more.description')).toBeTruthy();
+    expect(screen.getByText('navigation.more.account')).toBeTruthy();
+    expect(screen.queryByText('navigation.more.description')).toBeNull();
     await fireEvent.press(screen.getByTestId('more-statistics'));
     expect(mockPush).toHaveBeenCalledWith('/statistics');
   });
