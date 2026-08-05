@@ -25,6 +25,15 @@ function ProfileProbe() {
   return <Text>{profile.status}</Text>;
 }
 
+function deferredState() {
+  let resolve: ((state: ProfileBootstrapState) => void) | undefined;
+  const promise = new Promise<ProfileBootstrapState>((completion) => {
+    resolve = completion;
+  });
+
+  return { promise, resolve: (state: ProfileBootstrapState) => resolve?.(state) };
+}
+
 describe('ProfileProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -96,6 +105,124 @@ describe('ProfileProvider', () => {
     expect(mockBootstrapProfile).toHaveBeenCalledTimes(2);
   });
 
+  test.each<ProfileBootstrapState>([
+    { status: 'ready', profile: { id: 'user-a', nickname: 'Courier_1' } },
+    { status: 'needs_nickname', profile: null, reason: 'missing_profile' },
+    { status: 'recoverable_error', profile: null, error: 'network_unavailable' },
+    { status: 'blocked', profile: null, error: 'forbidden' },
+  ])('keeps retry pending until bootstrap settles with $status', async (result) => {
+    let retry: (() => Promise<void>) | undefined;
+    const retryBootstrap = deferredState();
+    mockAuthState = authenticatedState('user-a');
+    mockBootstrapProfile.mockResolvedValueOnce({ status: 'ready', profile: { id: 'user-a', nickname: 'Courier_1' } });
+    mockBootstrapProfile.mockImplementationOnce(() => retryBootstrap.promise);
+
+    function RetryProbe() {
+      retry = useProfile().retry;
+      return <ProfileProbe />;
+    }
+
+    await render(<ProfileProvider><RetryProbe /></ProfileProvider>);
+    expect(await screen.findByText('ready')).toBeTruthy();
+
+    let retryPromise: Promise<void> | undefined;
+    await act(async () => { retryPromise = retry?.(); });
+    let settled = false;
+    void retryPromise?.then(() => { settled = true; });
+
+    await waitFor(() => expect(mockBootstrapProfile).toHaveBeenCalledTimes(2));
+    expect(settled).toBe(false);
+
+    await act(async () => { retryBootstrap.resolve(result); });
+
+    await waitFor(() => expect(settled).toBe(true));
+    expect(screen.getByText(result.status)).toBeTruthy();
+  });
+
+  test('shares one pending retry and starts one effective bootstrap', async () => {
+    let retry: (() => Promise<void>) | undefined;
+    const retryBootstrap = deferredState();
+    mockAuthState = authenticatedState('user-a');
+    mockBootstrapProfile.mockResolvedValueOnce({ status: 'recoverable_error', profile: null, error: 'network_unavailable' });
+    mockBootstrapProfile.mockImplementationOnce(() => retryBootstrap.promise);
+
+    function RetryProbe() {
+      retry = useProfile().retry;
+      return <ProfileProbe />;
+    }
+
+    await render(<ProfileProvider><RetryProbe /></ProfileProvider>);
+    expect(await screen.findByText('recoverable_error')).toBeTruthy();
+
+    let firstRetry: Promise<void> | undefined;
+    let secondRetry: Promise<void> | undefined;
+    await act(async () => {
+      firstRetry = retry?.();
+      secondRetry = retry?.();
+    });
+    expect(secondRetry).toBe(firstRetry);
+
+    await waitFor(() => expect(mockBootstrapProfile).toHaveBeenCalledTimes(2));
+    await act(async () => { retryBootstrap.resolve({ status: 'ready', profile: { id: 'user-a', nickname: 'Courier_1' } }); });
+    await expect(firstRetry).resolves.toBeUndefined();
+  });
+
+  test('settles a pending retry on logout without allowing its stale result to commit', async () => {
+    let retry: (() => Promise<void>) | undefined;
+    const retryBootstrap = deferredState();
+    mockAuthState = authenticatedState('user-a');
+    mockBootstrapProfile.mockResolvedValueOnce({ status: 'recoverable_error', profile: null, error: 'network_unavailable' });
+    mockBootstrapProfile.mockImplementationOnce(() => retryBootstrap.promise);
+
+    function RetryProbe() {
+      retry = useProfile().retry;
+      return <ProfileProbe />;
+    }
+
+    const view = await render(<ProfileProvider><RetryProbe /></ProfileProvider>);
+    expect(await screen.findByText('recoverable_error')).toBeTruthy();
+    let retryPromise: Promise<void> | undefined;
+    await act(async () => { retryPromise = retry?.(); });
+    await waitFor(() => expect(mockBootstrapProfile).toHaveBeenCalledTimes(2));
+
+    mockAuthState = { status: 'unauthenticated', isAuthenticated: false, user: null, session: null };
+    await view.rerender(<ProfileProvider><RetryProbe /></ProfileProvider>);
+    await expect(retryPromise).resolves.toBeUndefined();
+    expect(await screen.findByText('idle')).toBeTruthy();
+
+    await act(async () => { retryBootstrap.resolve({ status: 'ready', profile: { id: 'user-a', nickname: 'Courier_1' } }); });
+    expect(screen.getByText('idle')).toBeTruthy();
+  });
+
+  test('settles User A retry, bootstraps User B, and ignores User A stale result', async () => {
+    let retry: (() => Promise<void>) | undefined;
+    const retryBootstrap = deferredState();
+    mockAuthState = authenticatedState('user-a');
+    mockBootstrapProfile.mockResolvedValueOnce({ status: 'recoverable_error', profile: null, error: 'network_unavailable' });
+    mockBootstrapProfile.mockImplementationOnce(() => retryBootstrap.promise);
+    mockBootstrapProfile.mockResolvedValueOnce({ status: 'needs_nickname', profile: null, reason: 'missing_profile' });
+
+    function RetryProbe() {
+      retry = useProfile().retry;
+      return <ProfileProbe />;
+    }
+
+    const view = await render(<ProfileProvider><RetryProbe /></ProfileProvider>);
+    expect(await screen.findByText('recoverable_error')).toBeTruthy();
+    let retryPromise: Promise<void> | undefined;
+    await act(async () => { retryPromise = retry?.(); });
+    await waitFor(() => expect(mockBootstrapProfile).toHaveBeenCalledTimes(2));
+
+    mockAuthState = authenticatedState('user-b');
+    await view.rerender(<ProfileProvider><RetryProbe /></ProfileProvider>);
+    await expect(retryPromise).resolves.toBeUndefined();
+    expect(await screen.findByText('needs_nickname')).toBeTruthy();
+
+    await act(async () => { retryBootstrap.resolve({ status: 'ready', profile: { id: 'user-a', nickname: 'Courier_1' } }); });
+    expect(screen.getByText('needs_nickname')).toBeTruthy();
+    expect(mockBootstrapProfile).toHaveBeenLastCalledWith('user-b', {});
+  });
+
   test('does not update state after unmounting during a request', async () => {
     let resolveRequest: ((state: ProfileBootstrapState) => void) | undefined;
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -109,6 +236,28 @@ describe('ProfileProvider', () => {
     await Promise.resolve();
 
     expect(consoleError).not.toHaveBeenCalled();
+  });
+
+  test('settles a pending retry when the provider unmounts', async () => {
+    let retry: (() => Promise<void>) | undefined;
+    const retryBootstrap = deferredState();
+    mockAuthState = authenticatedState('user-a');
+    mockBootstrapProfile.mockResolvedValueOnce({ status: 'ready', profile: { id: 'user-a', nickname: 'Courier_1' } });
+    mockBootstrapProfile.mockImplementationOnce(() => retryBootstrap.promise);
+
+    function RetryProbe() {
+      retry = useProfile().retry;
+      return <ProfileProbe />;
+    }
+
+    const view = await render(<ProfileProvider><RetryProbe /></ProfileProvider>);
+    expect(await screen.findByText('ready')).toBeTruthy();
+    let retryPromise: Promise<void> | undefined;
+    await act(async () => { retryPromise = retry?.(); });
+    await waitFor(() => expect(mockBootstrapProfile).toHaveBeenCalledTimes(2));
+
+    await view.unmount();
+    await expect(retryPromise).resolves.toBeUndefined();
   });
 
   test('does not duplicate bootstrap work in Strict Mode', async () => {

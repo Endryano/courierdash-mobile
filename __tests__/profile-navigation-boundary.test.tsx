@@ -29,8 +29,26 @@ describe('ProfileNavigationBoundary', () => {
     await fireEvent.press(screen.getByTestId('profile-navigation-retry'));
     expect(mockRetry).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('profile-navigation-retry').props.accessibilityState).toEqual({ disabled: true });
+    expect(screen.getByText('navigation.retrying')).toBeTruthy();
 
     await act(async () => { resolveRetry?.(); });
+
+    expect(screen.getByTestId('profile-navigation-retry').props.accessibilityState).toEqual({ disabled: false });
+    expect(screen.getByText('navigation.retry')).toBeTruthy();
+  });
+
+  test('keeps pending presentation until an invalidated provider retry settles', async () => {
+    let resolveRetry: (() => void) | undefined;
+    mockRetry.mockReturnValue(new Promise((resolve) => { resolveRetry = resolve; }));
+    await renderBoundary('recoverable_error');
+
+    await fireEvent.press(screen.getByTestId('profile-navigation-retry'));
+    expect(screen.getByText('navigation.retrying')).toBeTruthy();
+
+    await act(async () => { resolveRetry?.(); });
+
+    expect(screen.getByText('navigation.retry')).toBeTruthy();
+    expect(screen.getByTestId('profile-navigation-retry').props.accessibilityState).toEqual({ disabled: false });
   });
 
   test('renders a safe blocked boundary with no automatic logout', async () => {
