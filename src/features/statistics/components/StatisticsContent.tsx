@@ -1,8 +1,6 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useState } from 'react';
 
-import { AppCard } from '@/components/ui/AppCard';
-import { AppMetricCard } from '@/components/ui/AppMetricCard';
 import { AppSegmentedControl } from '@/components/ui/AppSegmentedControl';
 import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
@@ -14,10 +12,10 @@ import type { TranslationKey } from '@/i18n/translations';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { useTheme } from '@/theme/ThemeProvider';
 
-import type { StatisticsMetrics } from '../domain/statisticsMetrics';
 import { useStatisticsMetrics } from '../hooks/useStatisticsMetrics';
-
-type MetricCardProps = { readonly label: string; readonly value: string };
+import { StatisticsMetricSection, type StatisticsMetricSectionItem } from './StatisticsMetricSection';
+import { StatisticsPlatformList, type StatisticsPlatformDisplayItem } from './StatisticsPlatformList';
+import { StatisticsSummaryCard } from './StatisticsSummaryCard';
 
 const periodKeys: readonly WorkShiftPeriod[] = ['today', 'week', 'month', 'allTime'];
 
@@ -64,31 +62,6 @@ function StatisticsPeriodSelector({ period, onChange }: { readonly period: WorkS
   );
 }
 
-function PlatformBreakdown({ metrics }: { readonly metrics: StatisticsMetrics }) {
-  const { locale, t } = useLocalization();
-  const { spacing } = useTheme();
-
-  return (
-    <View style={{ gap: spacing.sm }}>
-      <AppText variant="title">{t('statistics.platformBreakdown')}</AppText>
-      {workPlatformKeys.map((platform) => {
-        const item = metrics.platforms[platform];
-        const label = t(platformTranslationKeys[platform]);
-        const brutto = formatCurrency(locale, item.brutto);
-        const orders = formatNumber(locale, item.orders, 0);
-
-        return (
-          <AppCard accessibilityLabel={`${label}: ${t('statistics.platform.brutto')} ${brutto}, ${t('statistics.platform.orders')} ${orders}`} key={platform} style={{ gap: spacing.xxs }}>
-            <AppText variant="label">{label}</AppText>
-            <AppText muted>{`${t('statistics.platform.brutto')}: ${brutto}`}</AppText>
-            <AppText muted>{`${t('statistics.platform.orders')}: ${orders}`}</AppText>
-          </AppCard>
-        );
-      })}
-    </View>
-  );
-}
-
 export function StatisticsContent() {
   const [period, setPeriod] = useState<WorkShiftPeriod>(defaultWorkShiftPeriod);
   const statistics = useStatisticsMetrics(period);
@@ -103,42 +76,56 @@ export function StatisticsContent() {
   if (statistics.status === 'blocked') return <StatisticsMessage descriptionKey="statistics.blocked.description" retry={statistics.retry} titleKey="statistics.blocked.title" />;
   if (statistics.status === 'period_empty') {
     return (
-      <Screen><View style={[styles.message, { gap: spacing.md, padding: spacing.xl }]}>
-        <StatisticsPeriodSelector onChange={setPeriod} period={period} />
-        <AppText variant="title">{t('statistics.periodEmpty.title')}</AppText>
-        <AppText muted>{t('statistics.periodEmpty.description')}</AppText>
-      </View></Screen>
+      <Screen>
+        <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
+          <AppText accessibilityRole="header" variant="title">{t('statistics.title')}</AppText>
+          <StatisticsPeriodSelector onChange={setPeriod} period={period} />
+          <View style={{ gap: spacing.xs }}>
+            <AppText accessibilityRole="header" variant="title">{t('statistics.periodEmpty.title')}</AppText>
+            <AppText muted>{t('statistics.periodEmpty.description')}</AppText>
+          </View>
+        </ScrollView>
+      </Screen>
     );
   }
 
   const { metrics } = statistics;
-  const cards: readonly MetricCardProps[] = [
-    { label: t('statistics.totalBrutto'), value: formatCurrency(locale, metrics.totalBrutto) },
+  const incomeCompositionMetrics: readonly StatisticsMetricSectionItem[] = [
     { label: t('statistics.baseIncome'), value: formatCurrency(locale, metrics.baseIncome) },
     { label: t('statistics.appTips'), value: formatCurrency(locale, metrics.appTips) },
     { label: t('statistics.cashTips'), value: formatCurrency(locale, metrics.cashTips) },
     { label: t('statistics.bonuses'), value: formatCurrency(locale, metrics.bonuses) },
-    { label: t('statistics.orders'), value: formatNumber(locale, metrics.orders, 0) },
+  ];
+  const workContextMetrics: readonly StatisticsMetricSectionItem[] = [
     { label: t('statistics.workedTime'), value: formatNumber(locale, metrics.workedTime, 2) },
     { label: t('statistics.distance'), value: formatNumber(locale, metrics.distance, 2) },
     { label: t('statistics.shiftCount'), value: formatNumber(locale, metrics.shiftCount, 0) },
   ];
+  const platforms: readonly StatisticsPlatformDisplayItem[] = workPlatformKeys.map((key) => {
+    const platform = metrics.platforms[key];
+
+    return {
+      key,
+      label: t(platformTranslationKeys[key]),
+      bruttoLabel: t('statistics.platform.brutto'),
+      bruttoValue: formatCurrency(locale, platform.brutto),
+      ordersLabel: t('statistics.platform.orders'),
+      ordersValue: formatNumber(locale, platform.orders, 0),
+      rawBrutto: platform.brutto,
+      rawOrders: platform.orders,
+    };
+  });
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
-        <AppText variant="title">{t('statistics.title')}</AppText>
+        <AppText accessibilityRole="header" variant="title">{t('statistics.title')}</AppText>
         <StatisticsPeriodSelector onChange={setPeriod} period={period} />
-        <View style={{ gap: spacing.sm }}>{cards.map((card) => <AppMetricCard key={card.label} {...card} />)}</View>
-        <PlatformBreakdown metrics={metrics} />
+        <StatisticsSummaryCard secondaryLabel={t('statistics.orders')} secondaryValue={formatNumber(locale, metrics.orders, 0)} totalLabel={t('statistics.totalBrutto')} totalValue={formatCurrency(locale, metrics.totalBrutto)} />
+        <StatisticsMetricSection metrics={incomeCompositionMetrics} title={t('statistics.section.incomeComposition')} />
+        <StatisticsMetricSection metrics={workContextMetrics} title={t('statistics.section.workContext')} />
+        <StatisticsPlatformList platforms={platforms} title={t('statistics.platformBreakdown')} />
       </ScrollView>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  message: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
