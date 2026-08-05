@@ -25,18 +25,22 @@ describe('DashboardContent', () => {
     mockUseDashboardMetrics.mockImplementation(() => mockDashboardState);
   });
 
-  test('renders the title, all eight labelled KPIs, and PLN formatted values', async () => {
+  test('renders the Brutto-first hero, metric sections, and PLN formatted canonical values', async () => {
     await renderDashboard();
 
     expect(screen.getByText('dashboard.title')).toBeTruthy();
-    for (const label of ['dashboard.totalIncome', 'dashboard.totalHours', 'dashboard.totalOrders', 'dashboard.totalKilometers', 'dashboard.totalShifts', 'dashboard.incomePerHour', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer']) {
+    for (const label of ['dashboard.totalIncome', 'dashboard.totalHours', 'dashboard.totalOrders', 'dashboard.totalKilometers', 'dashboard.totalShifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.operational', 'dashboard.section.efficiency']) {
       expect(screen.getByText(label)).toBeTruthy();
     }
+    expect(screen.getAllByText('dashboard.incomePerHour')).toHaveLength(2);
     expect(screen.getByText(formatDashboardCurrency('en', 360))).toBeTruthy();
-    expect(screen.getByText(formatDashboardCurrency('en', 45))).toBeTruthy();
+    expect(screen.getAllByText(formatDashboardCurrency('en', 45))).toHaveLength(2);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('work.create.action')).toBeNull();
     expect(screen.getByTestId('dashboard-period-week').props.accessibilityState).toEqual({ selected: true });
+    expect(screen.getByText('dashboard.title').props.accessibilityRole).toBe('header');
+    expect(screen.getByText('dashboard.section.operational').props.accessibilityRole).toBe('header');
+    expect(screen.getByText('dashboard.section.efficiency').props.accessibilityRole).toBe('header');
   });
 
   test('changes the selected period and updates displayed KPI values', async () => {
@@ -89,7 +93,7 @@ describe('DashboardContent', () => {
     mockDashboardState = { status: 'ready', metrics: { totalIncome: 1, totalHours: 0, totalOrders: 0, totalKilometers: 0, totalShifts: 1, incomePerHour: 0, incomePerOrder: 0, incomePerKilometer: 0 } };
     await renderDashboard();
 
-    expect(screen.getAllByText(formatDashboardCurrency('en', 0))).toHaveLength(3);
+    expect(screen.getAllByText(formatDashboardCurrency('en', 0))).toHaveLength(4);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('chart')).toBeNull();
   });
@@ -99,6 +103,8 @@ describe('DashboardContent', () => {
     await renderDashboard();
 
     expect(screen.getByText('dashboard.periodEmpty.title')).toBeTruthy();
+    expect(screen.getByText('dashboard.title')).toBeTruthy();
     expect(screen.getByTestId('dashboard-period-allTime')).toBeTruthy();
+    expect(screen.queryByText('dashboard.totalIncome')).toBeNull();
   });
 });

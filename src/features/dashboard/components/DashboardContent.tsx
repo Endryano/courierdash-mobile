@@ -1,19 +1,18 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useState } from 'react';
 
-import { AppMetricCard } from '@/components/ui/AppMetricCard';
 import { AppSegmentedControl } from '@/components/ui/AppSegmentedControl';
 import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
+import { DashboardHeroCard } from '@/features/dashboard/components/DashboardHeroCard';
+import { DashboardMetricSection, type DashboardMetricSectionItem } from '@/features/dashboard/components/DashboardMetricSection';
 import { useDashboardMetrics } from '@/features/dashboard/hooks/useDashboardMetrics';
 import { defaultDashboardPeriod, type DashboardPeriod } from '@/features/dashboard/domain/dashboardPeriod';
 import { useLocalization } from '@/i18n/LocalizationProvider';
 import type { TranslationKey } from '@/i18n/translations';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { useTheme } from '@/theme/ThemeProvider';
-
-type MetricCardProps = { readonly label: string; readonly value: string };
 
 const periodKeys: readonly DashboardPeriod[] = ['today', 'week', 'month', 'allTime'];
 
@@ -72,21 +71,27 @@ export function DashboardContent() {
 
   if (dashboard.status === 'period_empty') {
     return (
-      <Screen><View style={[styles.message, { gap: spacing.md, padding: spacing.xl }]}>
-        <DashboardPeriodSelector onChange={setPeriod} period={period} />
-        <AppText variant="title">{t('dashboard.periodEmpty.title')}</AppText>
-        <AppText muted>{t('dashboard.periodEmpty.description')}</AppText>
-      </View></Screen>
+      <Screen>
+        <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
+          <AppText accessibilityRole="header" variant="title">{t('dashboard.title')}</AppText>
+          <DashboardPeriodSelector onChange={setPeriod} period={period} />
+          <View style={{ gap: spacing.xs }}>
+            <AppText accessibilityRole="header" variant="title">{t('dashboard.periodEmpty.title')}</AppText>
+            <AppText muted>{t('dashboard.periodEmpty.description')}</AppText>
+          </View>
+        </ScrollView>
+      </Screen>
     );
   }
 
   const { metrics } = dashboard;
-  const cards: readonly MetricCardProps[] = [
-    { label: t('dashboard.totalIncome'), value: formatCurrency(locale, metrics.totalIncome) },
+  const operationalMetrics: readonly DashboardMetricSectionItem[] = [
     { label: t('dashboard.totalHours'), value: formatNumber(locale, metrics.totalHours, 2) },
-    { label: t('dashboard.totalOrders'), value: formatNumber(locale, metrics.totalOrders, 0) },
     { label: t('dashboard.totalKilometers'), value: formatNumber(locale, metrics.totalKilometers, 2) },
+    { label: t('dashboard.totalOrders'), value: formatNumber(locale, metrics.totalOrders, 0) },
     { label: t('dashboard.totalShifts'), value: formatNumber(locale, metrics.totalShifts, 0) },
+  ];
+  const efficiencyMetrics: readonly DashboardMetricSectionItem[] = [
     { label: t('dashboard.incomePerHour'), value: formatCurrency(locale, metrics.incomePerHour) },
     { label: t('dashboard.incomePerOrder'), value: formatCurrency(locale, metrics.incomePerOrder) },
     { label: t('dashboard.incomePerKilometer'), value: formatCurrency(locale, metrics.incomePerKilometer) },
@@ -95,19 +100,12 @@ export function DashboardContent() {
   return (
     <Screen>
       <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
-        <AppText variant="title">{t('dashboard.title')}</AppText>
+        <AppText accessibilityRole="header" variant="title">{t('dashboard.title')}</AppText>
         <DashboardPeriodSelector onChange={setPeriod} period={period} />
-        <View style={{ gap: spacing.sm }}>
-          {cards.map((card) => <AppMetricCard key={card.label} {...card} />)}
-        </View>
+        <DashboardHeroCard label={t('dashboard.totalIncome')} secondaryLabel={t('dashboard.incomePerHour')} secondaryValue={formatCurrency(locale, metrics.incomePerHour)} value={formatCurrency(locale, metrics.totalIncome)} />
+        <DashboardMetricSection metrics={operationalMetrics} title={t('dashboard.section.operational')} />
+        <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.efficiency')} />
       </ScrollView>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  message: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
