@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 
 import type { WorkShiftCreateContextValue } from '@/features/work/provider/workShiftCreateContext';
 import { ThemeProvider } from '@/theme/ThemeProvider';
-import { darkTheme } from '@/theme/theme';
 
 const mockSubmit = jest.fn<WorkShiftCreateContextValue['submit']>();
 const mockReconcile = jest.fn<WorkShiftCreateContextValue['reconcile']>();
@@ -170,7 +169,7 @@ describe('WorkShiftCreateForm', () => {
 
   test('uses a positive Create action without changing the secondary Cancel action', async () => {
     const view = await renderForm();
-    expect(StyleSheet.flatten(view.getByTestId('work-create-submit').props.style)).toMatchObject({ backgroundColor: darkTheme.colors.positive });
-    expect(StyleSheet.flatten(view.getByTestId('work-create-cancel').props.style).backgroundColor).not.toBe(darkTheme.colors.positive);
+    expect(StyleSheet.flatten(view.getByTestId('work-create-submit').props.style)).toMatchObject({ backgroundColor: '#00af42', minHeight: 72 });
+    expect(StyleSheet.flatten(view.getByTestId('work-create-cancel').props.style)).toMatchObject({ backgroundColor: '#233044', minHeight: 68 });
   });
 });

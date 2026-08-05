@@ -5,7 +5,6 @@ import { StyleSheet } from 'react-native';
 import { validateWorkShiftEdit } from '@/features/work/domain/workShiftEditValidation';
 import type { WorkShiftEditContextValue } from '@/features/work/provider/workShiftEditContext';
 import { ThemeProvider } from '@/theme/ThemeProvider';
-import { darkTheme } from '@/theme/theme';
 
 const mockSubmit = jest.fn<WorkShiftEditContextValue['submit']>();
 let mockEditState: WorkShiftEditContextValue;
@@ -144,7 +143,7 @@ describe('WorkShiftEditForm', () => {
 
   test('uses a warning Update action and keeps a localized remove control on selected cards', async () => {
     const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
-    expect(StyleSheet.flatten(view.getByTestId('work-edit-submit').props.style)).toMatchObject({ backgroundColor: darkTheme.colors.warning });
+    expect(StyleSheet.flatten(view.getByTestId('work-edit-submit').props.style)).toMatchObject({ backgroundColor: '#dc8b00', minHeight: 72 });
     expect(view.getByTestId('work-edit-platform-card-uber-remove').props.accessibilityLabel).toContain('work.platform.uber');
   });
 });

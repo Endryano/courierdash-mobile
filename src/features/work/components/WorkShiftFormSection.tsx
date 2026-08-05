@@ -16,8 +16,8 @@ export function WorkShiftFormSection({ children, testID, title }: WorkShiftFormS
 
   return (
     <View style={{ gap: spacing.sm }} testID={testID}>
-      {title === undefined ? null : <AppText accessibilityRole="header" variant="body" style={{ fontWeight: '700' }}>{title}</AppText>}
-      <AppCard padding="lg" style={{ gap: spacing.md }} variant="elevated">{children}</AppCard>
+      {title === undefined ? null : <AppText accessibilityRole="header" variant="body" style={{ fontSize: 27, fontWeight: '800', lineHeight: 32 }}>{title}</AppText>}
+      <AppCard padding="lg" style={{ backgroundColor: '#25262d', borderColor: '#3a4a64', borderRadius: 24, borderWidth: 2, gap: spacing.lg }} variant="elevated">{children}</AppCard>
     </View>
   );
 }

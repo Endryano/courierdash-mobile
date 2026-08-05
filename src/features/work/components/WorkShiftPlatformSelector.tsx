@@ -14,7 +14,7 @@ type WorkShiftPlatformSelectorProps<TPlatform extends string> = {
 };
 
 export function WorkShiftPlatformSelector<TPlatform extends string>({ disabled = false, getLabel, getTestID, onToggle, platforms, selected, testID }: WorkShiftPlatformSelectorProps<TPlatform>) {
-  const { colors, radii, spacing } = useTheme();
+  const { colors, spacing } = useTheme();
 
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }} testID={testID}>
@@ -31,16 +31,16 @@ export function WorkShiftPlatformSelector<TPlatform extends string>({ disabled =
             style={({ pressed }) => [
               styles.option,
               {
-                backgroundColor: isSelected ? colors.surface : colors.surfaceElevated,
-                borderColor: isSelected ? colors.accent : colors.border,
-                borderRadius: radii.full,
+                backgroundColor: isSelected ? '#18374c' : '#243247',
+                borderColor: isSelected ? '#00b7ef' : '#465977',
+                borderRadius: 16,
                 opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
                 paddingHorizontal: spacing.md,
               },
             ]}
             testID={getTestID?.(platform)}
           >
-            <AppText style={{ color: colors.textPrimary, fontWeight: isSelected ? '700' : '500' }} variant="label">
+            <AppText style={{ color: colors.textPrimary, fontSize: 17, fontWeight: isSelected ? '800' : '600' }} variant="label">
               {isSelected ? `✓ ${getLabel(platform)}` : `+ ${getLabel(platform)}`}
             </AppText>
           </Pressable>

@@ -32,21 +32,22 @@ export function WorkShiftPlatformFieldsCard({ accentColor, children, detailsExpa
   const { colors, radii, spacing } = useTheme();
 
   return (
-    <AppCard style={{ borderColor: accentColor, borderWidth: 1.5, gap: spacing.md }} testID={testID} variant="elevated">
+    <AppCard style={{ backgroundColor: '#22232a', borderColor: accentColor, borderRadius: 24, borderWidth: 2.5, gap: spacing.lg, padding: spacing.lg }} testID={testID} variant="elevated">
       <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <AppText style={{ fontWeight: '700' }} variant="body">{title}</AppText>
-        <Pressable accessibilityLabel={removeAccessibilityLabel} accessibilityRole="button" onPress={onRemove} style={({ pressed }) => [styles.remove, { borderColor: colors.border, borderRadius: radii.full, opacity: pressed ? 0.7 : 1 }]} testID={`${testID}-remove`}>
+        <AppText style={{ fontSize: 25, fontWeight: '800' }} variant="body">{title}</AppText>
+        <Pressable accessibilityLabel={removeAccessibilityLabel} accessibilityRole="button" onPress={onRemove} style={({ pressed }) => [styles.remove, { borderColor: '#53627a', borderRadius: radii.full, opacity: pressed ? 0.7 : 1 }]} testID={`${testID}-remove`}>
           <AppText style={{ color: colors.textSecondary, fontSize: 24, lineHeight: 28 }}>×</AppText>
         </Pressable>
       </View>
+      <View style={{ backgroundColor: '#3b4b65', height: 1 }} />
       {children}
-      <Pressable accessibilityRole="button" accessibilityState={{ expanded: detailsExpanded }} onPress={onToggleDetails} style={({ pressed }) => ({ minHeight: 48, justifyContent: 'center', opacity: pressed ? 0.7 : 1 })} testID={`${testID}-details-toggle`}>
-        <AppText style={{ color: colors.accent, fontWeight: '600' }}>{detailsLabel}</AppText>
+      <Pressable accessibilityRole="button" accessibilityState={{ expanded: detailsExpanded }} onPress={onToggleDetails} style={({ pressed }) => ({ alignSelf: 'flex-start', backgroundColor: '#182a3b', borderColor: '#285b8d', borderRadius: 14, borderWidth: 1.5, minHeight: 48, justifyContent: 'center', opacity: pressed ? 0.7 : 1, paddingHorizontal: spacing.md })} testID={`${testID}-details-toggle`}>
+        <AppText style={{ color: '#4ea5ff', fontWeight: '700' }}>{detailsLabel}</AppText>
       </Pressable>
     </AppCard>
   );
 }
 
 const styles = StyleSheet.create({
-  remove: { alignItems: 'center', borderWidth: StyleSheet.hairlineWidth, height: 36, justifyContent: 'center', width: 36 },
+  remove: { alignItems: 'center', borderWidth: 1.5, height: 42, justifyContent: 'center', width: 42 },
 });

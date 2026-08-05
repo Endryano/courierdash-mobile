@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
-import { AppButton } from '@/components/ui/AppButton';
-import { AppInput } from '@/components/ui/AppInput';
 import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
@@ -13,6 +11,8 @@ import { editableWorkPlatformKeys, type EditableWorkPlatformKey } from '../domai
 import type { WorkShiftEditInput } from '../domain/workShiftEdit';
 import { useWorkShiftEdit } from '../hooks/useWorkShiftEdit';
 import { WorkShiftDateField } from './WorkShiftDateField';
+import { WorkFormActions } from './WorkFormActions';
+import { WorkFormField } from './WorkFormField';
 import { WorkShiftFormSection } from './WorkShiftFormSection';
 import { WorkShiftFormShell } from './WorkShiftFormShell';
 import { getWorkPlatformAccent, WorkShiftPlatformFieldsCard } from './WorkShiftPlatformFieldsCard';
@@ -88,10 +88,7 @@ export function WorkShiftEditForm({ onCancel }: Props) {
   return (
     <WorkShiftFormShell
       actions={(
-        <>
-          {reconciliation ? <AppButton label={t('work.edit.reconcile')} onPress={() => void edit.reconcile()} testID="work-edit-reconcile" variant="warning" /> : <AppButton disabled={pending} label={t(pending ? 'work.edit.saving' : 'work.edit.save')} loading={pending} onPress={() => void edit.submit(currentInput)} testID="work-edit-submit" variant="warning" />}
-          <AppButton disabled={pending} label={t('work.edit.cancel')} onPress={returnToWork} testID="work-edit-cancel" variant="secondary" />
-        </>
+        <WorkFormActions cancelLabel={t('work.edit.cancel')} onCancel={returnToWork} onPrimary={() => void (reconciliation ? edit.reconcile() : edit.submit(currentInput))} pending={pending} primaryLabel={t(reconciliation ? 'work.edit.reconcile' : pending ? 'work.edit.saving' : 'work.edit.save')} primaryTestID={reconciliation ? 'work-edit-reconcile' : 'work-edit-submit'} primaryTone="update" testID="work-edit" />
       )}
       message={statusKey ? <AppText accessibilityRole="alert">{t(statusKey)}</AppText> : undefined}
       testID="work-edit-form"
@@ -99,8 +96,10 @@ export function WorkShiftEditForm({ onCancel }: Props) {
     >
       <WorkShiftFormSection testID="work-edit-general" title={t('work.form.details')}>
         <WorkShiftDateField label={t('work.create.date')} value={currentInput.date} onChange={(date) => setInput((current) => ({ ...(current ?? currentInput), date }))} testID="work-edit-date" />
-        <AppInput label={t('work.create.km')} value={formatEditNumericValue(currentInput.km)} variant="work" keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), km: parse(value) }))} testID="work-edit-km" />
-        <AppInput label={t('work.create.hours')} value={formatEditNumericValue(currentInput.hours)} variant="work" keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), hours: parse(value) }))} testID="work-edit-hours" />
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
+          <View style={{ flexGrow: 1, minWidth: 150 }}><WorkFormField label={t('work.create.km')} value={formatEditNumericValue(currentInput.km)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), km: parse(value) }))} testID="work-edit-km" /></View>
+          <View style={{ flexGrow: 1, minWidth: 150 }}><WorkFormField label={t('work.create.hours')} value={formatEditNumericValue(currentInput.hours)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), hours: parse(value) }))} testID="work-edit-hours" /></View>
+        </View>
       </WorkShiftFormSection>
       <WorkShiftFormSection testID="work-edit-platforms" title={t('work.form.income')}>
         <WorkShiftPlatformSelector
@@ -128,12 +127,12 @@ export function WorkShiftEditForm({ onCancel }: Props) {
             testID={`work-edit-platform-card-${platform}`}
             title={t(`work.platform.${platform}`)}
           >
-            {platform === 'other' ? <AppInput label={t('work.create.otherName')} value={currentInput.platforms.other.name ?? ''} variant="work" onChangeText={(name) => update('other', { name })} testID="work-edit-other-name" /> : null}
+            {platform === 'other' ? <WorkFormField label={t('work.create.otherName')} value={currentInput.platforms.other.name ?? ''} onChangeText={(name) => update('other', { name })} testID="work-edit-other-name" /> : null}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-              {metrics.slice(0, 2).map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><AppInput label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} variant="work" keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
+              {metrics.slice(0, 2).map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><WorkFormField label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
             </View>
             {expandedPlatforms.has(platform) ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-              {optionalMetrics.map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><AppInput label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} variant="work" keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
+              {optionalMetrics.map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><WorkFormField label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
             </View> : null}
           </WorkShiftPlatformFieldsCard>
         );
