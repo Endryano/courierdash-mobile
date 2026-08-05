@@ -1,11 +1,13 @@
 import { ScrollView, View } from 'react-native';
 import { useState } from 'react';
 
-import { AppSegmentedControl } from '@/components/ui/AppSegmentedControl';
+import type { AppSegmentedControlOption } from '@/components/ui/AppSegmentedControl';
 import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
+import { DashboardHeader } from '@/features/dashboard/components/DashboardHeader';
 import { DashboardHeroCard } from '@/features/dashboard/components/DashboardHeroCard';
+import { DashboardKpiGrid, type DashboardKpiItem } from '@/features/dashboard/components/DashboardKpiGrid';
 import { DashboardMetricSection, type DashboardMetricSectionItem } from '@/features/dashboard/components/DashboardMetricSection';
 import { useDashboardMetrics } from '@/features/dashboard/hooks/useDashboardMetrics';
 import { defaultDashboardPeriod, type DashboardPeriod } from '@/features/dashboard/domain/dashboardPeriod';
@@ -39,26 +41,15 @@ function DashboardMessage({ titleKey, descriptionKey, retry }: { readonly titleK
   return <Screen><AppStateSurface action={retry === undefined ? undefined : { label: t('dashboard.retry'), onPress: retryDashboard, testID: 'dashboard-retry' }} description={t(descriptionKey)} title={t(titleKey)} /></Screen>;
 }
 
-function DashboardPeriodSelector({ period, onChange }: { readonly period: DashboardPeriod; readonly onChange: (period: DashboardPeriod) => void }) {
-  const { t } = useLocalization();
-
-  return (
-    <AppSegmentedControl
-      onChange={onChange}
-      options={periodKeys.map((option) => ({ label: t(periodTranslationKeys[option]), testID: `dashboard-period-${option}`, value: option }))}
-      value={period}
-    />
-  );
-}
-
 export function DashboardContent() {
   const [period, setPeriod] = useState<DashboardPeriod>(defaultDashboardPeriod);
   const dashboard = useDashboardMetrics(period);
   const { locale, t } = useLocalization();
   const { spacing } = useTheme();
+  const periodOptions: readonly AppSegmentedControlOption<DashboardPeriod>[] = periodKeys.map((option) => ({ label: t(periodTranslationKeys[option]), testID: `dashboard-period-${option}`, value: option }));
 
   if (dashboard.status === 'loading') {
-    return <Screen><AppStateSurface><AppText>{t('dashboard.loading')}</AppText></AppStateSurface></Screen>;
+    return <Screen><AppStateSurface loading title={t('dashboard.loading')} /></Screen>;
   }
 
   if (dashboard.status === 'empty') {
@@ -73,8 +64,7 @@ export function DashboardContent() {
     return (
       <Screen>
         <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
-          <AppText accessibilityRole="header" variant="title">{t('dashboard.title')}</AppText>
-          <DashboardPeriodSelector onChange={setPeriod} period={period} />
+          <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('dashboard.title')} />
           <View style={{ gap: spacing.xs }}>
             <AppText accessibilityRole="header" variant="title">{t('dashboard.periodEmpty.title')}</AppText>
             <AppText muted>{t('dashboard.periodEmpty.description')}</AppText>
@@ -85,14 +75,13 @@ export function DashboardContent() {
   }
 
   const { metrics } = dashboard;
-  const operationalMetrics: readonly DashboardMetricSectionItem[] = [
-    { label: t('dashboard.totalHours'), value: formatNumber(locale, metrics.totalHours, 2) },
-    { label: t('dashboard.totalKilometers'), value: formatNumber(locale, metrics.totalKilometers, 2) },
-    { label: t('dashboard.totalOrders'), value: formatNumber(locale, metrics.totalOrders, 0) },
-    { label: t('dashboard.totalShifts'), value: formatNumber(locale, metrics.totalShifts, 0) },
+  const operationalMetrics: readonly DashboardKpiItem[] = [
+    { key: 'hours', label: t('dashboard.totalHours'), value: formatNumber(locale, metrics.totalHours, 2) },
+    { key: 'kilometers', label: t('dashboard.totalKilometers'), value: formatNumber(locale, metrics.totalKilometers, 2) },
+    { key: 'orders', label: t('dashboard.totalOrders'), value: formatNumber(locale, metrics.totalOrders, 0) },
+    { key: 'shifts', label: t('dashboard.totalShifts'), value: formatNumber(locale, metrics.totalShifts, 0) },
   ];
   const efficiencyMetrics: readonly DashboardMetricSectionItem[] = [
-    { label: t('dashboard.incomePerHour'), value: formatCurrency(locale, metrics.incomePerHour) },
     { label: t('dashboard.incomePerOrder'), value: formatCurrency(locale, metrics.incomePerOrder) },
     { label: t('dashboard.incomePerKilometer'), value: formatCurrency(locale, metrics.incomePerKilometer) },
   ];
@@ -100,10 +89,12 @@ export function DashboardContent() {
   return (
     <Screen>
       <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
-        <AppText accessibilityRole="header" variant="title">{t('dashboard.title')}</AppText>
-        <DashboardPeriodSelector onChange={setPeriod} period={period} />
+        <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('dashboard.title')} />
         <DashboardHeroCard label={t('dashboard.totalIncome')} secondaryLabel={t('dashboard.incomePerHour')} secondaryValue={formatCurrency(locale, metrics.incomePerHour)} value={formatCurrency(locale, metrics.totalIncome)} />
-        <DashboardMetricSection metrics={operationalMetrics} title={t('dashboard.section.operational')} />
+        <View style={{ gap: spacing.sm }}>
+          <AppText accessibilityRole="header" variant="label">{t('dashboard.section.operational')}</AppText>
+          <DashboardKpiGrid items={operationalMetrics} />
+        </View>
         <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.efficiency')} />
       </ScrollView>
     </Screen>

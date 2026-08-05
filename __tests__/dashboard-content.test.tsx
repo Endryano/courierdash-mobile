@@ -32,12 +32,13 @@ describe('DashboardContent', () => {
     for (const label of ['dashboard.totalIncome', 'dashboard.totalHours', 'dashboard.totalOrders', 'dashboard.totalKilometers', 'dashboard.totalShifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.operational', 'dashboard.section.efficiency']) {
       expect(screen.getByText(label)).toBeTruthy();
     }
-    expect(screen.getAllByText('dashboard.incomePerHour')).toHaveLength(2);
+    expect(screen.getAllByText('dashboard.incomePerHour')).toHaveLength(1);
     expect(screen.getByText(formatDashboardCurrency('en', 360))).toBeTruthy();
-    expect(screen.getAllByText(formatDashboardCurrency('en', 45))).toHaveLength(2);
+    expect(screen.getAllByText(formatDashboardCurrency('en', 45))).toHaveLength(1);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('work.create.action')).toBeNull();
     expect(screen.getByTestId('dashboard-period-week').props.accessibilityState).toEqual({ selected: true });
+    expect(screen.getByTestId('dashboard-period-week').parent?.props.accessibilityLabel).toBe('dashboard.period.label');
     expect(screen.getByText('dashboard.title').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.operational').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.efficiency').props.accessibilityRole).toBe('header');
@@ -52,6 +53,15 @@ describe('DashboardContent', () => {
 
     expect(screen.getByTestId('dashboard-period-today').props.accessibilityState).toEqual({ selected: true });
     expect(screen.getAllByText(formatDashboardCurrency('en', 25))).not.toHaveLength(0);
+  });
+
+  test('keeps every canonical period option interactive and selected-state controlled', async () => {
+    await renderDashboard();
+
+    for (const period of ['today', 'week', 'month', 'allTime'] as const) {
+      await fireEvent.press(screen.getByTestId(`dashboard-period-${period}`));
+      expect(screen.getByTestId(`dashboard-period-${period}`).props.accessibilityState).toEqual({ selected: true });
+    }
   });
 
   test('renders loading and empty states without placeholder metrics', async () => {
@@ -93,7 +103,7 @@ describe('DashboardContent', () => {
     mockDashboardState = { status: 'ready', metrics: { totalIncome: 1, totalHours: 0, totalOrders: 0, totalKilometers: 0, totalShifts: 1, incomePerHour: 0, incomePerOrder: 0, incomePerKilometer: 0 } };
     await renderDashboard();
 
-    expect(screen.getAllByText(formatDashboardCurrency('en', 0))).toHaveLength(4);
+    expect(screen.getAllByText(formatDashboardCurrency('en', 0))).toHaveLength(3);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('chart')).toBeNull();
   });

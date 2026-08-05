@@ -12,15 +12,15 @@ type DashboardHeroCardProps = {
 };
 
 export function DashboardHeroCard({ label, secondaryLabel, secondaryValue, value }: DashboardHeroCardProps) {
-  const { spacing } = useTheme();
+  const { colors, spacing } = useTheme();
 
   return (
     <AppCard accessibilityLabel={`${label}: ${value}. ${secondaryLabel}: ${secondaryValue}`} padding="lg" variant="elevated">
-      <View style={{ gap: spacing.xxs }}>
+      <View style={{ gap: spacing.xs }}>
         <AppText muted variant="label">{label}</AppText>
-        <AppText variant="title">{value}</AppText>
+        <AppText style={{ color: colors.accent, fontSize: 40, fontWeight: '700', lineHeight: 48 }} variant="title">{value}</AppText>
       </View>
-      <View style={{ gap: spacing.xxs, marginTop: spacing.lg }}>
+      <View style={{ borderTopColor: colors.border, borderTopWidth: 1, gap: spacing.xxs, marginTop: spacing.lg, paddingTop: spacing.sm }}>
         <AppText muted variant="caption">{secondaryLabel}</AppText>
         <AppText variant="body">{secondaryValue}</AppText>
       </View>
