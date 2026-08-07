@@ -55,8 +55,9 @@ function StatisticsPeriodSelector({ period, onChange }: { readonly period: WorkS
   return (
     <AppSegmentedControl
       accessibilityLabel={t('statistics.period.label')}
+      appearance="filter"
       onChange={onChange}
-      options={periodKeys.map((option) => ({ label: t(periodTranslationKeys[option]), testID: `statistics-period-${option}`, value: option }))}
+      options={periodKeys.map((option) => ({ breakBefore: option === 'allTime', label: t(periodTranslationKeys[option]), testID: `statistics-period-${option}`, value: option }))}
       value={period}
     />
   );

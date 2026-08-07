@@ -250,6 +250,16 @@ const dashboardPresentationTranslations = {
   },
 } as const;
 
+const statisticsPeriodOverrides: Readonly<Record<SupportedLocale, Partial<TranslationDictionary>>> = {
+  pl: {},
+  uk: {
+    'statistics.period.week': 'Тиждень',
+    'statistics.period.month': 'Місяць',
+  },
+  en: {},
+  ru: {},
+};
+
 export const translations = {
   pl: {
     ...navigationTranslations.pl,
@@ -288,6 +298,7 @@ export const translations = {
     'work.delete.action':'Видалити зміну','work.delete.title':'Видалити зміну?','work.delete.body':'Ця дія назавжди видаляє вибрану зміну.','work.delete.confirm':'Видалити','work.delete.cancel':'Скасувати','work.delete.deleting':'Видалення…','work.delete.recoverableTitle':'Не вдалося видалити зміну','work.delete.recoverable':'Зміну не було видалено. Поверніться до списку та спробуйте пізніше.','work.delete.blockedTitle':'Неможливо видалити зміну','work.delete.blocked':'Видалення цієї зміни зараз недоступне.','work.delete.reconciliationTitle':'Перевірте список змін','work.delete.reconciliation':'Зміну могло бути видалено, але список не оновився.','work.delete.reconcile':'Оновити список змін','work.delete.return':'Повернутися до списку змін',
     'dashboard.title': 'Панель', 'dashboard.totalIncome': 'Загальний дохід', 'dashboard.totalHours': 'Загальні години', 'dashboard.totalOrders': 'Загальні замовлення', 'dashboard.totalKilometers': 'Загальні кілометри', 'dashboard.totalShifts': 'Загальна кількість змін', 'dashboard.incomePerHour': 'Дохід за годину', 'dashboard.incomePerOrder': 'Дохід за замовлення', 'dashboard.incomePerKilometer': 'Дохід за кілометр', 'dashboard.loading': 'Завантаження панелі…', 'dashboard.empty.title': 'Немає змін', 'dashboard.empty.description': 'Додайте першу зміну, щоб побачити показники панелі.', 'dashboard.error.title': 'Панель тимчасово недоступна', 'dashboard.error.description': 'Спробуйте ще раз.', 'dashboard.retry': 'Спробувати ще раз', 'dashboard.period.today': 'Сьогодні', 'dashboard.period.week': 'Цей тиждень', 'dashboard.period.month': 'Цей місяць', 'dashboard.period.allTime': 'За весь час', 'dashboard.periodEmpty.title': 'У цьому періоді немає змін', 'dashboard.periodEmpty.description': 'Виберіть інший період, щоб побачити показники.', 'dashboard.section.operational': 'Робочі показники', 'dashboard.section.efficiency': 'Ефективність',
     'statistics.title': 'Статистика', 'statistics.period.label': 'Період', 'statistics.period.today': 'Сьогодні', 'statistics.period.week': 'Цей тиждень', 'statistics.period.month': 'Цей місяць', 'statistics.period.allTime': 'За весь час', 'statistics.totalBrutto': 'Загальна сума брутто', 'statistics.baseIncome': 'Базовий дохід', 'statistics.appTips': 'Чайові в застосунку', 'statistics.cashTips': 'Готівкові чайові', 'statistics.bonuses': 'Бонуси', 'statistics.orders': 'Замовлення', 'statistics.workedTime': 'Робочий час', 'statistics.distance': 'Відстань', 'statistics.shiftCount': 'Кількість змін', 'statistics.platformBreakdown': 'За платформами', 'statistics.platform.brutto': 'Брутто', 'statistics.platform.orders': 'Замовлення', 'statistics.loading': 'Завантаження статистики…', 'statistics.empty.title': 'Немає змін', 'statistics.empty.description': 'Додайте першу зміну, щоб побачити статистику.', 'statistics.periodEmpty.title': 'У цьому періоді немає змін', 'statistics.periodEmpty.description': 'Виберіть інший період, щоб побачити статистику.', 'statistics.error.title': 'Статистика тимчасово недоступна', 'statistics.error.description': 'Спробуйте ще раз.', 'statistics.blocked.title': 'Статистика тимчасово недоступна', 'statistics.blocked.description': 'Спробуйте пізніше.', 'statistics.retry': 'Спробувати ще раз', 'statistics.section.incomeComposition': 'Структура доходу', 'statistics.section.workContext': 'Контекст роботи',
+    ...statisticsPeriodOverrides.uk,
   },
   en: {
     ...navigationTranslations.en,

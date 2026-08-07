@@ -145,6 +145,13 @@ describe('StatisticsContent', () => {
     }
   });
 
+  test('uses concise Ukrainian Statistics period labels', () => {
+    expect(translations.uk['statistics.period.today']).toBe('Сьогодні');
+    expect(translations.uk['statistics.period.week']).toBe('Тиждень');
+    expect(translations.uk['statistics.period.month']).toBe('Місяць');
+    expect(translations.uk['statistics.period.allTime']).toBe('За весь час');
+  });
+
   test('renders safe loading, empty, period-empty, recoverable, and blocked states', async () => {
     mockStatisticsState = { status: 'loading' };
     const view = await renderStatistics();
