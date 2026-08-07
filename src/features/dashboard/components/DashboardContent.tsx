@@ -25,7 +25,18 @@ const periodTranslationKeys: Readonly<Record<DashboardPeriod, TranslationKey>> =
   allTime: 'dashboard.period.allTime',
 };
 
+const totalSectionHeadingKeys: Readonly<Record<DashboardPeriod, TranslationKey>> = {
+  today: 'dashboard.section.total.today',
+  week: 'dashboard.section.total.week',
+  month: 'dashboard.section.total.month',
+  allTime: 'dashboard.section.total.allTime',
+};
+
 export { formatCurrency as formatDashboardCurrency, formatNumber as formatDashboardNumber } from '@/lib/formatters';
+
+function splitCurrency(value: string): { readonly amount: string; readonly unit: string } {
+  return { amount: value.replace(/^PLN[\s\u00A0]+|[\s\u00A0]+PLN$/u, ''), unit: 'PLN' };
+}
 
 function DashboardMessage({ titleKey, descriptionKey, retry }: { readonly titleKey: TranslationKey; readonly descriptionKey: TranslationKey; readonly retry?: () => Promise<void> }) {
   const { t } = useLocalization();
@@ -75,16 +86,20 @@ export function DashboardContent() {
   }
 
   const { metrics } = dashboard;
+  const totalIncome = splitCurrency(formatCurrency(locale, metrics.totalIncome));
+  const incomePerHour = splitCurrency(formatCurrency(locale, metrics.incomePerHour));
+  const incomePerOrder = splitCurrency(formatCurrency(locale, metrics.incomePerOrder));
+  const incomePerKilometer = splitCurrency(formatCurrency(locale, metrics.incomePerKilometer));
   const operationalMetrics: readonly DashboardKpiItem[] = [
-    { key: 'orders', label: t('dashboard.totalOrders'), tone: 'orders', value: formatNumber(locale, metrics.totalOrders, 0) },
-    { key: 'hours', label: t('dashboard.totalHours'), value: formatNumber(locale, metrics.totalHours, 2) },
-    { key: 'kilometers', label: t('dashboard.totalKilometers'), tone: 'distance', value: formatNumber(locale, metrics.totalKilometers, 2) },
-    { key: 'shifts', label: t('dashboard.totalShifts'), tone: 'shifts', value: formatNumber(locale, metrics.totalShifts, 0) },
+    { key: 'orders', label: t('dashboard.label.orders'), tone: 'orders', value: formatNumber(locale, metrics.totalOrders, 0) },
+    { key: 'hours', label: t('dashboard.label.hours'), unit: t('dashboard.unit.hours'), value: formatNumber(locale, metrics.totalHours, 2) },
+    { key: 'kilometers', label: t('dashboard.label.kilometers'), tone: 'distance', unit: t('dashboard.unit.kilometers'), value: formatNumber(locale, metrics.totalKilometers, 2) },
+    { key: 'shifts', label: t('dashboard.label.shifts'), tone: 'shifts', value: formatNumber(locale, metrics.totalShifts, 0) },
   ];
   const efficiencyMetrics: readonly DashboardMetricSectionItem[] = [
-    { key: 'income-per-hour', label: t('dashboard.incomePerHour'), tone: 'income', value: formatCurrency(locale, metrics.incomePerHour) },
-    { key: 'income-per-order', label: t('dashboard.incomePerOrder'), tone: 'orders', value: formatCurrency(locale, metrics.incomePerOrder) },
-    { key: 'income-per-kilometer', label: t('dashboard.incomePerKilometer'), tone: 'distance', value: formatCurrency(locale, metrics.incomePerKilometer) },
+    { key: 'income-per-hour', label: t('dashboard.incomePerHour'), tone: 'income', unit: incomePerHour.unit, value: incomePerHour.amount },
+    { key: 'income-per-order', label: t('dashboard.incomePerOrder'), tone: 'orders', unit: incomePerOrder.unit, value: incomePerOrder.amount },
+    { key: 'income-per-kilometer', label: t('dashboard.incomePerKilometer'), tone: 'distance', unit: incomePerKilometer.unit, value: incomePerKilometer.amount },
   ];
 
   return (
@@ -92,11 +107,11 @@ export function DashboardContent() {
       <ScrollView contentContainerStyle={{ gap: spacing.lg, padding: spacing.lg, paddingBottom: spacing.xxl }}>
         <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('navigation.tab.dashboard')} />
         <View style={{ gap: spacing.md }}>
-          <AppText accessibilityRole="header" style={{ fontSize: 18, fontWeight: '700', letterSpacing: 1, lineHeight: 24, textTransform: 'uppercase' }} variant="label">{t('dashboard.section.operational')}</AppText>
-          <DashboardHeroCard label={t('dashboard.totalIncome')} value={formatCurrency(locale, metrics.totalIncome)} />
+          <AppText accessibilityRole="header" style={{ fontSize: 15, fontWeight: '600', letterSpacing: 1, lineHeight: 20, textTransform: 'uppercase' }} variant="label">{t(totalSectionHeadingKeys[period])}</AppText>
+          <DashboardHeroCard label={t('dashboard.totalIncome')} unit={totalIncome.unit} value={totalIncome.amount} />
           <DashboardKpiGrid items={operationalMetrics} />
         </View>
-        <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.efficiency')} />
+        <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.average')} />
       </ScrollView>
     </Screen>
   );

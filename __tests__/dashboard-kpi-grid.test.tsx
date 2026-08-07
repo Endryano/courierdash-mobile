@@ -34,10 +34,11 @@ describe('Dashboard presentation components', () => {
   });
 
   test('makes the supplied Brutto value visually primary without introducing interaction', async () => {
-    await render(<ThemeProvider><DashboardHeroCard label="Total Brutto" value="12,345.67 PLN" /></ThemeProvider>);
+    await render(<ThemeProvider><DashboardHeroCard label="Total Brutto" unit="PLN" value="12,345.67" /></ThemeProvider>);
 
     expect(screen.getByText('Total Brutto')).toBeTruthy();
-    expect(StyleSheet.flatten(screen.getByText('12,345.67 PLN').props.style)).toMatchObject({ fontSize: 42, lineHeight: 50 });
-    expect(screen.getByText('12,345.67 PLN').parent?.parent?.props.onPress).toBeUndefined();
+    expect(screen.getByText('PLN')).toBeTruthy();
+    expect(StyleSheet.flatten(screen.getByText('12,345.67').props.style)).toMatchObject({ fontSize: 38, lineHeight: 46 });
+    expect(screen.getByText('12,345.67').parent?.parent?.props.onPress).toBeUndefined();
   });
 });

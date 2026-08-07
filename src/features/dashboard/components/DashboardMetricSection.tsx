@@ -6,6 +6,7 @@ export type DashboardMetricSectionItem = {
   readonly key: string;
   readonly label: string;
   readonly value: string;
+  readonly unit?: string;
   readonly tone?: DashboardKpiTone;
 };
 

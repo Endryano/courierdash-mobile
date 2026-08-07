@@ -11,7 +11,7 @@ const mockUseDashboardMetrics = jest.fn<(period?: string) => DashboardMetricsSta
 jest.mock('@/features/dashboard/hooks/useDashboardMetrics', () => ({ useDashboardMetrics: (period?: string) => mockUseDashboardMetrics(period) }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ locale: 'en', t: (key: string) => key }) }));
 
-const { DashboardContent, formatDashboardCurrency } = require('@/features/dashboard/components/DashboardContent') as typeof import('@/features/dashboard/components/DashboardContent');
+const { DashboardContent } = require('@/features/dashboard/components/DashboardContent') as typeof import('@/features/dashboard/components/DashboardContent');
 
 function renderDashboard() {
   return render(<ThemeProvider><DashboardContent /></ThemeProvider>);
@@ -29,19 +29,19 @@ describe('DashboardContent', () => {
     await renderDashboard();
 
     expect(screen.getByText('navigation.tab.dashboard')).toBeTruthy();
-    for (const label of ['dashboard.totalIncome', 'dashboard.totalHours', 'dashboard.totalOrders', 'dashboard.totalKilometers', 'dashboard.totalShifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.operational', 'dashboard.section.efficiency']) {
+    for (const label of ['dashboard.totalIncome', 'dashboard.label.hours', 'dashboard.label.orders', 'dashboard.label.kilometers', 'dashboard.label.shifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.total.week', 'dashboard.section.average']) {
       expect(screen.getByText(label)).toBeTruthy();
     }
     expect(screen.getAllByText('dashboard.incomePerHour')).toHaveLength(1);
-    expect(screen.getByText(formatDashboardCurrency('en', 360))).toBeTruthy();
-    expect(screen.getAllByText(formatDashboardCurrency('en', 45))).toHaveLength(1);
+    expect(screen.getByText('360.00')).toBeTruthy();
+    expect(screen.getAllByText('45.00')).toHaveLength(1);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('work.create.action')).toBeNull();
     expect(screen.getByTestId('dashboard-period-week').props.accessibilityState).toEqual({ selected: true });
     expect(screen.getByTestId('dashboard-period-week').parent?.props.accessibilityLabel).toBe('dashboard.period.label');
     expect(screen.getByText('navigation.tab.dashboard').props.accessibilityRole).toBe('header');
-    expect(screen.getByText('dashboard.section.operational').props.accessibilityRole).toBe('header');
-    expect(screen.getByText('dashboard.section.efficiency').props.accessibilityRole).toBe('header');
+    expect(screen.getByText('dashboard.section.total.week').props.accessibilityRole).toBe('header');
+    expect(screen.getByText('dashboard.section.average').props.accessibilityRole).toBe('header');
   });
 
   test('changes the selected period and updates displayed KPI values', async () => {
@@ -52,7 +52,8 @@ describe('DashboardContent', () => {
     await fireEvent.press(screen.getByTestId('dashboard-period-today'));
 
     expect(screen.getByTestId('dashboard-period-today').props.accessibilityState).toEqual({ selected: true });
-    expect(screen.getAllByText(formatDashboardCurrency('en', 25))).not.toHaveLength(0);
+    expect(screen.getByText('dashboard.section.total.today')).toBeTruthy();
+    expect(screen.getAllByText('25.00')).not.toHaveLength(0);
   });
 
   test('keeps every canonical period option interactive and selected-state controlled', async () => {
@@ -103,7 +104,7 @@ describe('DashboardContent', () => {
     mockDashboardState = { status: 'ready', metrics: { totalIncome: 1, totalHours: 0, totalOrders: 0, totalKilometers: 0, totalShifts: 1, incomePerHour: 0, incomePerOrder: 0, incomePerKilometer: 0 } };
     await renderDashboard();
 
-    expect(screen.getAllByText(formatDashboardCurrency('en', 0))).toHaveLength(3);
+    expect(screen.getAllByText('0.00')).toHaveLength(3);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('chart')).toBeNull();
   });
