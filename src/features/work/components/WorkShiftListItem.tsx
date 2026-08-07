@@ -25,7 +25,6 @@ export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItem
   const platforms = workPlatformKeys
     .filter((key) => calculatePlatformBrutto(shift.analytics.platforms[key]) > 0 || calculatePlatformOrders(shift.analytics.platforms[key]) > 0)
     .map((key) => key === 'other' ? shift.analytics.platforms.other.name || t('work.platform.other') : t(`work.platform.${key}`));
-  const baseIncome = workPlatformKeys.reduce((total, key) => total + shift.analytics.platforms[key].income, 0);
   const brutto = workPlatformKeys.reduce((total, key) => total + calculatePlatformBrutto(shift.analytics.platforms[key]), 0);
   const orders = workPlatformKeys.reduce((total, key) => total + calculatePlatformOrders(shift.analytics.platforms[key]), 0);
   const incomePerHour = shift.hours > 0 ? brutto / shift.hours : 0;
@@ -43,7 +42,7 @@ export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItem
       <View style={[styles.detailsRow, { gap: spacing.md }]}>
         <View style={[styles.detailPanel, { borderColor: colors.border }]}>
           <AppText muted style={styles.panelTitle} variant="label">{t('work.history.shiftData')}</AppText>
-          <MetricRow label={t('work.history.baseIncome')} value={formatCurrency(locale, baseIncome)} />
+          <AppText adjustsFontSizeToFit minimumFontScale={0.78} numberOfLines={1} style={styles.panelIncome} variant="body">{formatCurrency(locale, brutto)}</AppText>
           <View style={[styles.innerSeparator, { backgroundColor: colors.border }]} />
           <MetricRow color="#579aff" label={t('work.history.orders')} value={formatNumber(locale, orders, 0)} />
           <MetricRow label={t('work.history.hours')} value={hours} />
@@ -90,6 +89,7 @@ const styles = StyleSheet.create({
   detailsRow: { flexDirection: 'row' },
   detailPanel: { borderRadius: 16, borderWidth: 1, flex: 1, flexBasis: 0, gap: 8, minWidth: 0, padding: 10 },
   panelTitle: { fontSize: 13, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase' },
+  panelIncome: { fontSize: 17, fontWeight: '700', lineHeight: 22, minWidth: 0, textAlign: 'right' },
   panelTitleCentered: { textAlign: 'center' },
   innerSeparator: { height: 1 },
   metricRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'nowrap', minWidth: 0 },

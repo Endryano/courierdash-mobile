@@ -137,7 +137,7 @@ describe('WorkShiftsPlaceholder', () => {
     const value = screen.getByText('PLN 139.38');
     expect(value.props.numberOfLines).toBe(1);
     expect(value.props.adjustsFontSizeToFit).toBe(true);
-    expect(screen.getByText('work.history.baseIncome').props.numberOfLines).toBe(1);
+    expect(screen.queryByText('work.history.baseIncome')).toBeNull();
     expect(screen.getAllByText('PLN 2,230.00')).toHaveLength(2);
     expect(screen.getByText('230')).toBeTruthy();
   });
