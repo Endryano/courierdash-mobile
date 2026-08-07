@@ -113,6 +113,19 @@ describe('WorkShiftEditForm', () => {
     expect(tree.indexOf('work-edit-platform-card-uber')).toBeLessThan(tree.indexOf('work-edit-form-actions'));
   });
 
+  test('keeps Details fields and expanded optional metrics in predictable paired rows', async () => {
+    const editableState = readyState();
+    if (!('input' in editableState)) throw new Error('ready state expected');
+    editableState.input.platforms.uber.appTips = 8;
+    mockEditState = editableState;
+    const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
+
+    expect(StyleSheet.flatten(view.getByTestId('work-edit-details-pair').props.style)).toMatchObject({ flexDirection: 'row' });
+    expect(StyleSheet.flatten(view.getByTestId('work-edit-uber-primary-pair').props.style)).toMatchObject({ flexDirection: 'row' });
+    expect(StyleSheet.flatten(view.getByTestId('work-edit-uber-optional-pair').props.style)).toMatchObject({ flexDirection: 'row' });
+    expect(view.getByTestId('work-edit-uber-bonuses')).toBeTruthy();
+  });
+
   test.each([
     ['loading', 'work.edit.loading'],
     ['not_found', 'work.edit.notFound'],

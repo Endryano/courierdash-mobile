@@ -48,6 +48,18 @@ describe('WorkShiftCreateForm', () => {
     for (const platform of ['uber', 'wolt', 'bolt', 'glovo', 'stuart', 'other']) expect(view.getByTestId(`work-platform-${platform}`)).toBeTruthy();
   });
 
+  test('keeps Details fields and expanded optional metrics in predictable paired rows', async () => {
+    const view = await renderForm();
+    expect(StyleSheet.flatten(view.getByTestId('work-create-details-pair').props.style)).toMatchObject({ flexDirection: 'row' });
+
+    await act(async () => { fireEvent.press(view.getByTestId('work-platform-uber')); });
+    await act(async () => { fireEvent.press(view.getByTestId('work-create-platform-card-uber-details-toggle')); });
+
+    expect(StyleSheet.flatten(view.getByTestId('work-create-uber-primary-pair').props.style)).toMatchObject({ flexDirection: 'row' });
+    expect(StyleSheet.flatten(view.getByTestId('work-create-uber-optional-pair').props.style)).toMatchObject({ flexDirection: 'row' });
+    expect(view.getByTestId('work-uber-bonuses')).toBeTruthy();
+  });
+
   test('uses selectable platform controls and keeps deselected draft metrics out of the Create payload', async () => {
     const view = await renderForm();
     const uber = view.getByTestId('work-platform-uber');

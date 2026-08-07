@@ -32,9 +32,9 @@ export function WorkShiftPlatformFieldsCard({ accentColor, children, detailsExpa
   const { colors, radii, spacing } = useTheme();
 
   return (
-    <AppCard style={{ backgroundColor: '#22232a', borderColor: accentColor, borderRadius: 24, borderWidth: 2.5, gap: spacing.lg, padding: spacing.lg }} testID={testID} variant="elevated">
+    <AppCard style={{ backgroundColor: '#22232a', borderColor: accentColor, borderRadius: 20, borderWidth: 1.5, gap: spacing.md, padding: spacing.md }} testID={testID} variant="elevated">
       <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <AppText style={{ fontSize: 25, fontWeight: '800' }} variant="body">{title}</AppText>
+        <AppText style={{ fontSize: 22, fontWeight: '800' }} variant="body">{title}</AppText>
         <Pressable accessibilityLabel={removeAccessibilityLabel} accessibilityRole="button" onPress={onRemove} style={({ pressed }) => [styles.remove, { borderColor: '#53627a', borderRadius: radii.full, opacity: pressed ? 0.7 : 1 }]} testID={`${testID}-remove`}>
           <AppText style={{ color: colors.textSecondary, fontSize: 24, lineHeight: 28 }}>×</AppText>
         </Pressable>
@@ -49,5 +49,5 @@ export function WorkShiftPlatformFieldsCard({ accentColor, children, detailsExpa
 }
 
 const styles = StyleSheet.create({
-  remove: { alignItems: 'center', borderWidth: 1.5, height: 42, justifyContent: 'center', width: 42 },
+  remove: { alignItems: 'center', borderWidth: 1.5, height: 48, justifyContent: 'center', width: 48 },
 });

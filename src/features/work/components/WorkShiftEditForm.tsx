@@ -5,7 +5,6 @@ import { AppStateSurface } from '@/components/ui/AppStateSurface';
 import { AppText } from '@/components/ui/AppText';
 import { Screen } from '@/components/ui/Screen';
 import { useLocalization } from '@/i18n/LocalizationProvider';
-import { useTheme } from '@/theme/ThemeProvider';
 
 import { editableWorkPlatformKeys, type EditableWorkPlatformKey } from '../domain/workShiftEditable';
 import type { WorkShiftEditInput } from '../domain/workShiftEdit';
@@ -13,6 +12,7 @@ import { useWorkShiftEdit } from '../hooks/useWorkShiftEdit';
 import { WorkShiftDateField } from './WorkShiftDateField';
 import { WorkFormActions } from './WorkFormActions';
 import { WorkFormField } from './WorkFormField';
+import { WorkFormFieldPair } from './WorkFormFieldPair';
 import { WorkShiftFormSection } from './WorkShiftFormSection';
 import { WorkShiftFormShell } from './WorkShiftFormShell';
 import { getWorkPlatformAccent, WorkShiftPlatformFieldsCard } from './WorkShiftPlatformFieldsCard';
@@ -32,7 +32,6 @@ function formatEditNumericValue(value: number | null): string {
 export function WorkShiftEditForm({ onCancel }: Props) {
   const edit = useWorkShiftEdit();
   const { t } = useLocalization();
-  const { spacing } = useTheme();
   const [input, setInput] = useState<WorkShiftEditInput | null>(null);
   const [expandedPlatforms, setExpandedPlatforms] = useState<Set<EditableWorkPlatformKey>>(() => new Set());
   const initializedDisclosure = useRef(false);
@@ -96,10 +95,10 @@ export function WorkShiftEditForm({ onCancel }: Props) {
     >
       <WorkShiftFormSection testID="work-edit-general" title={t('work.form.details')}>
         <WorkShiftDateField label={t('work.create.date')} value={currentInput.date} onChange={(date) => setInput((current) => ({ ...(current ?? currentInput), date }))} testID="work-edit-date" />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
-          <View style={{ flexGrow: 1, minWidth: 120 }}><WorkFormField label={t('work.create.km')} value={formatEditNumericValue(currentInput.km)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), km: parse(value) }))} testID="work-edit-km" /></View>
-          <View style={{ flexGrow: 1, minWidth: 120 }}><WorkFormField label={t('work.create.hours')} value={formatEditNumericValue(currentInput.hours)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), hours: parse(value) }))} testID="work-edit-hours" /></View>
-        </View>
+        <WorkFormFieldPair testID="work-edit-details-pair">
+          <WorkFormField label={t('work.create.km')} value={formatEditNumericValue(currentInput.km)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), km: parse(value) }))} testID="work-edit-km" />
+          <WorkFormField label={t('work.create.hours')} value={formatEditNumericValue(currentInput.hours)} keyboardType="decimal-pad" onChangeText={(value) => setInput((current) => ({ ...(current ?? currentInput), hours: parse(value) }))} testID="work-edit-hours" />
+        </WorkFormFieldPair>
       </WorkShiftFormSection>
       <WorkShiftFormSection testID="work-edit-platforms" title={t('work.form.income')}>
         <WorkShiftPlatformSelector
@@ -128,11 +127,14 @@ export function WorkShiftEditForm({ onCancel }: Props) {
             title={t(`work.platform.${platform}`)}
           >
             {platform === 'other' ? <WorkFormField label={t('work.create.otherName')} value={currentInput.platforms.other.name ?? ''} onChangeText={(name) => update('other', { name })} testID="work-edit-other-name" /> : null}
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-              {metrics.slice(0, 2).map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 110 }}><WorkFormField label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
-            </View>
-            {expandedPlatforms.has(platform) ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-              {optionalMetrics.map((metric) => <View key={metric} style={{ flexGrow: 1, minWidth: 132 }}><WorkFormField label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} /></View>)}
+            <WorkFormFieldPair testID={`work-edit-${platform}-primary-pair`}>
+              {metrics.slice(0, 2).map((metric) => <WorkFormField key={metric} label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} />)}
+            </WorkFormFieldPair>
+            {expandedPlatforms.has(platform) ? <View style={{ gap: 8 }}>
+              <WorkFormFieldPair testID={`work-edit-${platform}-optional-pair`}>
+                {optionalMetrics.slice(0, 2).map((metric) => <WorkFormField key={metric} label={t(`work.metric.${metric}`)} value={formatEditNumericValue(value[metric])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [metric]: parse(text) })} testID={`work-edit-${platform}-${metric}`} />)}
+              </WorkFormFieldPair>
+              <WorkFormField label={t(`work.metric.${optionalMetrics[2]}`)} value={formatEditNumericValue(value[optionalMetrics[2]])} keyboardType="decimal-pad" onChangeText={(text) => update(platform, { [optionalMetrics[2]]: parse(text) })} testID={`work-edit-${platform}-${optionalMetrics[2]}`} />
             </View> : null}
           </WorkShiftPlatformFieldsCard>
         );

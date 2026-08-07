@@ -21,7 +21,7 @@ export function WorkShiftFormShell({ actions, children, message, testID, title }
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
           <AppText accessibilityRole="header" style={styles.title} variant="title">{title}</AppText>
-          <View style={[styles.canvas, { backgroundColor: '#202126', borderColor: '#34435d', borderRadius: 24, gap: spacing.lg, marginTop: spacing.md, padding: spacing.lg }]}>
+          <View style={[styles.canvas, { backgroundColor: '#202126', borderColor: '#2e3d54', borderRadius: 22, gap: spacing.lg, marginTop: spacing.md, padding: spacing.lg }]}>
             {children}
             {message === undefined ? null : <View style={[styles.message, { backgroundColor: colors.surfaceElevated, borderColor: colors.border, borderRadius: radii.md, gap: spacing.xs, padding: spacing.md }]}>{message}</View>}
             <View style={{ gap: spacing.sm }} testID={testID === undefined ? undefined : `${testID}-actions`}>{actions}</View>
@@ -33,7 +33,7 @@ export function WorkShiftFormShell({ actions, children, message, testID, title }
 }
 
 const styles = StyleSheet.create({
-  canvas: { borderWidth: 1.5 },
+  canvas: { borderWidth: 1 },
   message: { borderWidth: 1.5 },
   title: { fontSize: 28, lineHeight: 34 },
 });
