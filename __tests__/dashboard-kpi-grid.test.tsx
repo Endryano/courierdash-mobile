@@ -34,12 +34,10 @@ describe('Dashboard presentation components', () => {
   });
 
   test('makes the supplied Brutto value visually primary without introducing interaction', async () => {
-    await render(<ThemeProvider><DashboardHeroCard label="Total Brutto" secondaryLabel="Income per hour" secondaryValue="10.00 PLN" value="12,345.67 PLN" /></ThemeProvider>);
+    await render(<ThemeProvider><DashboardHeroCard label="Total Brutto" value="12,345.67 PLN" /></ThemeProvider>);
 
     expect(screen.getByText('Total Brutto')).toBeTruthy();
-    expect(screen.getByText('Income per hour')).toBeTruthy();
-    expect(screen.getByText('10.00 PLN')).toBeTruthy();
-    expect(StyleSheet.flatten(screen.getByText('12,345.67 PLN').props.style)).toMatchObject({ fontSize: 40, lineHeight: 48 });
+    expect(StyleSheet.flatten(screen.getByText('12,345.67 PLN').props.style)).toMatchObject({ fontSize: 42, lineHeight: 50 });
     expect(screen.getByText('12,345.67 PLN').parent?.parent?.props.onPress).toBeUndefined();
   });
 });

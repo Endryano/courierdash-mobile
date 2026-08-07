@@ -28,7 +28,7 @@ describe('DashboardContent', () => {
   test('renders the Brutto-first hero, metric sections, and PLN formatted canonical values', async () => {
     await renderDashboard();
 
-    expect(screen.getByText('dashboard.title')).toBeTruthy();
+    expect(screen.getByText('navigation.tab.dashboard')).toBeTruthy();
     for (const label of ['dashboard.totalIncome', 'dashboard.totalHours', 'dashboard.totalOrders', 'dashboard.totalKilometers', 'dashboard.totalShifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.operational', 'dashboard.section.efficiency']) {
       expect(screen.getByText(label)).toBeTruthy();
     }
@@ -39,7 +39,7 @@ describe('DashboardContent', () => {
     expect(screen.queryByText('work.create.action')).toBeNull();
     expect(screen.getByTestId('dashboard-period-week').props.accessibilityState).toEqual({ selected: true });
     expect(screen.getByTestId('dashboard-period-week').parent?.props.accessibilityLabel).toBe('dashboard.period.label');
-    expect(screen.getByText('dashboard.title').props.accessibilityRole).toBe('header');
+    expect(screen.getByText('navigation.tab.dashboard').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.operational').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.efficiency').props.accessibilityRole).toBe('header');
   });
@@ -113,7 +113,7 @@ describe('DashboardContent', () => {
     await renderDashboard();
 
     expect(screen.getByText('dashboard.periodEmpty.title')).toBeTruthy();
-    expect(screen.getByText('dashboard.title')).toBeTruthy();
+    expect(screen.getByText('navigation.tab.dashboard')).toBeTruthy();
     expect(screen.getByTestId('dashboard-period-allTime')).toBeTruthy();
     expect(screen.queryByText('dashboard.totalIncome')).toBeNull();
   });

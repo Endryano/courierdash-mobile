@@ -22,7 +22,7 @@ export const defaultLocale: SupportedLocale = 'pl';
 
 const navigationTranslations = {
   pl: {
-    'navigation.tab.dashboard': 'Pulpit',
+    'navigation.tab.dashboard': 'Statystyki',
     'navigation.tab.work': 'Zmiany',
     'navigation.tab.more': 'Więcej',
     'navigation.more.title': 'Więcej',
@@ -33,7 +33,7 @@ const navigationTranslations = {
     'navigation.backToWork': 'Wróć do zmian',
   },
   uk: {
-    'navigation.tab.dashboard': 'Панель',
+    'navigation.tab.dashboard': 'Статистика',
     'navigation.tab.work': 'Зміни',
     'navigation.tab.more': 'Більше',
     'navigation.more.title': 'Більше',
@@ -44,7 +44,7 @@ const navigationTranslations = {
     'navigation.backToWork': 'Повернутися до змін',
   },
   en: {
-    'navigation.tab.dashboard': 'Dashboard',
+    'navigation.tab.dashboard': 'Statistics',
     'navigation.tab.work': 'Work',
     'navigation.tab.more': 'More',
     'navigation.more.title': 'More',
@@ -55,7 +55,7 @@ const navigationTranslations = {
     'navigation.backToWork': 'Back to work shifts',
   },
   ru: {
-    'navigation.tab.dashboard': 'Панель',
+    'navigation.tab.dashboard': 'Статистика',
     'navigation.tab.work': 'Смены',
     'navigation.tab.more': 'Больше',
     'navigation.more.title': 'Больше',
@@ -140,12 +140,48 @@ const workFormPresentationTranslations = {
   },
 } as const;
 
+const dashboardPresentationTranslations = {
+  pl: {
+    'dashboard.title': 'Statystyki',
+    'dashboard.loading': 'Ładowanie statystyk…',
+    'dashboard.empty.description': 'Dodaj pierwszą zmianę, aby zobaczyć statystyki.',
+    'dashboard.error.title': 'Statystyki są tymczasowo niedostępne',
+    'dashboard.section.operational': 'Łączne wartości',
+    'dashboard.section.efficiency': 'Średnie wskaźniki',
+  },
+  uk: {
+    'dashboard.title': 'Статистика',
+    'dashboard.loading': 'Завантаження статистики…',
+    'dashboard.empty.description': 'Додайте першу зміну, щоб побачити статистику.',
+    'dashboard.error.title': 'Статистика тимчасово недоступна',
+    'dashboard.section.operational': 'Загальні значення',
+    'dashboard.section.efficiency': 'Середні показники',
+  },
+  en: {
+    'dashboard.title': 'Statistics',
+    'dashboard.loading': 'Loading statistics…',
+    'dashboard.empty.description': 'Add your first shift to see statistics.',
+    'dashboard.error.title': 'Statistics are temporarily unavailable',
+    'dashboard.section.operational': 'Total values',
+    'dashboard.section.efficiency': 'Average metrics',
+  },
+  ru: {
+    'dashboard.title': 'Статистика',
+    'dashboard.loading': 'Загрузка статистики…',
+    'dashboard.empty.description': 'Добавьте первую смену, чтобы увидеть статистику.',
+    'dashboard.error.title': 'Статистика временно недоступна',
+    'dashboard.section.operational': 'Общие значения',
+    'dashboard.section.efficiency': 'Средние показатели',
+  },
+} as const;
+
 export const translations = {
   pl: {
     ...navigationTranslations.pl,
     ...workShiftCreateValidationTranslations.pl,
     ...workShiftDateTranslations.pl,
     ...workFormPresentationTranslations.pl,
+    ...dashboardPresentationTranslations.pl,
     'dashboard.period.label': 'Wybór okresu',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Podstawa motywu i lokalizacji jest gotowa.',
@@ -163,6 +199,7 @@ export const translations = {
     ...workShiftCreateValidationTranslations.uk,
     ...workShiftDateTranslations.uk,
     ...workFormPresentationTranslations.uk,
+    ...dashboardPresentationTranslations.uk,
     'dashboard.period.label': 'Вибір періоду',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основу теми та локалізації підготовлено.',
@@ -180,6 +217,7 @@ export const translations = {
     ...workShiftCreateValidationTranslations.en,
     ...workShiftDateTranslations.en,
     ...workFormPresentationTranslations.en,
+    ...dashboardPresentationTranslations.en,
     'dashboard.period.label': 'Period selection',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Theme and localization foundation is ready.',
@@ -197,6 +235,7 @@ export const translations = {
     ...workShiftCreateValidationTranslations.ru,
     ...workShiftDateTranslations.ru,
     ...workFormPresentationTranslations.ru,
+    ...dashboardPresentationTranslations.ru,
     'dashboard.period.label': 'Выбор периода',
     'foundation.title': 'CourierDash Mobile',
     'foundation.description': 'Основа темы и локализации готова.',

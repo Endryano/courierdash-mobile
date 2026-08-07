@@ -9,10 +9,10 @@ const mockSignOut = jest.fn<() => Promise<void>>();
 let capturedScreenOptions: Record<string, unknown> | undefined;
 const registeredTabs: string[] = [];
 const tabLabels = {
-  en: { 'navigation.tab.dashboard': 'Dashboard', 'navigation.tab.work': 'Work', 'navigation.tab.more': 'More' },
-  pl: { 'navigation.tab.dashboard': 'Pulpit', 'navigation.tab.work': 'Zmiany', 'navigation.tab.more': 'Więcej' },
-  ru: { 'navigation.tab.dashboard': 'Панель', 'navigation.tab.work': 'Смены', 'navigation.tab.more': 'Больше' },
-  uk: { 'navigation.tab.dashboard': 'Панель', 'navigation.tab.work': 'Зміни', 'navigation.tab.more': 'Більше' },
+  en: { 'navigation.tab.dashboard': 'Statistics', 'navigation.tab.work': 'Work', 'navigation.tab.more': 'More' },
+  pl: { 'navigation.tab.dashboard': 'Statystyki', 'navigation.tab.work': 'Zmiany', 'navigation.tab.more': 'Więcej' },
+  ru: { 'navigation.tab.dashboard': 'Статистика', 'navigation.tab.work': 'Смены', 'navigation.tab.more': 'Больше' },
+  uk: { 'navigation.tab.dashboard': 'Статистика', 'navigation.tab.work': 'Зміни', 'navigation.tab.more': 'Більше' },
 } as const;
 let mockLocale: keyof typeof tabLabels = 'en';
 
@@ -61,7 +61,7 @@ describe('AppTabsLayout', () => {
     await renderTabs();
 
     expect(registeredTabs).toEqual(['index', 'work', 'more']);
-    expect(screen.getByText('index:Dashboard')).toBeTruthy();
+    expect(screen.getByText('index:Statistics')).toBeTruthy();
     expect(screen.getByText('work:Work')).toBeTruthy();
     expect(screen.getByText('more:More')).toBeTruthy();
     expect(registeredTabs).not.toContain('statistics');
@@ -88,10 +88,10 @@ describe('AppTabsLayout', () => {
   });
 
   test.each([
-    ['pl', 'Pulpit', 'Zmiany', 'Więcej'],
-    ['uk', 'Панель', 'Зміни', 'Більше'],
-    ['en', 'Dashboard', 'Work', 'More'],
-    ['ru', 'Панель', 'Смены', 'Больше'],
+    ['pl', 'Statystyki', 'Zmiany', 'Więcej'],
+    ['uk', 'Статистика', 'Зміни', 'Більше'],
+    ['en', 'Statistics', 'Work', 'More'],
+    ['ru', 'Статистика', 'Смены', 'Больше'],
   ] as [keyof typeof tabLabels, string, string, string][])('renders localized labels for %s', async (locale, dashboard, work, more) => {
     mockLocale = locale;
     await renderTabs();
@@ -103,12 +103,12 @@ describe('AppTabsLayout', () => {
 
   test('updates tab labels after a localization rerender without custom navigation state', async () => {
     const view = await renderTabs();
-    expect(screen.getByText('index:Dashboard')).toBeTruthy();
+    expect(screen.getByText('index:Statistics')).toBeTruthy();
 
     mockLocale = 'uk';
     await view.rerender(<ThemeProvider><AppTabsLayout /></ThemeProvider>);
 
-    expect(screen.getByText('index:Панель')).toBeTruthy();
+    expect(screen.getByText('index:Статистика')).toBeTruthy();
     expect(screen.getByText('work:Зміни')).toBeTruthy();
     expect(screen.getByText('more:Більше')).toBeTruthy();
   });

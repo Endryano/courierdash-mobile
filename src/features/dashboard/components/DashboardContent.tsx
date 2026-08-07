@@ -63,8 +63,8 @@ export function DashboardContent() {
   if (dashboard.status === 'period_empty') {
     return (
       <Screen>
-        <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
-          <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('dashboard.title')} />
+        <ScrollView contentContainerStyle={{ gap: spacing.lg, padding: spacing.lg, paddingBottom: spacing.xxl }}>
+          <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('navigation.tab.dashboard')} />
           <View style={{ gap: spacing.xs }}>
             <AppText accessibilityRole="header" variant="title">{t('dashboard.periodEmpty.title')}</AppText>
             <AppText muted>{t('dashboard.periodEmpty.description')}</AppText>
@@ -76,23 +76,24 @@ export function DashboardContent() {
 
   const { metrics } = dashboard;
   const operationalMetrics: readonly DashboardKpiItem[] = [
+    { key: 'orders', label: t('dashboard.totalOrders'), tone: 'orders', value: formatNumber(locale, metrics.totalOrders, 0) },
     { key: 'hours', label: t('dashboard.totalHours'), value: formatNumber(locale, metrics.totalHours, 2) },
-    { key: 'kilometers', label: t('dashboard.totalKilometers'), value: formatNumber(locale, metrics.totalKilometers, 2) },
-    { key: 'orders', label: t('dashboard.totalOrders'), value: formatNumber(locale, metrics.totalOrders, 0) },
-    { key: 'shifts', label: t('dashboard.totalShifts'), value: formatNumber(locale, metrics.totalShifts, 0) },
+    { key: 'kilometers', label: t('dashboard.totalKilometers'), tone: 'distance', value: formatNumber(locale, metrics.totalKilometers, 2) },
+    { key: 'shifts', label: t('dashboard.totalShifts'), tone: 'shifts', value: formatNumber(locale, metrics.totalShifts, 0) },
   ];
   const efficiencyMetrics: readonly DashboardMetricSectionItem[] = [
-    { label: t('dashboard.incomePerOrder'), value: formatCurrency(locale, metrics.incomePerOrder) },
-    { label: t('dashboard.incomePerKilometer'), value: formatCurrency(locale, metrics.incomePerKilometer) },
+    { key: 'income-per-hour', label: t('dashboard.incomePerHour'), tone: 'income', value: formatCurrency(locale, metrics.incomePerHour) },
+    { key: 'income-per-order', label: t('dashboard.incomePerOrder'), tone: 'orders', value: formatCurrency(locale, metrics.incomePerOrder) },
+    { key: 'income-per-kilometer', label: t('dashboard.incomePerKilometer'), tone: 'distance', value: formatCurrency(locale, metrics.incomePerKilometer) },
   ];
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={{ gap: spacing.md, padding: spacing.xl }}>
-        <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('dashboard.title')} />
-        <DashboardHeroCard label={t('dashboard.totalIncome')} secondaryLabel={t('dashboard.incomePerHour')} secondaryValue={formatCurrency(locale, metrics.incomePerHour)} value={formatCurrency(locale, metrics.totalIncome)} />
-        <View style={{ gap: spacing.sm }}>
-          <AppText accessibilityRole="header" variant="label">{t('dashboard.section.operational')}</AppText>
+      <ScrollView contentContainerStyle={{ gap: spacing.lg, padding: spacing.lg, paddingBottom: spacing.xxl }}>
+        <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('navigation.tab.dashboard')} />
+        <View style={{ gap: spacing.md }}>
+          <AppText accessibilityRole="header" style={{ fontSize: 18, fontWeight: '700', letterSpacing: 1, lineHeight: 24, textTransform: 'uppercase' }} variant="label">{t('dashboard.section.operational')}</AppText>
+          <DashboardHeroCard label={t('dashboard.totalIncome')} value={formatCurrency(locale, metrics.totalIncome)} />
           <DashboardKpiGrid items={operationalMetrics} />
         </View>
         <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.efficiency')} />
