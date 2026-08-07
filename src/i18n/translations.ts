@@ -5,7 +5,7 @@ export type TranslationKey =
   | 'auth.brand' | 'auth.loginTitle' | 'auth.signupTitle' | 'auth.email' | 'auth.password' | 'auth.confirmPassword' | 'auth.login' | 'auth.signup' | 'auth.logout' | 'auth.goToLogin' | 'auth.goToSignup' | 'auth.loading' | 'auth.required' | 'auth.invalidEmail' | 'auth.passwordMismatch' | 'auth.confirmEmail' | 'auth.signedUp' | 'auth.error.generic' | 'auth.error.invalidCredentials' | 'auth.error.accountExists' | 'auth.error.rateLimit' | 'auth.error.network' | 'auth.error.weakPassword'
   | 'profile.nickname.title' | 'profile.nickname.description' | 'profile.nickname.label' | 'profile.nickname.save' | 'profile.nickname.saving' | 'profile.nickname.error.required' | 'profile.nickname.error.tooShort' | 'profile.nickname.error.tooLong' | 'profile.nickname.error.invalidCharacters' | 'profile.nickname.error.conflict' | 'profile.nickname.error.network' | 'profile.nickname.error.forbidden' | 'profile.nickname.error.unknown'
   | 'navigation.loading' | 'navigation.profileError.title' | 'navigation.profileError.description' | 'navigation.blocked.title' | 'navigation.blocked.description' | 'navigation.retry' | 'navigation.retrying' | 'navigation.tab.dashboard' | 'navigation.tab.work' | 'navigation.tab.more' | 'navigation.more.title' | 'navigation.more.description' | 'navigation.more.account' | 'navigation.more.analytics' | 'navigation.more.statistics' | 'navigation.backToWork' | 'app.placeholder.title' | 'app.placeholder.nickname'
-  | 'work.loading' | 'work.empty.title' | 'work.empty.description' | 'work.list.title' | 'work.shift.hours' | 'work.shift.km' | 'work.error.title' | 'work.error.description' | 'work.blocked.title' | 'work.blocked.description' | 'work.retry'
+  | 'work.loading' | 'work.empty.title' | 'work.empty.description' | 'work.list.title' | 'work.shift.hours' | 'work.shift.km' | 'work.error.title' | 'work.error.description' | 'work.blocked.title' | 'work.blocked.description' | 'work.retry' | 'work.history.title' | 'work.history.subtitle' | 'work.history.days' | 'work.history.platforms' | 'work.history.shiftData' | 'work.history.efficiency' | 'work.history.baseIncome' | 'work.history.orders' | 'work.history.hours' | 'work.history.kilometers' | 'work.history.incomePerHour' | 'work.history.incomePerKilometer' | 'work.history.incomePerOrder'
   | 'work.create.action' | 'work.create.title' | 'work.create.date' | 'work.create.km' | 'work.create.hours' | 'work.create.otherName' | 'work.create.submit' | 'work.create.submitting' | 'work.create.cancel' | 'work.create.validation' | 'work.create.validation.date' | 'work.create.validation.platform' | 'work.create.validation.number' | 'work.create.validation.nonNegative' | 'work.create.validation.ordersInteger' | 'work.create.validation.otherName' | 'work.create.duplicate' | 'work.create.recoverable' | 'work.create.reconciliation' | 'work.create.reconcile' | 'work.create.blocked' | 'work.create.success'
   | 'work.form.general' | 'work.form.platforms' | 'work.form.details' | 'work.form.income' | 'work.form.showOptional' | 'work.form.hideOptional' | 'work.form.removePlatform'
   | 'work.date.cancel' | 'work.date.confirm' | 'work.date.invalid'
@@ -140,6 +140,21 @@ const workFormPresentationTranslations = {
   },
 } as const;
 
+const workHistoryTranslations = {
+  pl: {
+    'work.history.title': 'Historia zmian', 'work.history.subtitle': '(zawsze pokazuje BRUTTO)', 'work.history.days': 'Dni', 'work.history.platforms': 'PLATFORMY', 'work.history.shiftData': 'DANE ZMIANY', 'work.history.efficiency': 'EFEKTYWNOŚĆ', 'work.history.baseIncome': 'Stawka bazowa:', 'work.history.orders': 'Zamów.:', 'work.history.hours': 'Godz.:', 'work.history.kilometers': 'Km:', 'work.history.incomePerHour': 'zł/godz:', 'work.history.incomePerKilometer': 'zł/km:', 'work.history.incomePerOrder': 'zł/zam:',
+  },
+  uk: {
+    'work.history.title': 'Історія змін', 'work.history.subtitle': '(завжди показує БРУТТО)', 'work.history.days': 'Днів', 'work.history.platforms': 'ПЛАТФОРМИ', 'work.history.shiftData': 'ДАНІ ЗМІНИ', 'work.history.efficiency': 'ЕФЕКТИВНІСТЬ', 'work.history.baseIncome': 'Суха ставка:', 'work.history.orders': 'Зам:', 'work.history.hours': 'Год:', 'work.history.kilometers': 'Км:', 'work.history.incomePerHour': 'зл/год:', 'work.history.incomePerKilometer': 'зл/км:', 'work.history.incomePerOrder': 'зл/зам:',
+  },
+  en: {
+    'work.history.title': 'Shift history', 'work.history.subtitle': '(always shows GROSS)', 'work.history.days': 'Days', 'work.history.platforms': 'PLATFORMS', 'work.history.shiftData': 'SHIFT DATA', 'work.history.efficiency': 'EFFICIENCY', 'work.history.baseIncome': 'Base income:', 'work.history.orders': 'Orders:', 'work.history.hours': 'Hours:', 'work.history.kilometers': 'Km:', 'work.history.incomePerHour': 'PLN/hr:', 'work.history.incomePerKilometer': 'PLN/km:', 'work.history.incomePerOrder': 'PLN/order:',
+  },
+  ru: {
+    'work.history.title': 'История смен', 'work.history.subtitle': '(всегда показывает БРУТТО)', 'work.history.days': 'Дней', 'work.history.platforms': 'ПЛАТФОРМЫ', 'work.history.shiftData': 'ДАННЫЕ СМЕНЫ', 'work.history.efficiency': 'ЭФФЕКТИВНОСТЬ', 'work.history.baseIncome': 'Базовая ставка:', 'work.history.orders': 'Зак.:', 'work.history.hours': 'Час:', 'work.history.kilometers': 'Км:', 'work.history.incomePerHour': 'зл/час:', 'work.history.incomePerKilometer': 'зл/км:', 'work.history.incomePerOrder': 'зл/зак:',
+  },
+} as const;
+
 const dashboardPresentationTranslations = {
   pl: {
     'dashboard.title': 'Statystyki',
@@ -241,6 +256,7 @@ export const translations = {
     ...workShiftCreateValidationTranslations.pl,
     ...workShiftDateTranslations.pl,
     ...workFormPresentationTranslations.pl,
+    ...workHistoryTranslations.pl,
     ...dashboardPresentationTranslations.pl,
     'dashboard.period.label': 'Wybór okresu',
     'foundation.title': 'CourierDash Mobile',
@@ -259,6 +275,7 @@ export const translations = {
     ...workShiftCreateValidationTranslations.uk,
     ...workShiftDateTranslations.uk,
     ...workFormPresentationTranslations.uk,
+    ...workHistoryTranslations.uk,
     ...dashboardPresentationTranslations.uk,
     'dashboard.period.label': 'Вибір періоду',
     'foundation.title': 'CourierDash Mobile',
@@ -277,6 +294,7 @@ export const translations = {
     ...workShiftCreateValidationTranslations.en,
     ...workShiftDateTranslations.en,
     ...workFormPresentationTranslations.en,
+    ...workHistoryTranslations.en,
     ...dashboardPresentationTranslations.en,
     'dashboard.period.label': 'Period selection',
     'foundation.title': 'CourierDash Mobile',
@@ -295,6 +313,7 @@ export const translations = {
     ...workShiftCreateValidationTranslations.ru,
     ...workShiftDateTranslations.ru,
     ...workFormPresentationTranslations.ru,
+    ...workHistoryTranslations.ru,
     ...dashboardPresentationTranslations.ru,
     'dashboard.period.label': 'Выбор периода',
     'foundation.title': 'CourierDash Mobile',
