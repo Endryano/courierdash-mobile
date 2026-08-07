@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render, screen, within } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { translations } from '@/i18n/translations';
 import type { StatisticsMetrics } from '@/features/statistics/domain/statisticsMetrics';
 import type { StatisticsMetricsState } from '@/features/statistics/hooks/useStatisticsMetrics';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { darkTheme } from '@/theme/theme';
 
 const mockRetry = jest.fn<() => Promise<void>>();
 let mockStatisticsState: StatisticsMetricsState;
@@ -146,10 +148,21 @@ describe('StatisticsContent', () => {
   });
 
   test('uses concise Ukrainian Statistics period labels', () => {
+    expect(translations.uk['dashboard.period.week']).toBe('Тиждень');
+    expect(translations.uk['dashboard.period.month']).toBe('Місяць');
     expect(translations.uk['statistics.period.today']).toBe('Сьогодні');
     expect(translations.uk['statistics.period.week']).toBe('Тиждень');
     expect(translations.uk['statistics.period.month']).toBe('Місяць');
     expect(translations.uk['statistics.period.allTime']).toBe('За весь час');
+  });
+
+  test('renders selected and inactive filter periods with visibly distinct surfaces', async () => {
+    await renderStatistics();
+
+    const selectedStyle = StyleSheet.flatten(screen.getByTestId('statistics-period-week').props.style);
+    const inactiveStyle = StyleSheet.flatten(screen.getByTestId('statistics-period-today').props.style);
+    expect(selectedStyle).toMatchObject({ backgroundColor: '#17343A', borderColor: darkTheme.colors.accent });
+    expect(inactiveStyle).toMatchObject({ backgroundColor: darkTheme.colors.surface, borderColor: darkTheme.colors.border });
   });
 
   test('renders safe loading, empty, period-empty, recoverable, and blocked states', async () => {

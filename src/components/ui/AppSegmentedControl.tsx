@@ -4,6 +4,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 
 import { AppText } from './AppText';
 
+const filterActiveBackground = '#17343A';
+
 export type AppSegmentedControlOption<T extends string> = {
   value: T;
   label: string;
@@ -42,7 +44,7 @@ export function AppSegmentedControl<T extends string>({ accessibilityLabel, appe
                 styles.option,
                 appearance === 'filter' ? styles.filterOption : undefined,
                 {
-                  backgroundColor: appearance === 'filter' ? colors.surfaceElevated : selected ? colors.accent : colors.surface,
+                  backgroundColor: appearance === 'filter' ? selected ? filterActiveBackground : colors.surface : selected ? colors.accent : colors.surface,
                   borderColor: appearance === 'filter' && selected ? colors.accent : colors.border,
                   borderRadius: radii.md,
                   opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
@@ -52,7 +54,7 @@ export function AppSegmentedControl<T extends string>({ accessibilityLabel, appe
               ]}
               testID={option.testID}
             >
-              <AppText muted={!selected} style={[appearance === 'filter' ? styles.filterLabel : undefined, { color: selected ? appearance === 'filter' ? colors.accent : colors.background : undefined }]} variant="label">
+              <AppText muted={!selected} style={[appearance === 'filter' ? selected ? styles.filterActiveLabel : styles.filterLabel : undefined, { color: selected ? appearance === 'filter' ? colors.accent : colors.background : undefined }]} variant="label">
                 {option.label}
               </AppText>
             </Pressable>,
@@ -71,6 +73,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   filterOption: { alignItems: 'center', justifyContent: 'center', minHeight: 48, minWidth: 96 },
-  filterLabel: { fontSize: 13, fontWeight: '600' },
+  filterLabel: { fontSize: 13, fontWeight: '500' },
+  filterActiveLabel: { fontSize: 13, fontWeight: '600' },
   breakBefore: { flexBasis: '100%' },
 });

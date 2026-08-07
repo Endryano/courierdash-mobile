@@ -253,6 +253,8 @@ const dashboardPresentationTranslations = {
 const statisticsPeriodOverrides: Readonly<Record<SupportedLocale, Partial<TranslationDictionary>>> = {
   pl: {},
   uk: {
+    'dashboard.period.week': 'Тиждень',
+    'dashboard.period.month': 'Місяць',
     'statistics.period.week': 'Тиждень',
     'statistics.period.month': 'Місяць',
   },
