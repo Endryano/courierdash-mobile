@@ -20,7 +20,7 @@ function renderPlaceholder() {
   return render(<ThemeProvider><WorkShiftsPlaceholder /></ThemeProvider>);
 }
 
-function createShift(id: number, date: string, hours: number, km: number): WorkShift {
+function createShift(id: number, date: string, hours: number, km: number, income = 100, orders = 5): WorkShift {
   return {
     id,
     date,
@@ -28,7 +28,7 @@ function createShift(id: number, date: string, hours: number, km: number): WorkS
     km,
     analytics: {
       platforms: {
-        uber: { income: 100, orders: 5, appTips: null, cashTips: 0, bonuses: null },
+        uber: { income, orders, appTips: null, cashTips: 0, bonuses: null },
         wolt: { income: 0, orders: null, appTips: null, cashTips: 0, bonuses: null },
         bolt: { income: 0, orders: null, appTips: null, cashTips: 0, bonuses: null },
         glovo: { income: 0, orders: null, appTips: null, cashTips: 0, bonuses: null },
@@ -128,5 +128,17 @@ describe('WorkShiftsPlaceholder', () => {
     await fireEvent.press(screen.getByTestId('work-delete-1'));
     expect(mockRequestDelete).toHaveBeenCalledWith(shift);
     expect(mockRetry).not.toHaveBeenCalled();
+  });
+
+  test('keeps long monetary values and their labels on single adaptive lines', async () => {
+    mockWorkState = { status: 'ready', shifts: [createShift(1, '2026-07-29', 16, 230, 2230, 110)], retry: mockRetry };
+    await renderPlaceholder();
+
+    const value = screen.getByText('PLN 139.38');
+    expect(value.props.numberOfLines).toBe(1);
+    expect(value.props.adjustsFontSizeToFit).toBe(true);
+    expect(screen.getByText('work.history.baseIncome').props.numberOfLines).toBe(1);
+    expect(screen.getAllByText('PLN 2,230.00')).toHaveLength(2);
+    expect(screen.getByText('230')).toBeTruthy();
   });
 });

@@ -72,7 +72,12 @@ export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItem
 }
 
 function MetricRow({ color, label, value }: { readonly color?: string; readonly label: string; readonly value: string }) {
-  return <View style={styles.metricRow}><AppText style={[styles.metricLabel, color === undefined ? undefined : { color }]} variant="body">{label}</AppText><AppText style={[styles.metricValue, color === undefined ? undefined : { color }]} variant="body">{value}</AppText></View>;
+  return (
+    <View style={styles.metricRow}>
+      <AppText adjustsFontSizeToFit minimumFontScale={0.78} numberOfLines={1} style={[styles.metricLabel, color === undefined ? undefined : { color }]} variant="body">{label}</AppText>
+      <AppText adjustsFontSizeToFit minimumFontScale={0.78} numberOfLines={1} style={[styles.metricValue, color === undefined ? undefined : { color }]} variant="body">{value}</AppText>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -83,13 +88,13 @@ const styles = StyleSheet.create({
   separator: { height: 1 },
   platforms: { fontSize: 14, fontWeight: '500', letterSpacing: 0.3 },
   detailsRow: { flexDirection: 'row' },
-  detailPanel: { borderRadius: 16, borderWidth: 1, flex: 1, gap: 8, padding: 12 },
+  detailPanel: { borderRadius: 16, borderWidth: 1, flex: 1, flexBasis: 0, gap: 8, minWidth: 0, padding: 10 },
   panelTitle: { fontSize: 13, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase' },
   panelTitleCentered: { textAlign: 'center' },
   innerSeparator: { height: 1 },
-  metricRow: { alignItems: 'baseline', flexDirection: 'row', justifyContent: 'space-between' },
-  metricLabel: { color: '#a8b0c1', flex: 1, fontSize: 15, lineHeight: 21 },
-  metricValue: { fontSize: 16, fontWeight: '700', lineHeight: 21, marginLeft: 8, textAlign: 'right' },
+  metricRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'nowrap', minWidth: 0 },
+  metricLabel: { color: '#a8b0c1', flex: 1, flexShrink: 1, fontSize: 13, lineHeight: 19, minWidth: 0 },
+  metricValue: { flexShrink: 1, fontSize: 15, fontWeight: '700', lineHeight: 20, marginLeft: 4, minWidth: 0, textAlign: 'right' },
   editAction: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flex: 1, justifyContent: 'center', minHeight: 48 },
   editText: { fontWeight: '700' },
   deleteAction: { alignItems: 'center', borderRadius: 16, borderWidth: 1, justifyContent: 'center', minHeight: 48, width: 56 },
