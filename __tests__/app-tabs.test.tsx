@@ -5,7 +5,6 @@ import { StyleSheet } from 'react-native';
 
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
-const mockPush = jest.fn();
 const mockSignOut = jest.fn<() => Promise<void>>();
 let capturedScreenOptions: Record<string, unknown> | undefined;
 const registeredTabs: string[] = [];
@@ -36,7 +35,7 @@ jest.mock('expo-router', () => {
     mockTabOptions.set(name, options);
     return React.createElement(Text, { accessibilityLabel: options.tabBarAccessibilityLabel }, `${name}:${options.title}`);
   };
-  return { Tabs, router: { push: mockPush } };
+  return { Tabs };
 });
 jest.mock('@/i18n/LocalizationProvider', () => ({
   useLocalization: () => ({ t: (key: keyof typeof tabLabels.en) => tabLabels[mockLocale][key] ?? key }),
@@ -128,14 +127,14 @@ describe('AppTabsLayout', () => {
     expect(screen.getByText('more:Більше')).toBeTruthy();
   });
 
-  test('keeps More as a localized account screen and opens the protected Statistics route', async () => {
+  test('keeps More as a localized account screen without the removed legacy Statistics entry', async () => {
     await render(<ThemeProvider><MoreRoute /></ThemeProvider>);
 
     expect(screen.getByText('navigation.more.title')).toBeTruthy();
     expect(screen.getByText('navigation.more.account')).toBeTruthy();
     expect(screen.queryByText('navigation.more.description')).toBeNull();
-    await fireEvent.press(screen.getByTestId('more-statistics'));
-    expect(mockPush).toHaveBeenCalledWith('/statistics');
+    expect(screen.queryByTestId('more-statistics')).toBeNull();
+    expect(screen.queryByText('navigation.more.analytics')).toBeNull();
   });
 
   test('shows Logout in More, blocks repeat presses, and leaves navigation to the gate', async () => {
@@ -147,7 +146,6 @@ describe('AppTabsLayout', () => {
     await fireEvent.press(screen.getByTestId('more-logout'));
     await waitFor(() => expect(mockSignOut).toHaveBeenCalledTimes(1));
     expect(screen.getByTestId('more-logout').props.accessibilityState).toEqual({ disabled: true, busy: true });
-    expect(mockPush).not.toHaveBeenCalled();
 
     await act(async () => { resolveSignOut?.(); });
   });
@@ -161,6 +159,5 @@ describe('AppTabsLayout', () => {
 
     expect(await screen.findByText('auth.error.network')).toBeTruthy();
     expect(screen.queryByText(rawError)).toBeNull();
-    expect(mockPush).not.toHaveBeenCalled();
   });
 });

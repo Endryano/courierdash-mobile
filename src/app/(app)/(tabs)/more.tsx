@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -55,9 +54,6 @@ export default function MoreRoute() {
       <ScrollView contentContainerStyle={{ flexGrow: 1, gap: spacing.xl, paddingBottom: 0, paddingHorizontal: spacing.xl, paddingTop: insets.top + spacing.xl }} contentInsetAdjustmentBehavior="never" keyboardShouldPersistTaps="handled">
         <AppText accessibilityRole="header" variant="title">{t('navigation.more.title')}</AppText>
         {nickname ? <MoreSection><MoreAccountCard email={email} label={t('navigation.more.account')} nickname={nickname} /></MoreSection> : null}
-        <MoreSection title={t('navigation.more.analytics')}>
-          <AppButton label={t('navigation.more.statistics')} onPress={() => router.push('/statistics')} testID="more-statistics" variant="secondary" />
-        </MoreSection>
         <MoreSection>
           <AppButton label={pending ? t('auth.loading') : t('auth.logout')} loading={pending} onPress={() => void handleSignOut()} testID="more-logout" variant="danger" />
           {signOutError ? <AuthMessage message={signOutError} /> : null}

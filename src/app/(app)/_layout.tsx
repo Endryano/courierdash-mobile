@@ -13,7 +13,6 @@ export default function AppLayout() {
           <WorkShiftDeleteProvider>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="statistics" />
               <Stack.Screen name="work/create" />
               <Stack.Screen name="work/[id]/edit" />
             </Stack>

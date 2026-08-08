@@ -3,15 +3,14 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-
 
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
-const mockPush = jest.fn();
 const mockSignOut = jest.fn<() => Promise<void>>();
 let mockEmail: string | undefined;
 let mockNickname: string | null = 'Courier_1';
 let mockLocale = 'en';
 
 const localeLabels = {
-  en: { 'navigation.more.title': 'More', 'navigation.more.account': 'Account', 'navigation.more.analytics': 'Analytics', 'navigation.more.statistics': 'Statistics', 'auth.logout': 'Log out', 'auth.loading': 'Loading…' },
-  uk: { 'navigation.more.title': 'Більше', 'navigation.more.account': 'Обліковий запис', 'navigation.more.analytics': 'Аналітика', 'navigation.more.statistics': 'Статистика', 'auth.logout': 'Вийти', 'auth.loading': 'Завантаження…' },
+  en: { 'navigation.more.title': 'More', 'navigation.more.account': 'Account', 'auth.logout': 'Log out', 'auth.loading': 'Loading…' },
+  uk: { 'navigation.more.title': 'Більше', 'navigation.more.account': 'Обліковий запис', 'auth.logout': 'Вийти', 'auth.loading': 'Завантаження…' },
 } as const;
 
 class MockAuthApiError extends Error {
@@ -20,7 +19,6 @@ class MockAuthApiError extends Error {
   }
 }
 
-jest.mock('expo-router', () => ({ router: { push: mockPush } }));
 jest.mock('@/features/auth/authApi', () => ({ AuthApiError: MockAuthApiError }));
 jest.mock('@/features/auth/useAuth', () => ({ useAuth: () => ({ signOut: mockSignOut, user: mockEmail === undefined ? null : { email: mockEmail, id: 'internal-user-id', user_metadata: { private: 'metadata' } } }) }));
 jest.mock('@/features/profile/useProfile', () => ({ useProfile: () => ({ profile: mockNickname === null ? null : { id: 'profile-id', nickname: mockNickname } }) }));
@@ -85,14 +83,11 @@ describe('MoreRoute', () => {
     expect(screen.queryByText('long.account.identifier')).toBeNull();
   });
 
-  test('uses the exact protected Statistics route and no unsupported actions', async () => {
+  test('does not render the removed Analytics section or legacy Statistics action', async () => {
     await renderMore();
 
-    const statistics = screen.getByTestId('more-statistics');
-    expect(statistics.props.accessibilityRole).toBe('button');
-    await fireEvent.press(statistics);
-
-    expect(mockPush).toHaveBeenCalledWith('/statistics');
+    expect(screen.queryByTestId('more-statistics')).toBeNull();
+    expect(screen.queryByText('Analytics')).toBeNull();
     expect(screen.queryByText(/Annual Report/i)).toBeNull();
     expect(screen.queryByText(/Settings/i)).toBeNull();
   });
@@ -105,7 +100,7 @@ describe('MoreRoute', () => {
     await view.rerender(<ThemeProvider><MoreRoute /></ThemeProvider>);
 
     expect(screen.getByText('Обліковий запис')).toBeTruthy();
-    expect(screen.getByText('Аналітика')).toBeTruthy();
+    expect(screen.queryByText('Аналітика')).toBeNull();
   });
 
   test('keeps provider-owned logout pending, safe failure, and retry behavior', async () => {
@@ -119,7 +114,6 @@ describe('MoreRoute', () => {
 
     await fireEvent.press(screen.getByTestId('more-logout'));
     await waitFor(() => expect(mockSignOut).toHaveBeenCalledTimes(2));
-    expect(mockPush).not.toHaveBeenCalled();
   });
 
   test('disables and marks Logout busy while a request is pending', async () => {
