@@ -20,11 +20,13 @@ type AppSegmentedControlProps<T extends string> = {
   onChange: (value: T) => void;
   accessibilityLabel?: string;
   testID?: string;
-  appearance?: 'default' | 'filter';
+  appearance?: 'default' | 'filter' | 'filterWhiteText';
 };
 
 export function AppSegmentedControl<T extends string>({ accessibilityLabel, appearance = 'default', onChange, options, testID, value }: AppSegmentedControlProps<T>) {
   const { colors, radii, spacing } = useTheme();
+  const isFilter = appearance === 'filter' || appearance === 'filterWhiteText';
+  const usesWhiteFilterText = appearance === 'filterWhiteText';
 
   return (
     <View accessibilityLabel={accessibilityLabel} accessibilityRole="tablist" style={[styles.control, { gap: spacing.xs }]} testID={testID}>
@@ -42,10 +44,10 @@ export function AppSegmentedControl<T extends string>({ accessibilityLabel, appe
             onPress={() => onChange(option.value)}
               style={({ pressed }) => [
                 styles.option,
-                appearance === 'filter' ? styles.filterOption : undefined,
+                isFilter ? styles.filterOption : undefined,
                 {
-                  backgroundColor: appearance === 'filter' ? selected ? filterActiveBackground : colors.surface : selected ? colors.accent : colors.surface,
-                  borderColor: appearance === 'filter' && selected ? colors.accent : colors.border,
+                  backgroundColor: isFilter ? selected ? filterActiveBackground : colors.surface : selected ? colors.accent : colors.surface,
+                  borderColor: isFilter && selected ? colors.accent : colors.border,
                   borderRadius: radii.md,
                   opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
                   paddingHorizontal: spacing.sm,
@@ -54,7 +56,7 @@ export function AppSegmentedControl<T extends string>({ accessibilityLabel, appe
               ]}
               testID={option.testID}
             >
-              <AppText muted={!selected} style={[appearance === 'filter' ? selected ? styles.filterActiveLabel : styles.filterLabel : undefined, { color: selected ? appearance === 'filter' ? colors.accent : colors.background : undefined }]} variant="label">
+              <AppText muted={!selected && !usesWhiteFilterText} style={[isFilter ? selected ? styles.filterActiveLabel : styles.filterLabel : undefined, { color: usesWhiteFilterText ? colors.textPrimary : selected ? isFilter ? colors.accent : colors.background : undefined }]} variant="label">
                 {option.label}
               </AppText>
             </Pressable>,

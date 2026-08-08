@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import type { DashboardMetricsState } from '@/features/dashboard/hooks/useDashboardMetrics';
 import { ThemeProvider } from '@/theme/ThemeProvider';
@@ -67,6 +68,16 @@ describe('DashboardContent', () => {
       await fireEvent.press(screen.getByTestId(`dashboard-period-${period}`));
       expect(screen.getByTestId(`dashboard-period-${period}`).props.accessibilityState).toEqual({ selected: true });
     }
+  });
+
+  test('uses white labels for every Dashboard period while preserving active filter surfaces', async () => {
+    await renderDashboard();
+
+    for (const period of ['today', 'week', 'month', 'allTime'] as const) {
+      const label = screen.getByText(`dashboard.period.${period}`);
+      expect(StyleSheet.flatten(label.props.style)).toMatchObject({ color: '#ffffff' });
+    }
+    expect(StyleSheet.flatten(screen.getByTestId('dashboard-period-week').props.style)).toMatchObject({ backgroundColor: '#17343A', borderColor: '#00e5ff' });
   });
 
   test('renders loading and empty states without placeholder metrics', async () => {
