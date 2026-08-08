@@ -20,7 +20,7 @@ export function DashboardMetricSection({ metrics, title }: DashboardMetricSectio
 
   return (
     <>
-      <AppText accessibilityRole="header" style={{ fontSize: 18, fontWeight: '700', letterSpacing: 1, lineHeight: 24, marginBottom: spacing.xs, textTransform: 'uppercase' }} variant="label">{title}</AppText>
+      <AppText accessibilityRole="header" style={{ fontSize: 15, fontWeight: '700', letterSpacing: 0.9, lineHeight: 20, marginBottom: spacing.xxs, textTransform: 'uppercase' }} variant="label">{title}</AppText>
       <DashboardKpiGrid items={metrics} />
     </>
   );

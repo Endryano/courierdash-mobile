@@ -37,11 +37,11 @@ export function DashboardKpiGrid({ items }: DashboardKpiGridProps) {
   const { fontScale, width } = useWindowDimensions();
   const { spacing } = useTheme();
   const availableWidth = Math.max(0, width - spacing.lg * 2);
-  const columns = resolveDashboardKpiGridColumns(availableWidth, fontScale, spacing.md);
-  const itemWidth = columns === 2 ? (availableWidth - spacing.md) / 2 : availableWidth;
+  const columns = resolveDashboardKpiGridColumns(availableWidth, fontScale, spacing.sm);
+  const itemWidth = columns === 2 ? (availableWidth - spacing.sm) / 2 : availableWidth;
 
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }} testID="dashboard-kpi-grid">
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }} testID="dashboard-kpi-grid">
       {items.map(({ key, ...item }) => (
         <View key={key} style={{ width: itemWidth }}>
           <DashboardKpiCard {...item} testID={`dashboard-kpi-${key}`} />
@@ -58,7 +58,7 @@ function DashboardKpiCard({ accessibilityLabel, label, testID, tone = 'default',
   const palette = toneStyles[tone];
 
   return (
-    <AppCard accessibilityLabel={accessibilityLabel ?? `${label}: ${value}`} padding="md" style={[styles.card, { backgroundColor: colors.surface, borderColor: palette.borderColor, gap: spacing.xs }]} testID={testID}>
+    <AppCard accessibilityLabel={accessibilityLabel ?? `${label}: ${value}`} padding="sm" style={[styles.card, { backgroundColor: colors.surface, borderColor: palette.borderColor, gap: spacing.xxs }]} testID={testID}>
       <AppText muted style={styles.label} variant="label">{label}</AppText>
       <View style={styles.valueRow}>
         <AppText style={[styles.value, { color: palette.valueColor }]} variant="body">{value}</AppText>
@@ -69,9 +69,9 @@ function DashboardKpiCard({ accessibilityLabel, label, testID, tone = 'default',
 }
 
 const styles = StyleSheet.create({
-  card: { alignItems: 'center', borderRadius: 18, borderWidth: 1, justifyContent: 'center', minHeight: 108 },
-  label: { fontSize: 13, fontWeight: '600', letterSpacing: 0.8, lineHeight: 18, textAlign: 'center', textTransform: 'uppercase' },
+  card: { alignItems: 'center', borderRadius: 18, borderWidth: 1, justifyContent: 'center', minHeight: 92 },
+  label: { fontSize: 12, fontWeight: '600', letterSpacing: 0.7, lineHeight: 16, textAlign: 'center', textTransform: 'uppercase' },
   valueRow: { alignItems: 'baseline', flexDirection: 'row', gap: 4, justifyContent: 'center' },
-  value: { fontSize: 30, fontWeight: '800', lineHeight: 36, textAlign: 'center' },
-  unit: { fontSize: 15, fontWeight: '600', lineHeight: 20 },
+  value: { fontSize: 26, fontWeight: '800', lineHeight: 31, textAlign: 'center' },
+  unit: { fontSize: 13, fontWeight: '600', lineHeight: 18 },
 });
