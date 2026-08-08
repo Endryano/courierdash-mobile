@@ -13,6 +13,10 @@ let mockCreateState: WorkShiftCreateContextValue;
 jest.mock('@/features/work/hooks/useWorkShiftCreate', () => ({ useWorkShiftCreate: () => mockCreateState }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ locale: 'en', t: (key: string) => key }) }));
 jest.mock('@react-native-community/datetimepicker', () => ({ __esModule: true, default: () => null }));
+jest.mock('react-native-safe-area-context', () => ({
+  ...(jest.requireActual('react-native-safe-area-context') as object),
+  useSafeAreaInsets: () => ({ bottom: 34, left: 0, right: 0, top: 59 }),
+}));
 
 const { WorkShiftCreateForm } = require('@/features/work/components/WorkShiftCreateForm') as typeof import('@/features/work/components/WorkShiftCreateForm');
 
@@ -181,7 +185,7 @@ describe('WorkShiftCreateForm', () => {
 
   test('uses a positive Create action without changing the secondary Cancel action', async () => {
     const view = await renderForm();
-    expect(StyleSheet.flatten(view.getByTestId('work-create-submit').props.style)).toMatchObject({ backgroundColor: '#00af42', minHeight: 64 });
-    expect(StyleSheet.flatten(view.getByTestId('work-create-cancel').props.style)).toMatchObject({ backgroundColor: '#233044', minHeight: 60 });
+    expect(StyleSheet.flatten(view.getByTestId('work-create-submit').props.style)).toMatchObject({ backgroundColor: '#00b844', minHeight: 56 });
+    expect(StyleSheet.flatten(view.getByTestId('work-create-cancel').props.style)).toMatchObject({ backgroundColor: '#1e1e24', minHeight: 52 });
   });
 });

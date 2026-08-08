@@ -14,10 +14,10 @@ type WorkShiftPlatformSelectorProps<TPlatform extends string> = {
 };
 
 export function WorkShiftPlatformSelector<TPlatform extends string>({ disabled = false, getLabel, getTestID, onToggle, platforms, selected, testID }: WorkShiftPlatformSelectorProps<TPlatform>) {
-  const { colors, spacing } = useTheme();
+  const { colors, radii, spacing } = useTheme();
 
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }} testID={testID}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }} testID={testID}>
       {platforms.map((platform) => {
         const isSelected = selected.has(platform);
         return (
@@ -31,16 +31,16 @@ export function WorkShiftPlatformSelector<TPlatform extends string>({ disabled =
             style={({ pressed }) => [
               styles.option,
               {
-                backgroundColor: isSelected ? '#18374c' : '#243247',
-                borderColor: isSelected ? '#00b7ef' : '#465977',
-                borderRadius: 16,
+                backgroundColor: isSelected ? '#17343A' : colors.surface,
+                borderColor: isSelected ? colors.accent : colors.border,
+                borderRadius: radii.full,
                 opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
-                paddingHorizontal: spacing.md,
+                paddingHorizontal: spacing.sm,
               },
             ]}
             testID={getTestID?.(platform)}
           >
-            <AppText style={{ color: colors.textPrimary, fontSize: 17, fontWeight: isSelected ? '800' : '600' }} variant="label">
+            <AppText style={{ color: isSelected ? colors.accent : colors.textPrimary, fontSize: 14, fontWeight: isSelected ? '700' : '600' }} variant="label">
               {isSelected ? `✓ ${getLabel(platform)}` : `+ ${getLabel(platform)}`}
             </AppText>
           </Pressable>
@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: 'center',
-    minHeight: 48,
+    minHeight: 42,
   },
 });

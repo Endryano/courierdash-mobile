@@ -11,14 +11,14 @@ type WorkShiftFormSectionProps = {
 };
 
 export function WorkShiftFormSection({ children, testID, title }: WorkShiftFormSectionProps) {
-  const { spacing } = useTheme();
+  const { colors, radii, spacing } = useTheme();
 
   return (
-    <View style={[styles.section, { borderColor: '#3a4a64', gap: spacing.md, paddingTop: spacing.md }]} testID={testID}>
-      {title === undefined ? null : <AppText accessibilityRole="header" variant="body" style={{ fontSize: 25, fontWeight: '800', lineHeight: 30 }}>{title}</AppText>}
-      <View style={{ gap: spacing.md }}>{children}</View>
+    <View style={[styles.section, { backgroundColor: colors.surfaceElevated, borderColor: colors.border, borderRadius: radii.lg, gap: spacing.sm, padding: spacing.md }]} testID={testID}>
+      {title === undefined ? null : <AppText accessibilityRole="header" variant="label" style={styles.title}>{title}</AppText>}
+      <View style={{ gap: spacing.sm }}>{children}</View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({ section: { borderTopWidth: 1.5 } });
+const styles = StyleSheet.create({ section: { borderWidth: StyleSheet.hairlineWidth }, title: { fontSize: 13, fontWeight: '700', letterSpacing: 0.8, lineHeight: 16, textTransform: 'uppercase' } });

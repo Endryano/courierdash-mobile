@@ -11,6 +11,10 @@ let mockEditState: WorkShiftEditContextValue;
 
 jest.mock('@/features/work/hooks/useWorkShiftEdit', () => ({ useWorkShiftEdit: () => mockEditState }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ locale: 'en', t: (key: string) => key }) }));
+jest.mock('react-native-safe-area-context', () => ({
+  ...(jest.requireActual('react-native-safe-area-context') as object),
+  useSafeAreaInsets: () => ({ bottom: 34, left: 0, right: 0, top: 59 }),
+}));
 jest.mock('@react-native-community/datetimepicker', () => ({
   __esModule: true,
   default: ({ onChange, testID }: { onChange: (event: { type: 'set' }, value: Date) => void; testID: string }) => {
@@ -156,7 +160,7 @@ describe('WorkShiftEditForm', () => {
 
   test('uses a warning Update action and keeps a localized remove control on selected cards', async () => {
     const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
-    expect(StyleSheet.flatten(view.getByTestId('work-edit-submit').props.style)).toMatchObject({ backgroundColor: '#dc8b00', minHeight: 64 });
+    expect(StyleSheet.flatten(view.getByTestId('work-edit-submit').props.style)).toMatchObject({ backgroundColor: '#d88b00', minHeight: 56 });
     expect(view.getByTestId('work-edit-platform-card-uber-remove').props.accessibilityLabel).toContain('work.platform.uber');
   });
 });

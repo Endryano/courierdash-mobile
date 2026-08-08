@@ -1,25 +1,28 @@
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/AppText';
+import { useTheme } from '@/theme/ThemeProvider';
 
 type Props = { primaryLabel: string; primaryTone: 'create' | 'update'; onPrimary: () => void; cancelLabel: string; onCancel: () => void; pending: boolean; testID: string; primaryTestID?: string };
 
 export function WorkFormActions({ cancelLabel, onCancel, onPrimary, pending, primaryLabel, primaryTestID, primaryTone, testID }: Props) {
-  const backgroundColor = primaryTone === 'create' ? '#00af42' : '#dc8b00';
-  return <View style={styles.actions} testID={`${testID}-actions`}>
-    <Pressable accessibilityLabel={primaryLabel} accessibilityRole="button" accessibilityState={pending ? { disabled: true, busy: true } : { disabled: false }} disabled={pending} onPress={onPrimary} style={({ pressed }) => [styles.primary, { backgroundColor, opacity: pressed || pending ? 0.75 : 1 }]} testID={primaryTestID ?? `${testID}-submit`}>
-      {pending ? <ActivityIndicator color="#ffffff" /> : <AppText style={styles.primaryText}>{primaryLabel}</AppText>}
+  const { colors, radii, spacing } = useTheme();
+  const backgroundColor = primaryTone === 'create' ? colors.positive : colors.warning;
+
+  return <View style={[styles.actions, { gap: spacing.sm, marginTop: spacing.xs }]} testID={`${testID}-actions`}>
+    <Pressable accessibilityLabel={primaryLabel} accessibilityRole="button" accessibilityState={pending ? { disabled: true, busy: true } : { disabled: false }} disabled={pending} onPress={onPrimary} style={({ pressed }) => [styles.primary, { backgroundColor, borderRadius: radii.md, opacity: pressed || pending ? 0.75 : 1 }]} testID={primaryTestID ?? `${testID}-submit`}>
+      {pending ? <ActivityIndicator color={colors.textPrimary} /> : <AppText style={[styles.primaryText, { color: colors.textPrimary }]}>{primaryLabel}</AppText>}
     </Pressable>
-    <Pressable accessibilityLabel={cancelLabel} accessibilityRole="button" accessibilityState={{ disabled: pending }} disabled={pending} onPress={onCancel} style={({ pressed }) => [styles.cancel, { opacity: pressed || pending ? 0.75 : 1 }]} testID={`${testID}-cancel`}>
-      <AppText style={styles.cancelText}>{cancelLabel}</AppText>
+    <Pressable accessibilityLabel={cancelLabel} accessibilityRole="button" accessibilityState={{ disabled: pending }} disabled={pending} onPress={onCancel} style={({ pressed }) => [styles.cancel, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.md, opacity: pressed || pending ? 0.75 : 1 }]} testID={`${testID}-cancel`}>
+      <AppText style={[styles.cancelText, { color: colors.textPrimary }]}>{cancelLabel}</AppText>
     </Pressable>
   </View>;
 }
 
 const styles = StyleSheet.create({
-  actions: { gap: 14, marginTop: 8 },
-  primary: { alignItems: 'center', borderRadius: 18, justifyContent: 'center', minHeight: 64, paddingHorizontal: 20 },
-  primaryText: { color: '#fff', fontSize: 20, fontWeight: '800' },
-  cancel: { alignItems: 'center', backgroundColor: '#233044', borderColor: '#3b4b65', borderRadius: 18, borderWidth: 1.5, justifyContent: 'center', minHeight: 60, paddingHorizontal: 20 },
-  cancelText: { color: '#fff', fontSize: 19, fontWeight: '700' },
+  actions: {},
+  primary: { alignItems: 'center', justifyContent: 'center', minHeight: 56, paddingHorizontal: 20 },
+  primaryText: { fontSize: 17, fontWeight: '800' },
+  cancel: { alignItems: 'center', borderWidth: StyleSheet.hairlineWidth, justifyContent: 'center', minHeight: 52, paddingHorizontal: 20 },
+  cancelText: { fontSize: 16, fontWeight: '700' },
 });
