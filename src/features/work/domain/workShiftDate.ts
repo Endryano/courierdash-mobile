@@ -21,3 +21,16 @@ export function formatWorkShiftDate(value: string, locale: SupportedLocale): str
   const date = fromCanonicalWorkShiftDate(value);
   return date === null ? null : new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(date);
 }
+
+export function formatWorkShiftHistoryDate(value: string, locale: SupportedLocale): string | null {
+  const date = fromCanonicalWorkShiftDate(value);
+  if (date === null) return null;
+
+  const formatted = new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+    weekday: 'short',
+  }).format(date);
+
+  return formatted.length === 0 ? null : formatted[0].toLocaleUpperCase(locale) + formatted.slice(1);
+}

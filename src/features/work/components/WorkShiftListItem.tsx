@@ -8,7 +8,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 
 import type { WorkShift, WorkShiftSummary } from '../domain/workShift';
 import { calculatePlatformBrutto, calculatePlatformOrders, workPlatformKeys } from '../domain/workShiftAnalytics';
-import { formatWorkShiftDate } from '../domain/workShiftDate';
+import { formatWorkShiftHistoryDate } from '../domain/workShiftDate';
 
 type WorkShiftListItemProps = {
   readonly shift: WorkShift;
@@ -19,7 +19,7 @@ type WorkShiftListItemProps = {
 export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItemProps) {
   const { locale, t } = useLocalization();
   const { colors, spacing } = useTheme();
-  const date = formatWorkShiftDate(shift.date, locale) ?? t('work.date.invalid');
+  const date = formatWorkShiftHistoryDate(shift.date, locale) ?? t('work.date.invalid');
   const hours = formatNumber(locale, shift.hours, 2);
   const kilometres = formatNumber(locale, shift.km, 2);
   const platforms = workPlatformKeys
@@ -32,14 +32,14 @@ export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItem
   const incomePerOrder = orders > 0 ? brutto / orders : 0;
 
   return (
-    <AppCard padding="lg" style={[styles.card, { gap: spacing.lg }]} testID={`work-shift-${shift.id}`}>
+    <AppCard padding="md" style={[styles.card, { gap: spacing.sm }]} testID={`work-shift-${shift.id}`}>
       <View style={styles.topRow}>
         <AppText accessibilityLabel={`${t('work.create.date')}: ${date}`} style={styles.date} variant="body">{date}</AppText>
         <AppText style={[styles.brutto, { color: colors.positive }]} variant="title">{formatCurrency(locale, brutto)}</AppText>
       </View>
       <View style={[styles.separator, { backgroundColor: colors.border }]} />
       <AppText muted style={styles.platforms} variant="label">{`${t('work.history.platforms')}: ${platforms.join(' • ') || '—'}`}</AppText>
-      <View style={[styles.detailsRow, { gap: spacing.md }]}>
+      <View style={[styles.detailsRow, { gap: spacing.sm }]}>
         <View style={[styles.detailPanel, { borderColor: colors.border }]}>
           <AppText muted style={styles.panelTitle} variant="label">{t('work.history.shiftData')}</AppText>
           <AppText adjustsFontSizeToFit minimumFontScale={0.78} numberOfLines={1} style={[styles.panelIncome, { color: colors.positive }]} variant="body">{formatCurrency(locale, brutto)}</AppText>
@@ -81,13 +81,13 @@ function MetricRow({ color, label, value }: { readonly color?: string; readonly 
 
 const styles = StyleSheet.create({
   card: { borderColor: '#213248', borderRadius: 22, borderWidth: 1 },
-  topRow: { alignItems: 'baseline', flexDirection: 'row', justifyContent: 'space-between' },
-  date: { flex: 1, fontSize: 24, fontWeight: '700', lineHeight: 30 },
-  brutto: { fontSize: 26, lineHeight: 32, marginLeft: 12 },
+  topRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  date: { flex: 1, fontSize: 19, fontWeight: '700', lineHeight: 24 },
+  brutto: { fontSize: 23, lineHeight: 28, marginLeft: 8 },
   separator: { height: 1 },
   platforms: { fontSize: 14, fontWeight: '500', letterSpacing: 0.3 },
   detailsRow: { flexDirection: 'row' },
-  detailPanel: { borderRadius: 16, borderWidth: 1, flex: 1, flexBasis: 0, gap: 8, minWidth: 0, padding: 10 },
+  detailPanel: { borderRadius: 16, borderWidth: 1, flex: 1, flexBasis: 0, gap: 6, minWidth: 0, padding: 8 },
   panelTitle: { fontSize: 13, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase' },
   panelIncome: { fontSize: 17, fontWeight: '700', lineHeight: 22, minWidth: 0, textAlign: 'right' },
   panelTitleCentered: { textAlign: 'center' },

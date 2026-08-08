@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import type { WorkShift } from '@/features/work/domain/workShift';
+import { formatWorkShiftHistoryDate } from '@/features/work/domain/workShiftDate';
 
 const mockRetry = jest.fn<() => Promise<void>>();
 const mockRequestDelete = jest.fn();
@@ -70,8 +71,10 @@ describe('WorkShiftsPlaceholder', () => {
     expect(screen.getByTestId('work-shift-2')).toBeTruthy();
     expect(screen.getByTestId('work-shift-1')).toBeTruthy();
     expect(screen.getAllByTestId(/work-shift-\d+/).map((item) => item.props.testID)).toEqual(['work-shift-2', 'work-shift-1']);
-    expect(screen.getByText('July 30, 2026')).toBeTruthy();
-    expect(screen.getByLabelText('work.create.date: July 30, 2026')).toBeTruthy();
+    const historyDate = formatWorkShiftHistoryDate('2026-07-30', 'en')!;
+    expect(screen.getByText(historyDate)).toBeTruthy();
+    expect(screen.getByLabelText(`work.create.date: ${historyDate}`)).toBeTruthy();
+    expect(historyDate).not.toContain('2026');
     expect(screen.queryByText('2026-07-30')).toBeNull();
     expect(screen.getByText('work.history.title').props.accessibilityRole).toBe('header');
     expect(screen.getAllByText('work.history.hours')).toHaveLength(2);

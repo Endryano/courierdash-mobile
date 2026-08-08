@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { formatWorkShiftDate, fromCanonicalWorkShiftDate, isCanonicalWorkShiftDate, toCanonicalWorkShiftDate } from '@/features/work/domain/workShiftDate';
+import { formatWorkShiftDate, formatWorkShiftHistoryDate, fromCanonicalWorkShiftDate, isCanonicalWorkShiftDate, toCanonicalWorkShiftDate } from '@/features/work/domain/workShiftDate';
 
 describe('work shift local date helpers', () => {
   test.each(['2026-01-05', '2026-12-31', '2024-02-29'])('accepts canonical local calendar dates', (value) => {
@@ -20,5 +20,14 @@ describe('work shift local date helpers', () => {
   test('formats a canonical value for the requested locale without changing persistence value', () => {
     expect(formatWorkShiftDate('2026-07-31', 'en')).toContain('2026');
     expect(formatWorkShiftDate('invalid', 'en')).toBeNull();
+  });
+
+  test('formats a compact localized history label without the year', () => {
+    const formatted = formatWorkShiftHistoryDate('2026-08-02', 'uk');
+
+    expect(formatted).toContain('2');
+    expect(formatted).not.toContain('2026');
+    expect(formatted).toMatch(/^Н/u);
+    expect(formatWorkShiftHistoryDate('invalid', 'uk')).toBeNull();
   });
 });
