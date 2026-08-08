@@ -29,6 +29,10 @@ jest.mock('@/i18n/LocalizationProvider', () => ({
     t: (key: keyof typeof localeLabels.en) => localeLabels[mockLocale as keyof typeof localeLabels][key] ?? key,
   }),
 }));
+jest.mock('react-native-safe-area-context', () => ({
+  ...(jest.requireActual('react-native-safe-area-context') as object),
+  useSafeAreaInsets: () => ({ bottom: 34, left: 0, right: 0, top: 59 }),
+}));
 
 const MoreRoute = require('@/app/(app)/(tabs)/more').default as typeof import('@/app/(app)/(tabs)/more').default;
 

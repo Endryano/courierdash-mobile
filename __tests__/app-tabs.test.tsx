@@ -44,6 +44,10 @@ jest.mock('@/i18n/LocalizationProvider', () => ({
 jest.mock('@/features/auth/useAuth', () => ({ useAuth: () => ({ signOut: mockSignOut, user: { email: 'courier@example.com' } }) }));
 jest.mock('@/features/auth/authApi', () => ({ AuthApiError: MockAuthApiError }));
 jest.mock('@/features/profile/useProfile', () => ({ useProfile: () => ({ profile: { nickname: 'Courier_1' } }) }));
+jest.mock('react-native-safe-area-context', () => ({
+  ...(jest.requireActual('react-native-safe-area-context') as object),
+  useSafeAreaInsets: () => ({ bottom: 34, left: 0, right: 0, top: 59 }),
+}));
 
 const AppTabsLayout = require('@/app/(app)/(tabs)/_layout').default as typeof import('@/app/(app)/(tabs)/_layout').default;
 const MoreRoute = require('@/app/(app)/(tabs)/more').default as typeof import('@/app/(app)/(tabs)/more').default;

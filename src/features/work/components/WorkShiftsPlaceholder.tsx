@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { AppStateSurface } from '@/components/ui/AppStateSurface';
@@ -32,10 +33,14 @@ const sortLabelKeys: Record<WorkShiftHistorySortMode, (typeof sortOptions)[numbe
   distance_asc: 'work.history.sort.distanceAsc',
 };
 
+const createFabSize = 64;
+const createFabBottomOffset = 24;
+
 export function WorkShiftsPlaceholder() {
   const { retry, shifts, status } = useWorkShifts();
   const { t } = useLocalization();
   const { colors, spacing } = useTheme();
+  const insets = useSafeAreaInsets();
   const [isRetrying, setIsRetrying] = useState(false);
   const [isSortPickerVisible, setIsSortPickerVisible] = useState(false);
   const [sortMode, setSortMode] = useState<WorkShiftHistorySortMode>('date_desc');
@@ -73,9 +78,10 @@ export function WorkShiftsPlaceholder() {
   }
 
   return (
-    <Screen>
+    <Screen edges={[]}>
       <FlatList
-        contentContainerStyle={[styles.listContent, { gap: spacing.lg, padding: spacing.lg, paddingBottom: spacing.xxl + 88 }]}
+        contentContainerStyle={[styles.listContent, { gap: spacing.lg, paddingBottom: createFabSize + createFabBottomOffset, paddingHorizontal: spacing.lg, paddingTop: insets.top + spacing.lg }]}
+        contentInsetAdjustmentBehavior="never"
         data={sortedShifts}
         keyExtractor={(shift) => String(shift.id)}
         ListHeaderComponent={(
@@ -165,6 +171,6 @@ const styles = StyleSheet.create({
   sortModal: { borderRadius: 16, borderWidth: StyleSheet.hairlineWidth, gap: 8, padding: 12 },
   sortModalTitle: { fontSize: 20, lineHeight: 26 },
   sortOption: { borderRadius: 12, borderWidth: StyleSheet.hairlineWidth, justifyContent: 'center', minHeight: 48, paddingHorizontal: 12 },
-  createFab: { alignItems: 'center', borderRadius: 32, bottom: 24, height: 64, justifyContent: 'center', position: 'absolute', right: 20, width: 64 },
+  createFab: { alignItems: 'center', borderRadius: 32, bottom: createFabBottomOffset, height: createFabSize, justifyContent: 'center', position: 'absolute', right: 20, width: createFabSize },
   createFabIcon: { fontSize: 38, fontWeight: '400', lineHeight: 42 },
 });

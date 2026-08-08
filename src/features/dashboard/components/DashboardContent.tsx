@@ -1,5 +1,6 @@
 import { ScrollView, View } from 'react-native';
 import { useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { AppSegmentedControlOption } from '@/components/ui/AppSegmentedControl';
 import { AppStateSurface } from '@/components/ui/AppStateSurface';
@@ -57,6 +58,7 @@ export function DashboardContent() {
   const dashboard = useDashboardMetrics(period);
   const { locale, t } = useLocalization();
   const { spacing } = useTheme();
+  const insets = useSafeAreaInsets();
   const periodOptions: readonly AppSegmentedControlOption<DashboardPeriod>[] = periodKeys.map((option) => ({ label: t(periodTranslationKeys[option]), testID: `dashboard-period-${option}`, value: option }));
 
   if (dashboard.status === 'loading') {
@@ -73,8 +75,8 @@ export function DashboardContent() {
 
   if (dashboard.status === 'period_empty') {
     return (
-      <Screen>
-        <ScrollView contentContainerStyle={{ gap: spacing.lg, padding: spacing.lg, paddingBottom: spacing.xxl }}>
+      <Screen edges={[]}>
+        <ScrollView contentContainerStyle={{ gap: spacing.lg, paddingBottom: 0, paddingHorizontal: spacing.lg, paddingTop: insets.top + spacing.lg }} contentInsetAdjustmentBehavior="never">
           <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('navigation.tab.dashboard')} />
           <View style={{ gap: spacing.xs }}>
             <AppText accessibilityRole="header" variant="title">{t('dashboard.periodEmpty.title')}</AppText>
@@ -103,8 +105,8 @@ export function DashboardContent() {
   ];
 
   return (
-    <Screen>
-      <ScrollView contentContainerStyle={{ gap: 0, padding: spacing.md, paddingBottom: spacing.xxl }}>
+    <Screen edges={[]}>
+      <ScrollView contentContainerStyle={{ gap: 0, paddingBottom: 0, paddingHorizontal: spacing.md, paddingTop: insets.top + spacing.md }} contentInsetAdjustmentBehavior="never">
         <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('navigation.tab.dashboard')} />
         <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
           <AppText accessibilityRole="header" style={{ fontSize: 13, fontWeight: '600', letterSpacing: 0.8, lineHeight: 16, textTransform: 'uppercase' }} variant="label">{t(totalSectionHeadingKeys[period])}</AppText>

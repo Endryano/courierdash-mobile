@@ -10,6 +10,10 @@ const mockUseDashboardMetrics = jest.fn<(period?: string) => DashboardMetricsSta
 
 jest.mock('@/features/dashboard/hooks/useDashboardMetrics', () => ({ useDashboardMetrics: (period?: string) => mockUseDashboardMetrics(period) }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ locale: 'en', t: (key: string) => key }) }));
+jest.mock('react-native-safe-area-context', () => ({
+  ...(jest.requireActual('react-native-safe-area-context') as object),
+  useSafeAreaInsets: () => ({ bottom: 34, left: 0, right: 0, top: 59 }),
+}));
 
 const { DashboardContent } = require('@/features/dashboard/components/DashboardContent') as typeof import('@/features/dashboard/components/DashboardContent');
 

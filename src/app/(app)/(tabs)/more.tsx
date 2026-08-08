@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { AppText } from '@/components/ui/AppText';
@@ -17,6 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 export default function MoreRoute() {
   const { t } = useLocalization();
   const { spacing } = useTheme();
+  const insets = useSafeAreaInsets();
   const { signOut, user } = useAuth();
   const { profile } = useProfile();
   const [pending, setPending] = useState(false);
@@ -49,8 +51,8 @@ export default function MoreRoute() {
   }
 
   return (
-    <Screen>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, gap: spacing.xl, padding: spacing.xl, paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
+    <Screen edges={[]}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, gap: spacing.xl, paddingBottom: 0, paddingHorizontal: spacing.xl, paddingTop: insets.top + spacing.xl }} contentInsetAdjustmentBehavior="never" keyboardShouldPersistTaps="handled">
         <AppText accessibilityRole="header" variant="title">{t('navigation.more.title')}</AppText>
         {nickname ? <MoreSection><MoreAccountCard email={email} label={t('navigation.more.account')} nickname={nickname} /></MoreSection> : null}
         <MoreSection title={t('navigation.more.analytics')}>

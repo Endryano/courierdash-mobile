@@ -14,6 +14,10 @@ jest.mock('@/features/work/hooks/useWorkShifts', () => ({ useWorkShifts: () => m
 jest.mock('@/features/work/hooks/useWorkShiftDelete', () => ({ useWorkShiftDelete: () => ({ status: 'idle', requestDelete: mockRequestDelete }) }));
 jest.mock('@/i18n/LocalizationProvider', () => ({ useLocalization: () => ({ locale: 'en', t: (key: string) => key }) }));
 jest.mock('expo-router', () => ({ router: { push: mockPush } }));
+jest.mock('react-native-safe-area-context', () => ({
+  ...(jest.requireActual('react-native-safe-area-context') as object),
+  useSafeAreaInsets: () => ({ bottom: 34, left: 0, right: 0, top: 59 }),
+}));
 
 const { WorkShiftsPlaceholder } = require('@/features/work/components/WorkShiftsPlaceholder') as typeof import('@/features/work/components/WorkShiftsPlaceholder');
 
