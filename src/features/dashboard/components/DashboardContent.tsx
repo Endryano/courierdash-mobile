@@ -104,14 +104,16 @@ export function DashboardContent() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={{ gap: spacing.xs, padding: spacing.md, paddingBottom: spacing.xxl }}>
+      <ScrollView contentContainerStyle={{ gap: 0, padding: spacing.md, paddingBottom: spacing.xxl }}>
         <DashboardHeader onChange={setPeriod} options={periodOptions} period={period} periodLabel={t('dashboard.period.label')} title={t('navigation.tab.dashboard')} />
-        <View style={{ gap: spacing.xxs }}>
+        <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
           <AppText accessibilityRole="header" style={{ fontSize: 13, fontWeight: '600', letterSpacing: 0.8, lineHeight: 16, textTransform: 'uppercase' }} variant="label">{t(totalSectionHeadingKeys[period])}</AppText>
           <DashboardHeroCard label={t('dashboard.totalIncome')} unit={totalIncome.unit} value={totalIncome.amount} />
           <DashboardKpiGrid items={operationalMetrics} />
         </View>
-        <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.average')} />
+        <View style={{ marginTop: spacing.lg }}>
+          <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.average')} />
+        </View>
       </ScrollView>
     </Screen>
   );
