@@ -158,9 +158,9 @@ describe('WorkShiftEditForm', () => {
     expect(view.getByTestId('work-edit-uber-bonuses').props.value).toBe('10');
   });
 
-  test('uses a warning Update action and keeps a localized remove control on selected cards', async () => {
+  test('uses the shared positive Save action and keeps a localized remove control on selected cards', async () => {
     const view = await render(<ThemeProvider><WorkShiftEditForm onCancel={jest.fn()} /></ThemeProvider>);
-    expect(StyleSheet.flatten(view.getByTestId('work-edit-submit').props.style)).toMatchObject({ backgroundColor: '#d88b00', minHeight: 56 });
+    expect(StyleSheet.flatten(view.getByTestId('work-edit-submit').props.style)).toMatchObject({ backgroundColor: '#00b844', minHeight: 56 });
     expect(view.getByTestId('work-edit-platform-card-uber-remove').props.accessibilityLabel).toContain('work.platform.uber');
   });
 });

@@ -3,11 +3,11 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/AppText';
 import { useTheme } from '@/theme/ThemeProvider';
 
-type Props = { primaryLabel: string; primaryTone: 'create' | 'update'; onPrimary: () => void; cancelLabel: string; onCancel: () => void; pending: boolean; testID: string; primaryTestID?: string };
+type Props = { primaryLabel: string; onPrimary: () => void; cancelLabel: string; onCancel: () => void; pending: boolean; testID: string; primaryTestID?: string };
 
-export function WorkFormActions({ cancelLabel, onCancel, onPrimary, pending, primaryLabel, primaryTestID, primaryTone, testID }: Props) {
+export function WorkFormActions({ cancelLabel, onCancel, onPrimary, pending, primaryLabel, primaryTestID, testID }: Props) {
   const { colors, radii, spacing } = useTheme();
-  const backgroundColor = primaryTone === 'create' ? colors.positive : colors.warning;
+  const backgroundColor = colors.positive;
 
   return <View style={[styles.actions, { gap: spacing.sm, marginTop: spacing.xs }]} testID={`${testID}-actions`}>
     <Pressable accessibilityLabel={primaryLabel} accessibilityRole="button" accessibilityState={pending ? { disabled: true, busy: true } : { disabled: false }} disabled={pending} onPress={onPrimary} style={({ pressed }) => [styles.primary, { backgroundColor, borderRadius: radii.md, opacity: pressed || pending ? 0.75 : 1 }]} testID={primaryTestID ?? `${testID}-submit`}>

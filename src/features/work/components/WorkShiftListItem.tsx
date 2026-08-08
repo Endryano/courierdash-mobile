@@ -41,7 +41,6 @@ export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItem
       <AppText muted style={styles.platforms} variant="label">{`${t('work.history.platforms')}: ${platforms.join(' • ') || '—'}`}</AppText>
       <View style={[styles.detailsRow, { gap: spacing.sm }]}>
         <View style={[styles.detailPanel, { borderColor: colors.border }]}>
-          <AppText muted style={styles.panelTitle} variant="label">{t('work.history.shiftData')}</AppText>
           <AppText adjustsFontSizeToFit minimumFontScale={0.78} numberOfLines={1} style={[styles.panelIncome, { color: colors.positive }]} variant="body">{formatCurrency(locale, brutto)}</AppText>
           <View style={[styles.innerSeparator, { backgroundColor: colors.border }]} />
           <MetricRow color="#579aff" label={t('work.history.orders')} value={formatNumber(locale, orders, 0)} />

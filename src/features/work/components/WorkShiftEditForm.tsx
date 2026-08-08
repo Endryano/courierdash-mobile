@@ -87,7 +87,7 @@ export function WorkShiftEditForm({ onCancel }: Props) {
   return (
     <WorkShiftFormShell
       actions={(
-        <WorkFormActions cancelLabel={t('work.edit.cancel')} onCancel={returnToWork} onPrimary={() => void (reconciliation ? edit.reconcile() : edit.submit(currentInput))} pending={pending} primaryLabel={t(reconciliation ? 'work.edit.reconcile' : pending ? 'work.edit.saving' : 'work.edit.save')} primaryTestID={reconciliation ? 'work-edit-reconcile' : 'work-edit-submit'} primaryTone="update" testID="work-edit" />
+        <WorkFormActions cancelLabel={t('work.edit.cancel')} onCancel={returnToWork} onPrimary={() => void (reconciliation ? edit.reconcile() : edit.submit(currentInput))} pending={pending} primaryLabel={t(reconciliation ? 'work.edit.reconcile' : pending ? 'work.edit.saving' : 'work.edit.save')} primaryTestID={reconciliation ? 'work-edit-reconcile' : 'work-edit-submit'} testID="work-edit" />
       )}
       message={statusKey ? <AppText accessibilityRole="alert">{t(statusKey)}</AppText> : undefined}
       testID="work-edit-form"

@@ -65,7 +65,7 @@ export function WorkShiftCreateForm({ onCancel }: Props) {
   return (
     <WorkShiftFormShell
       actions={(
-        <WorkFormActions cancelLabel={t('work.create.cancel')} onCancel={cancel} onPrimary={() => void (requiresReconciliation ? reconcile() : submitForm())} pending={pending} primaryLabel={t(requiresReconciliation ? 'work.create.reconcile' : pending ? 'work.create.submitting' : 'work.create.submit')} primaryTestID={requiresReconciliation ? 'work-create-reconcile' : 'work-create-submit'} primaryTone="create" testID="work-create" />
+        <WorkFormActions cancelLabel={t('work.create.cancel')} onCancel={cancel} onPrimary={() => void (requiresReconciliation ? reconcile() : submitForm())} pending={pending} primaryLabel={t(requiresReconciliation ? 'work.create.reconcile' : pending ? 'work.create.submitting' : 'work.create.submit')} primaryTestID={requiresReconciliation ? 'work-create-reconcile' : 'work-create-submit'} testID="work-create" />
       )}
       message={statusKey || validationDetailKey ? <><AppText accessibilityRole="alert">{statusKey ? t(statusKey) : null}</AppText>{validationDetailKey ? <AppText accessibilityRole="alert">{t(validationDetailKey)}</AppText> : null}</> : undefined}
       testID="work-create-form"

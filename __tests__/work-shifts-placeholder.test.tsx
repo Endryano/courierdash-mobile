@@ -83,6 +83,8 @@ describe('WorkShiftsPlaceholder', () => {
     expect(screen.getByText('work.history.title').props.accessibilityRole).toBe('header');
     expect(screen.getAllByText('work.history.hours')).toHaveLength(2);
     expect(screen.getAllByText('work.history.kilometers')).toHaveLength(2);
+    expect(screen.queryByText('work.history.shiftData')).toBeNull();
+    expect(screen.getAllByText('work.history.efficiency')).toHaveLength(2);
     expect(screen.getByText('8.5')).toBeTruthy();
     expect(screen.getByText('20.25')).toBeTruthy();
     expect(screen.getAllByText('PLN 100.00')).toHaveLength(4);
