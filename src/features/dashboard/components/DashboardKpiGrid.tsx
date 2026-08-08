@@ -37,11 +37,11 @@ export function DashboardKpiGrid({ items }: DashboardKpiGridProps) {
   const { fontScale, width } = useWindowDimensions();
   const { spacing } = useTheme();
   const availableWidth = Math.max(0, width - spacing.lg * 2);
-  const columns = resolveDashboardKpiGridColumns(availableWidth, fontScale, spacing.sm);
-  const itemWidth = columns === 2 ? (availableWidth - spacing.sm) / 2 : availableWidth;
+  const columns = resolveDashboardKpiGridColumns(availableWidth, fontScale, spacing.xs);
+  const itemWidth = columns === 2 ? (availableWidth - spacing.xs) / 2 : availableWidth;
 
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }} testID="dashboard-kpi-grid">
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }} testID="dashboard-kpi-grid">
       {items.map(({ key, ...item }) => (
         <View key={key} style={{ width: itemWidth }}>
           <DashboardKpiCard {...item} testID={`dashboard-kpi-${key}`} />
@@ -58,20 +58,20 @@ function DashboardKpiCard({ accessibilityLabel, label, testID, tone = 'default',
   const palette = toneStyles[tone];
 
   return (
-    <AppCard accessibilityLabel={accessibilityLabel ?? `${label}: ${value}`} padding="sm" style={[styles.card, { backgroundColor: colors.surface, borderColor: palette.borderColor, gap: spacing.xxs }]} testID={testID}>
+    <AppCard accessibilityLabel={accessibilityLabel ?? `${label}: ${value}`} padding="none" style={[styles.card, { backgroundColor: colors.surface, borderColor: palette.borderColor, gap: spacing.xxs }]} testID={testID}>
       <AppText muted style={styles.label} variant="label">{label}</AppText>
       <View style={styles.valueRow}>
-        <AppText style={[styles.value, { color: palette.valueColor }]} variant="body">{value}</AppText>
-        {unit === undefined ? null : <AppText muted style={styles.unit} variant="body">{unit}</AppText>}
+        <AppText adjustsFontSizeToFit minimumFontScale={0.85} numberOfLines={1} style={[styles.value, { color: palette.valueColor }]} variant="body">{value}</AppText>
+        {unit === undefined ? null : <AppText muted numberOfLines={1} style={styles.unit} variant="body">{unit}</AppText>}
       </View>
     </AppCard>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { alignItems: 'center', borderRadius: 18, borderWidth: 1, justifyContent: 'center', minHeight: 92 },
-  label: { fontSize: 12, fontWeight: '600', letterSpacing: 0.7, lineHeight: 16, textAlign: 'center', textTransform: 'uppercase' },
+  card: { alignItems: 'center', borderRadius: 18, borderWidth: 1, justifyContent: 'center', minHeight: 70, paddingHorizontal: 8, paddingVertical: 6 },
+  label: { fontSize: 11, fontWeight: '600', letterSpacing: 0.5, lineHeight: 14, textAlign: 'center', textTransform: 'uppercase' },
   valueRow: { alignItems: 'baseline', flexDirection: 'row', gap: 4, justifyContent: 'center' },
-  value: { fontSize: 26, fontWeight: '800', lineHeight: 31, textAlign: 'center' },
-  unit: { fontSize: 13, fontWeight: '600', lineHeight: 18 },
+  value: { fontSize: 22, fontWeight: '800', lineHeight: 26, textAlign: 'center' },
+  unit: { fontSize: 12, fontWeight: '600', lineHeight: 15 },
 });

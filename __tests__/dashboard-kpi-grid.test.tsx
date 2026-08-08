@@ -38,7 +38,7 @@ describe('Dashboard presentation components', () => {
 
     expect(screen.getByText('Total Brutto')).toBeTruthy();
     expect(screen.getByText('PLN')).toBeTruthy();
-    expect(StyleSheet.flatten(screen.getByText('12,345.67').props.style)).toMatchObject({ fontSize: 34, lineHeight: 40 });
+    expect(StyleSheet.flatten(screen.getByText('12,345.67').props.style)).toMatchObject({ fontSize: 28, lineHeight: 34 });
     expect(screen.getByText('12,345.67').parent?.parent?.props.onPress).toBeUndefined();
   });
 });

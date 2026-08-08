@@ -1,5 +1,4 @@
 import { AppText } from '@/components/ui/AppText';
-import { useTheme } from '@/theme/ThemeProvider';
 import { DashboardKpiGrid, type DashboardKpiTone } from './DashboardKpiGrid';
 
 export type DashboardMetricSectionItem = {
@@ -16,11 +15,9 @@ type DashboardMetricSectionProps = {
 };
 
 export function DashboardMetricSection({ metrics, title }: DashboardMetricSectionProps) {
-  const { spacing } = useTheme();
-
   return (
     <>
-      <AppText accessibilityRole="header" style={{ fontSize: 15, fontWeight: '700', letterSpacing: 0.9, lineHeight: 20, marginBottom: spacing.xxs, textTransform: 'uppercase' }} variant="label">{title}</AppText>
+      <AppText accessibilityRole="header" style={{ fontSize: 13, fontWeight: '700', letterSpacing: 0.8, lineHeight: 16, marginBottom: 0, textTransform: 'uppercase' }} variant="label">{title}</AppText>
       <DashboardKpiGrid items={metrics} />
     </>
   );
