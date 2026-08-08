@@ -37,7 +37,8 @@ describe('Dashboard metric presentation', () => {
     expect(screen.getByText('PLN')).toBeTruthy();
     expect(StyleSheet.flatten(screen.getByText('12,345.67').props.style)).toMatchObject({ fontSize: 38, lineHeight: 44 });
     expect(StyleSheet.flatten(screen.getByTestId('dashboard-hero-value-row').props.style)).toMatchObject({ justifyContent: 'center', width: '100%' });
-    expect(StyleSheet.flatten(screen.getByText('12,345.67').props.style)).toMatchObject({ flexShrink: 1, textAlign: 'right' });
+    expect(screen.getByText('12,345.67').props.adjustsFontSizeToFit).toBeUndefined();
+    expect(screen.getByText('12,345.67').props.minimumFontScale).toBeUndefined();
     expect(screen.getByText('12,345.67').parent?.parent?.props.onPress).toBeUndefined();
   });
 
