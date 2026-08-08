@@ -20,3 +20,7 @@ export function calculatePlatformBrutto(platform: WorkAnalyticsPlatform): number
 export function calculatePlatformOrders(platform: WorkAnalyticsPlatform): number {
   return nullableContribution(platform.orders);
 }
+
+export function calculateWorkShiftBrutto(shift: WorkShift): number {
+  return workPlatformKeys.reduce((total, key) => total + calculatePlatformBrutto(shift.analytics.platforms[key]), 0);
+}

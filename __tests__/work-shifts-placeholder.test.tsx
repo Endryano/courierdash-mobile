@@ -133,6 +133,27 @@ describe('WorkShiftsPlaceholder', () => {
     expect(mockRetry).not.toHaveBeenCalled();
   });
 
+  test('changes visible history order locally through the compact sorting selector', async () => {
+    mockWorkState = {
+      status: 'ready',
+      shifts: [
+        createShift(1, '2026-07-29', 10, 20, 300),
+        createShift(2, '2026-07-31', 30, 20, 100),
+        createShift(3, '2026-07-30', 20, 20, 200),
+      ],
+      retry: mockRetry,
+    };
+    await renderPlaceholder();
+
+    expect(screen.getAllByTestId(/work-shift-\d+/).map((item) => item.props.testID)).toEqual(['work-shift-2', 'work-shift-3', 'work-shift-1']);
+    await fireEvent.press(screen.getByTestId('work-history-sort-control'));
+    expect(screen.getByTestId('work-history-sort-income_desc')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('work-history-sort-income_desc'));
+
+    expect(screen.getAllByTestId(/work-shift-\d+/).map((item) => item.props.testID)).toEqual(['work-shift-1', 'work-shift-3', 'work-shift-2']);
+    expect(mockRetry).not.toHaveBeenCalled();
+  });
+
   test('keeps long monetary values and their labels on single adaptive lines', async () => {
     mockWorkState = { status: 'ready', shifts: [createShift(1, '2026-07-29', 16, 230, 2230, 110)], retry: mockRetry };
     await renderPlaceholder();

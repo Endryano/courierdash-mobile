@@ -7,7 +7,7 @@ import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { useTheme } from '@/theme/ThemeProvider';
 
 import type { WorkShift, WorkShiftSummary } from '../domain/workShift';
-import { calculatePlatformBrutto, calculatePlatformOrders, workPlatformKeys } from '../domain/workShiftAnalytics';
+import { calculatePlatformBrutto, calculatePlatformOrders, calculateWorkShiftBrutto, workPlatformKeys } from '../domain/workShiftAnalytics';
 import { formatWorkShiftHistoryDate } from '../domain/workShiftDate';
 
 type WorkShiftListItemProps = {
@@ -25,7 +25,7 @@ export function WorkShiftListItem({ onDelete, onEdit, shift }: WorkShiftListItem
   const platforms = workPlatformKeys
     .filter((key) => calculatePlatformBrutto(shift.analytics.platforms[key]) > 0 || calculatePlatformOrders(shift.analytics.platforms[key]) > 0)
     .map((key) => key === 'other' ? shift.analytics.platforms.other.name || t('work.platform.other') : t(`work.platform.${key}`));
-  const brutto = workPlatformKeys.reduce((total, key) => total + calculatePlatformBrutto(shift.analytics.platforms[key]), 0);
+  const brutto = calculateWorkShiftBrutto(shift);
   const orders = workPlatformKeys.reduce((total, key) => total + calculatePlatformOrders(shift.analytics.platforms[key]), 0);
   const incomePerHour = shift.hours > 0 ? brutto / shift.hours : 0;
   const incomePerKilometre = shift.km > 0 ? brutto / shift.km : 0;
