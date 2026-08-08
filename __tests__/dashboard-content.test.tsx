@@ -19,10 +19,10 @@ jest.mock('react-native-safe-area-context', () => ({
 const { DashboardContent } = require('@/features/dashboard/components/DashboardContent') as typeof import('@/features/dashboard/components/DashboardContent');
 
 const readyRecords = {
-  bestHourlyRate: 45,
-  bestIncomePerKilometer: 18,
-  highestIncome: 360,
-  mostOrders: 105,
+  bestHourlyRate: { date: '2026-08-01', value: 45 },
+  bestIncomePerKilometer: { date: '2026-08-01', value: 18 },
+  highestIncome: { date: '2026-08-01', value: 360 },
+  mostOrders: { date: '2026-08-01', value: 105 },
 };
 
 function renderDashboard() {
@@ -41,7 +41,7 @@ describe('DashboardContent', () => {
     await renderDashboard();
 
     expect(screen.getByText('navigation.tab.dashboard')).toBeTruthy();
-    for (const label of ['dashboard.totalIncome', 'dashboard.label.hours', 'dashboard.label.orders', 'dashboard.label.kilometers', 'dashboard.label.shifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.total.week', 'dashboard.section.average', 'dashboard.section.personalRecords', 'dashboard.records.highestIncome', 'dashboard.records.bestHourlyRate', 'dashboard.records.mostOrders', 'dashboard.records.bestIncomePerKilometer']) {
+    for (const label of ['dashboard.totalIncome', 'dashboard.label.hours', 'dashboard.label.orders', 'dashboard.label.kilometers', 'dashboard.label.shifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.income', 'dashboard.section.average', 'dashboard.section.personalRecords', 'dashboard.records.highestIncome', 'dashboard.records.bestHourlyRate', 'dashboard.records.mostOrders', 'dashboard.records.bestIncomePerKilometer']) {
       expect(screen.getByText(label)).toBeTruthy();
     }
     expect(screen.getAllByText('dashboard.incomePerHour')).toHaveLength(1);
@@ -52,20 +52,24 @@ describe('DashboardContent', () => {
     expect(screen.getByTestId('dashboard-period-week').props.accessibilityState).toEqual({ selected: true });
     expect(screen.getByTestId('dashboard-period-week').parent?.props.accessibilityLabel).toBe('dashboard.period.label');
     expect(screen.getByText('navigation.tab.dashboard').props.accessibilityRole).toBe('header');
-    expect(screen.getByText('dashboard.section.total.week').props.accessibilityRole).toBe('header');
+    expect(screen.getByText('dashboard.section.income').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.average').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.personalRecords').props.accessibilityRole).toBe('header');
+    expect(screen.getByTestId('dashboard-operational-strip-orders')).toBeTruthy();
+    expect(screen.getByTestId('dashboard-efficiency-strip-income-per-hour')).toBeTruthy();
+    expect(screen.getByTestId('dashboard-record-highest-income')).toBeTruthy();
+    expect(screen.getAllByText('August 1, 2026')).toHaveLength(4);
   });
 
   test('changes the selected period and updates displayed KPI values', async () => {
     mockUseDashboardMetrics.mockImplementation((period) => period === 'today'
-      ? { status: 'ready', metrics: { totalIncome: 25, totalHours: 1, totalOrders: 1, totalKilometers: 2, totalShifts: 1, incomePerHour: 25, incomePerOrder: 25, incomePerKilometer: 12.5 }, records: { bestHourlyRate: 25, bestIncomePerKilometer: 12.5, highestIncome: 25, mostOrders: 1 } }
+      ? { status: 'ready', metrics: { totalIncome: 25, totalHours: 1, totalOrders: 1, totalKilometers: 2, totalShifts: 1, incomePerHour: 25, incomePerOrder: 25, incomePerKilometer: 12.5 }, records: { bestHourlyRate: { date: '2026-08-01', value: 25 }, bestIncomePerKilometer: { date: '2026-08-01', value: 12.5 }, highestIncome: { date: '2026-08-01', value: 25 }, mostOrders: { date: '2026-08-01', value: 1 } } }
       : mockDashboardState);
     await renderDashboard();
     await fireEvent.press(screen.getByTestId('dashboard-period-today'));
 
     expect(screen.getByTestId('dashboard-period-today').props.accessibilityState).toEqual({ selected: true });
-    expect(screen.getByText('dashboard.section.total.today')).toBeTruthy();
+    expect(screen.getByText('dashboard.section.income')).toBeTruthy();
     expect(screen.getAllByText('25.00')).not.toHaveLength(0);
   });
 
@@ -78,13 +82,11 @@ describe('DashboardContent', () => {
     }
   });
 
-  test('uses white labels for every Dashboard period while preserving active filter surfaces', async () => {
+  test('uses a compact selected segment with muted inactive Dashboard periods', async () => {
     await renderDashboard();
 
-    for (const period of ['today', 'week', 'month', 'allTime'] as const) {
-      const label = screen.getByText(`dashboard.period.${period}`);
-      expect(StyleSheet.flatten(label.props.style)).toMatchObject({ color: '#ffffff' });
-    }
+    expect(StyleSheet.flatten(screen.getByText('dashboard.period.today').props.style)).toMatchObject({ color: '#a0a0a0' });
+    expect(StyleSheet.flatten(screen.getByText('dashboard.period.week').props.style)).toMatchObject({ color: '#00e5ff' });
     expect(StyleSheet.flatten(screen.getByTestId('dashboard-period-week').props.style)).toMatchObject({ backgroundColor: '#17343A', borderColor: '#00e5ff' });
   });
 
@@ -124,7 +126,7 @@ describe('DashboardContent', () => {
   });
 
   test('formats zero denominator rates safely without charts or filters', async () => {
-    mockDashboardState = { status: 'ready', metrics: { totalIncome: 1, totalHours: 0, totalOrders: 0, totalKilometers: 0, totalShifts: 1, incomePerHour: 0, incomePerOrder: 0, incomePerKilometer: 0 }, records: { bestHourlyRate: null, bestIncomePerKilometer: null, highestIncome: 1, mostOrders: 0 } };
+    mockDashboardState = { status: 'ready', metrics: { totalIncome: 1, totalHours: 0, totalOrders: 0, totalKilometers: 0, totalShifts: 1, incomePerHour: 0, incomePerOrder: 0, incomePerKilometer: 0 }, records: { bestHourlyRate: { date: null, value: null }, bestIncomePerKilometer: { date: null, value: null }, highestIncome: { date: '2026-08-01', value: 1 }, mostOrders: { date: '2026-08-01', value: 0 } } };
     await renderDashboard();
 
     expect(screen.getAllByText('0.00')).toHaveLength(3);

@@ -12,7 +12,7 @@ export type TranslationKey =
   | 'work.platform.uber' | 'work.platform.wolt' | 'work.platform.bolt' | 'work.platform.glovo' | 'work.platform.stuart' | 'work.platform.other' | 'work.metric.income' | 'work.metric.orders' | 'work.metric.appTips' | 'work.metric.cashTips' | 'work.metric.bonuses'
   | 'work.edit.action' | 'work.edit.title' | 'work.edit.loading' | 'work.edit.save' | 'work.edit.saving' | 'work.edit.cancel' | 'work.edit.validation' | 'work.edit.duplicate' | 'work.edit.recoverable' | 'work.edit.blocked' | 'work.edit.notFound' | 'work.edit.reconciliation' | 'work.edit.reconcile'
   | 'work.delete.action' | 'work.delete.title' | 'work.delete.body' | 'work.delete.confirm' | 'work.delete.cancel' | 'work.delete.deleting' | 'work.delete.recoverableTitle' | 'work.delete.recoverable' | 'work.delete.blockedTitle' | 'work.delete.blocked' | 'work.delete.reconciliationTitle' | 'work.delete.reconciliation' | 'work.delete.reconcile' | 'work.delete.return'
-  | 'dashboard.title' | 'dashboard.totalIncome' | 'dashboard.totalHours' | 'dashboard.totalOrders' | 'dashboard.totalKilometers' | 'dashboard.totalShifts' | 'dashboard.incomePerHour' | 'dashboard.incomePerOrder' | 'dashboard.incomePerKilometer' | 'dashboard.loading' | 'dashboard.empty.title' | 'dashboard.empty.description' | 'dashboard.error.title' | 'dashboard.error.description' | 'dashboard.retry' | 'dashboard.period.label' | 'dashboard.period.today' | 'dashboard.period.week' | 'dashboard.period.month' | 'dashboard.period.allTime' | 'dashboard.periodEmpty.title' | 'dashboard.periodEmpty.description' | 'dashboard.section.operational' | 'dashboard.section.efficiency' | 'dashboard.section.total.today' | 'dashboard.section.total.week' | 'dashboard.section.total.month' | 'dashboard.section.total.allTime' | 'dashboard.section.average' | 'dashboard.section.personalRecords' | 'dashboard.records.highestIncome' | 'dashboard.records.bestHourlyRate' | 'dashboard.records.mostOrders' | 'dashboard.records.bestIncomePerKilometer' | 'dashboard.records.unit.perHour' | 'dashboard.records.unit.perKilometer' | 'dashboard.label.orders' | 'dashboard.label.hours' | 'dashboard.label.kilometers' | 'dashboard.label.shifts' | 'dashboard.unit.hours' | 'dashboard.unit.kilometers'
+  | 'dashboard.title' | 'dashboard.totalIncome' | 'dashboard.totalHours' | 'dashboard.totalOrders' | 'dashboard.totalKilometers' | 'dashboard.totalShifts' | 'dashboard.incomePerHour' | 'dashboard.incomePerOrder' | 'dashboard.incomePerKilometer' | 'dashboard.loading' | 'dashboard.empty.title' | 'dashboard.empty.description' | 'dashboard.error.title' | 'dashboard.error.description' | 'dashboard.retry' | 'dashboard.period.label' | 'dashboard.period.today' | 'dashboard.period.week' | 'dashboard.period.month' | 'dashboard.period.allTime' | 'dashboard.periodEmpty.title' | 'dashboard.periodEmpty.description' | 'dashboard.section.operational' | 'dashboard.section.efficiency' | 'dashboard.section.total.today' | 'dashboard.section.total.week' | 'dashboard.section.total.month' | 'dashboard.section.total.allTime' | 'dashboard.section.income' | 'dashboard.section.average' | 'dashboard.section.personalRecords' | 'dashboard.records.highestIncome' | 'dashboard.records.bestHourlyRate' | 'dashboard.records.mostOrders' | 'dashboard.records.bestIncomePerKilometer' | 'dashboard.records.unit.perHour' | 'dashboard.records.unit.perKilometer' | 'dashboard.label.orders' | 'dashboard.label.hours' | 'dashboard.label.kilometers' | 'dashboard.label.shifts' | 'dashboard.unit.hours' | 'dashboard.unit.kilometers'
   ;
 
 type TranslationDictionary = Record<TranslationKey, string>;
@@ -163,7 +163,8 @@ const dashboardPresentationTranslations = {
     'dashboard.section.total.week': 'Łączne wartości za tydzień',
     'dashboard.section.total.month': 'Łączne wartości za miesiąc',
     'dashboard.section.total.allTime': 'Łączne wartości za cały czas',
-    'dashboard.section.average': 'Średnie wskaźniki',
+    'dashboard.section.average': 'EFEKTYWNOŚĆ',
+    'dashboard.section.income': 'DOCHÓD',
     'dashboard.section.personalRecords': 'REKORDY OSOBISTE',
     'dashboard.records.highestIncome': 'NAJWYŻSZY DOCHÓD',
     'dashboard.records.bestHourlyRate': 'NAJLEPSZA STAWKA',
@@ -193,7 +194,8 @@ const dashboardPresentationTranslations = {
     'dashboard.section.total.week': 'Загальні значення за тиждень',
     'dashboard.section.total.month': 'Загальні значення за місяць',
     'dashboard.section.total.allTime': 'Загальні значення за весь час',
-    'dashboard.section.average': 'Середні показники',
+    'dashboard.section.average': 'ЕФЕКТИВНІСТЬ',
+    'dashboard.section.income': 'ДОХІД',
     'dashboard.section.personalRecords': 'ОСОБИСТІ РЕКОРДИ',
     'dashboard.records.highestIncome': 'НАЙБІЛЬШИЙ ДОХІД',
     'dashboard.records.bestHourlyRate': 'НАЙКРАЩА СТАВКА',
@@ -223,7 +225,8 @@ const dashboardPresentationTranslations = {
     'dashboard.section.total.week': 'Total values this week',
     'dashboard.section.total.month': 'Total values this month',
     'dashboard.section.total.allTime': 'Total values for all time',
-    'dashboard.section.average': 'Average metrics',
+    'dashboard.section.average': 'EFFICIENCY',
+    'dashboard.section.income': 'INCOME',
     'dashboard.section.personalRecords': 'PERSONAL RECORDS',
     'dashboard.records.highestIncome': 'HIGHEST INCOME',
     'dashboard.records.bestHourlyRate': 'BEST HOURLY RATE',
@@ -253,7 +256,8 @@ const dashboardPresentationTranslations = {
     'dashboard.section.total.week': 'Общие значения за неделю',
     'dashboard.section.total.month': 'Общие значения за месяц',
     'dashboard.section.total.allTime': 'Общие значения за всё время',
-    'dashboard.section.average': 'Средние показатели',
+    'dashboard.section.average': 'ЭФФЕКТИВНОСТЬ',
+    'dashboard.section.income': 'ДОХОД',
     'dashboard.section.personalRecords': 'ЛИЧНЫЕ РЕКОРДЫ',
     'dashboard.records.highestIncome': 'НАИБОЛЬШИЙ ДОХОД',
     'dashboard.records.bestHourlyRate': 'ЛУЧШАЯ СТАВКА',
@@ -279,6 +283,7 @@ const statisticsPeriodOverrides: Readonly<Record<SupportedLocale, Partial<Transl
   uk: {
     'dashboard.period.week': 'Тиждень',
     'dashboard.period.month': 'Місяць',
+    'dashboard.period.allTime': 'Весь час',
   },
   en: {},
   ru: {},

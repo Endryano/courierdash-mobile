@@ -19,7 +19,7 @@ export function DashboardHeader({ onChange, options, period, periodLabel, title 
   return (
     <View style={{ gap: spacing.md }}>
       <AppText accessibilityRole="header" style={{ fontSize: 32, fontWeight: '800', lineHeight: 38 }} variant="title">{title}</AppText>
-      <AppSegmentedControl accessibilityLabel={periodLabel} appearance="filterWhiteText" onChange={onChange} options={options} value={period} />
+      <AppSegmentedControl accessibilityLabel={periodLabel} appearance="dashboard" onChange={onChange} options={options} value={period} />
     </View>
   );
 }

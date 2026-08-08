@@ -27,7 +27,7 @@ function Probe({ period = 'allTime', now }: { readonly period?: 'today' | 'week'
 
 function RecordsProbe({ period, now }: { readonly period: 'today' | 'week' | 'month' | 'allTime'; readonly now?: Date }) {
   const state = useDashboardMetrics(period, now);
-  return <Text>{state.status === 'ready' ? `record:${state.records.highestIncome}` : state.status}</Text>;
+  return <Text>{state.status === 'ready' ? `record:${state.records.highestIncome.value}` : state.status}</Text>;
 }
 
 describe('useDashboardMetrics', () => {

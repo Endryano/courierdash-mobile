@@ -27,10 +27,10 @@ export function DashboardHeroCard({ label, unit, value }: DashboardHeroCardProps
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: 20, borderWidth: 1, minHeight: 80, paddingHorizontal: 16, paddingVertical: 8 },
+  card: { borderRadius: 20, borderWidth: 1, minHeight: 116, paddingHorizontal: 16, paddingVertical: 12 },
   content: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   label: { fontSize: 11, fontWeight: '600', letterSpacing: 0.8, lineHeight: 14, textTransform: 'uppercase' },
   valueRow: { alignItems: 'baseline', flexDirection: 'row', gap: 6 },
-  value: { fontSize: 28, fontWeight: '800', lineHeight: 34 },
+  value: { fontSize: 38, fontWeight: '800', lineHeight: 44 },
   unit: { fontSize: 13, fontWeight: '600', lineHeight: 17 },
 });

@@ -31,10 +31,10 @@ describe('calculateDashboardRecords', () => {
     const originalOrder = shifts.map(({ id }) => id);
 
     expect(calculateDashboardRecords(shifts)).toEqual({
-      bestHourlyRate: 60,
-      bestIncomePerKilometer: 20,
-      highestIncome: 135,
-      mostOrders: 30,
+      bestHourlyRate: { date: '2026-08-01', value: 60 },
+      bestIncomePerKilometer: { date: '2026-08-01', value: 20 },
+      highestIncome: { date: '2026-08-01', value: 135 },
+      mostOrders: { date: '2026-08-01', value: 30 },
     });
     expect(shifts.map(({ id }) => id)).toEqual(originalOrder);
   });
@@ -43,10 +43,10 @@ describe('calculateDashboardRecords', () => {
     const selectedPeriodShifts = [shift(1, { hours: 4, income: 80, km: 8, orders: 8 })];
 
     expect(calculateDashboardRecords(selectedPeriodShifts)).toEqual({
-      bestHourlyRate: 20,
-      bestIncomePerKilometer: 10,
-      highestIncome: 80,
-      mostOrders: 8,
+      bestHourlyRate: { date: '2026-08-01', value: 20 },
+      bestIncomePerKilometer: { date: '2026-08-01', value: 10 },
+      highestIncome: { date: '2026-08-01', value: 80 },
+      mostOrders: { date: '2026-08-01', value: 8 },
     });
   });
 
@@ -62,7 +62,7 @@ describe('calculateDashboardRecords', () => {
       },
     }];
 
-    expect(calculateDashboardRecords(shifts).mostOrders).toBe(43);
+    expect(calculateDashboardRecords(shifts).mostOrders.value).toBe(43);
   });
 
   test('returns unavailable rate records for invalid denominators without NaN or Infinity', () => {
@@ -73,20 +73,34 @@ describe('calculateDashboardRecords', () => {
     const records = calculateDashboardRecords(shifts);
 
     expect(records).toEqual({
-      bestHourlyRate: null,
-      bestIncomePerKilometer: null,
-      highestIncome: 500,
-      mostOrders: 4,
+      bestHourlyRate: { date: null, value: null },
+      bestIncomePerKilometer: { date: null, value: null },
+      highestIncome: { date: '2026-08-01', value: 500 },
+      mostOrders: { date: '2026-08-01', value: 4 },
     });
-    expect(Object.values(records).every((value) => value === null || Number.isFinite(value))).toBe(true);
+    expect(Object.values(records).every(({ value }) => value === null || Number.isFinite(value))).toBe(true);
   });
 
   test('returns safe unavailable values for an empty filtered collection', () => {
     expect(calculateDashboardRecords([])).toEqual({
-      bestHourlyRate: null,
-      bestIncomePerKilometer: null,
-      highestIncome: null,
-      mostOrders: null,
+      bestHourlyRate: { date: null, value: null },
+      bestIncomePerKilometer: { date: null, value: null },
+      highestIncome: { date: null, value: null },
+      mostOrders: { date: null, value: null },
+    });
+  });
+
+  test('breaks equal records by the most recent canonical shift date', () => {
+    const shifts = [
+      { ...shift(1, { hours: 2, income: 100, km: 5, orders: 10 }), date: '2026-07-01' },
+      { ...shift(2, { hours: 2, income: 100, km: 5, orders: 10 }), date: '2026-07-03' },
+    ];
+
+    expect(calculateDashboardRecords(shifts)).toEqual({
+      bestHourlyRate: { date: '2026-07-03', value: 50 },
+      bestIncomePerKilometer: { date: '2026-07-03', value: 20 },
+      highestIncome: { date: '2026-07-03', value: 100 },
+      mostOrders: { date: '2026-07-03', value: 10 },
     });
   });
 });
