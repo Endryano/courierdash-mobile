@@ -36,7 +36,16 @@ describe('Dashboard metric presentation', () => {
     expect(screen.getByText('Total Brutto')).toBeTruthy();
     expect(screen.getByText('PLN')).toBeTruthy();
     expect(StyleSheet.flatten(screen.getByText('12,345.67').props.style)).toMatchObject({ fontSize: 38, lineHeight: 44 });
+    expect(StyleSheet.flatten(screen.getByTestId('dashboard-hero-value-row').props.style)).toMatchObject({ justifyContent: 'center', width: '100%' });
+    expect(StyleSheet.flatten(screen.getByText('12,345.67').props.style)).toMatchObject({ flexShrink: 1, textAlign: 'right' });
     expect(screen.getByText('12,345.67').parent?.parent?.props.onPress).toBeUndefined();
+  });
+
+  test.each(['2 944,00', '12 540,00', '123 456,78'])('keeps realistic total-income values in the same inline row: %s', async (value) => {
+    await render(<ThemeProvider><DashboardHeroCard label="Total Brutto" unit="PLN" value={value} /></ThemeProvider>);
+
+    expect(screen.getByText(value)).toBeTruthy();
+    expect(screen.getByText('PLN')).toBeTruthy();
   });
 
   test('renders compact record cards with a supplied localized date', async () => {

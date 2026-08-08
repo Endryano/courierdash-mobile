@@ -17,7 +17,7 @@ export function DashboardHeroCard({ label, unit, value }: DashboardHeroCardProps
     <AppCard accessibilityLabel={`${label}: ${value}`} padding="none" style={[styles.card, { borderColor: '#27354a', gap: spacing.xxs }]} variant="elevated">
       <View style={styles.content}>
         <AppText muted style={styles.label} variant="label">{label}</AppText>
-        <View style={styles.valueRow}>
+        <View style={styles.valueRow} testID="dashboard-hero-value-row">
           <AppText adjustsFontSizeToFit minimumFontScale={0.85} numberOfLines={1} style={[styles.value, { color: colors.positive }]} variant="title">{value}</AppText>
           {unit === undefined ? null : <AppText muted numberOfLines={1} style={styles.unit} variant="body">{unit}</AppText>}
         </View>
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   card: { borderRadius: 20, borderWidth: 1, minHeight: 116, paddingHorizontal: 16, paddingVertical: 12 },
   content: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   label: { fontSize: 11, fontWeight: '600', letterSpacing: 0.8, lineHeight: 14, textTransform: 'uppercase' },
-  valueRow: { alignItems: 'baseline', flexDirection: 'row', gap: 6 },
-  value: { fontSize: 38, fontWeight: '800', lineHeight: 44 },
-  unit: { fontSize: 13, fontWeight: '600', lineHeight: 17 },
+  valueRow: { alignItems: 'baseline', flexDirection: 'row', gap: 6, justifyContent: 'center', width: '100%' },
+  value: { flexShrink: 1, fontSize: 38, fontWeight: '800', lineHeight: 44, textAlign: 'right' },
+  unit: { flexShrink: 0, fontSize: 13, fontWeight: '600', lineHeight: 17 },
 });
