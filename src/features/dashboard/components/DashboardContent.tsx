@@ -39,6 +39,10 @@ function splitCurrency(value: string): { readonly amount: string; readonly unit:
   return { amount: value.replace(/^PLN[\s\u00A0]+|[\s\u00A0]+PLN$/u, ''), unit: 'PLN' };
 }
 
+function formatRecordCurrency(locale: Parameters<typeof formatCurrency>[0], value: number | null): { readonly amount: string; readonly unit?: string } {
+  return value === null ? { amount: '—' } : splitCurrency(formatCurrency(locale, value));
+}
+
 function DashboardMessage({ titleKey, descriptionKey, retry }: { readonly titleKey: TranslationKey; readonly descriptionKey: TranslationKey; readonly retry?: () => Promise<void> }) {
   const { t } = useLocalization();
 
@@ -87,7 +91,7 @@ export function DashboardContent() {
     );
   }
 
-  const { metrics } = dashboard;
+  const { metrics, records } = dashboard;
   const totalIncome = splitCurrency(formatCurrency(locale, metrics.totalIncome));
   const incomePerHour = splitCurrency(formatCurrency(locale, metrics.incomePerHour));
   const incomePerOrder = splitCurrency(formatCurrency(locale, metrics.incomePerOrder));
@@ -103,6 +107,15 @@ export function DashboardContent() {
     { key: 'income-per-order', label: t('dashboard.incomePerOrder'), tone: 'orders', unit: incomePerOrder.unit, value: incomePerOrder.amount },
     { key: 'income-per-kilometer', label: t('dashboard.incomePerKilometer'), tone: 'distance', unit: incomePerKilometer.unit, value: incomePerKilometer.amount },
   ];
+  const highestIncome = formatRecordCurrency(locale, records.highestIncome);
+  const bestHourlyRate = formatRecordCurrency(locale, records.bestHourlyRate);
+  const bestIncomePerKilometer = formatRecordCurrency(locale, records.bestIncomePerKilometer);
+  const recordMetrics: readonly DashboardMetricSectionItem[] = [
+    { key: 'highest-income', label: t('dashboard.records.highestIncome'), tone: 'record', unit: highestIncome.unit, value: highestIncome.amount },
+    { key: 'best-hourly-rate', label: t('dashboard.records.bestHourlyRate'), tone: 'record', unit: bestHourlyRate.unit === undefined ? undefined : t('dashboard.records.unit.perHour'), value: bestHourlyRate.amount },
+    { key: 'most-orders', label: t('dashboard.records.mostOrders'), tone: 'record', value: records.mostOrders === null ? '—' : formatNumber(locale, records.mostOrders, 0) },
+    { key: 'best-income-per-kilometer', label: t('dashboard.records.bestIncomePerKilometer'), tone: 'record', unit: bestIncomePerKilometer.unit === undefined ? undefined : t('dashboard.records.unit.perKilometer'), value: bestIncomePerKilometer.amount },
+  ];
 
   return (
     <Screen edges={[]}>
@@ -115,6 +128,9 @@ export function DashboardContent() {
         </View>
         <View style={{ marginTop: spacing.lg }}>
           <DashboardMetricSection metrics={efficiencyMetrics} title={t('dashboard.section.average')} />
+        </View>
+        <View style={{ marginTop: spacing.lg }}>
+          <DashboardMetricSection metrics={recordMetrics} title={t('dashboard.section.personalRecords')} />
         </View>
       </ScrollView>
     </Screen>

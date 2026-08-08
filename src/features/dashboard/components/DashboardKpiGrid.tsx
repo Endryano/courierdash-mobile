@@ -15,9 +15,9 @@ export type DashboardKpiItem = {
   readonly tone?: DashboardKpiTone;
 };
 
-export type DashboardKpiTone = 'default' | 'income' | 'orders' | 'distance' | 'shifts';
+export type DashboardKpiTone = 'default' | 'income' | 'orders' | 'distance' | 'shifts' | 'record';
 
-const toneStyles: Record<DashboardKpiTone, { readonly borderColor: string; readonly valueColor: string }> = {
+const toneStyles: Record<Exclude<DashboardKpiTone, 'record'>, { readonly borderColor: string; readonly valueColor: string }> = {
   default: { borderColor: '#27354a', valueColor: '#ffffff' },
   income: { borderColor: '#285038', valueColor: '#20d879' },
   orders: { borderColor: '#2b3d5c', valueColor: '#579aff' },
@@ -55,7 +55,9 @@ type DashboardKpiCardProps = Omit<DashboardKpiItem, 'key'> & { readonly testID: 
 
 function DashboardKpiCard({ accessibilityLabel, label, testID, tone = 'default', unit, value }: DashboardKpiCardProps) {
   const { colors, spacing } = useTheme();
-  const palette = toneStyles[tone];
+  const palette = tone === 'record'
+    ? { borderColor: colors.warning, valueColor: colors.warning }
+    : toneStyles[tone];
 
   return (
     <AppCard accessibilityLabel={accessibilityLabel ?? `${label}: ${value}`} padding="none" style={[styles.card, { backgroundColor: colors.surface, borderColor: palette.borderColor, gap: spacing.xxs }]} testID={testID}>

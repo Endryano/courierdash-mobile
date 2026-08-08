@@ -25,6 +25,11 @@ function Probe({ period = 'allTime', now }: { readonly period?: 'today' | 'week'
   return <Text onPress={'retry' in state ? state.retry : undefined}>{state.status === 'ready' ? `${state.status}:${state.metrics.totalIncome}` : state.status}</Text>;
 }
 
+function RecordsProbe({ period, now }: { readonly period: 'today' | 'week' | 'month' | 'allTime'; readonly now?: Date }) {
+  const state = useDashboardMetrics(period, now);
+  return <Text>{state.status === 'ready' ? `record:${state.records.highestIncome}` : state.status}</Text>;
+}
+
 describe('useDashboardMetrics', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,6 +82,23 @@ describe('useDashboardMetrics', () => {
     await view.rerender(<Probe period="week" now={new Date(2026, 6, 20, 12, 0, 0)} />);
     expect(screen.getByText('period_empty')).toBeTruthy();
     expect(mockWorkState.shifts).toHaveLength(2);
+  });
+
+  test('derives records from the same selected period collection as Dashboard metrics', async () => {
+    mockWorkState = {
+      status: 'ready',
+      shifts: [
+        { ...shift(10), date: '2026-07-29' },
+        { ...shift(200), id: 2, date: '2026-06-01' },
+      ],
+      retry: mockRetry,
+      subjectUserId: 'user-1',
+    };
+    const view = await render(<RecordsProbe period="today" now={new Date(2026, 6, 29, 12)} />);
+    expect(screen.getByText('record:10')).toBeTruthy();
+
+    await view.rerender(<RecordsProbe period="allTime" now={new Date(2026, 6, 29, 12)} />);
+    expect(screen.getByText('record:200')).toBeTruthy();
   });
 
   test('recalculates selected relative periods from the shared foreground date without retrying Work', async () => {

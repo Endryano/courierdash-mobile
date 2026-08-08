@@ -4,13 +4,14 @@ import { useWorkShifts } from '@/features/work/hooks/useWorkShifts';
 import { useForegroundDate } from '@/lib/lifecycle/foregroundDate';
 
 import { calculateDashboardMetrics, type DashboardMetrics } from '../domain/dashboardMetrics';
+import { calculateDashboardRecords, type DashboardRecords } from '../domain/dashboardRecords';
 import { defaultDashboardPeriod, filterWorkShiftsByPeriod, type DashboardPeriod } from '../domain/dashboardPeriod';
 
 export type DashboardMetricsState =
   | { readonly status: 'loading' }
   | { readonly status: 'empty' }
   | { readonly status: 'period_empty'; readonly period: DashboardPeriod }
-  | { readonly status: 'ready'; readonly metrics: DashboardMetrics }
+  | { readonly status: 'ready'; readonly metrics: DashboardMetrics; readonly records: DashboardRecords }
   | { readonly status: 'recoverable_error'; readonly retry: () => Promise<void> }
   | { readonly status: 'blocked'; readonly retry: () => Promise<void> };
 
@@ -24,6 +25,10 @@ export function useDashboardMetrics(period: DashboardPeriod = defaultDashboardPe
   );
   const metrics = useMemo(
     () => calculateDashboardMetrics(filteredShifts),
+    [filteredShifts],
+  );
+  const records = useMemo(
+    () => calculateDashboardRecords(filteredShifts),
     [filteredShifts],
   );
 
@@ -43,5 +48,5 @@ export function useDashboardMetrics(period: DashboardPeriod = defaultDashboardPe
     return { status: 'period_empty', period };
   }
 
-  return { status: 'ready', metrics };
+  return { status: 'ready', metrics, records };
 }

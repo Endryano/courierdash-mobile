@@ -18,6 +18,13 @@ jest.mock('react-native-safe-area-context', () => ({
 
 const { DashboardContent } = require('@/features/dashboard/components/DashboardContent') as typeof import('@/features/dashboard/components/DashboardContent');
 
+const readyRecords = {
+  bestHourlyRate: 45,
+  bestIncomePerKilometer: 18,
+  highestIncome: 360,
+  mostOrders: 105,
+};
+
 function renderDashboard() {
   return render(<ThemeProvider><DashboardContent /></ThemeProvider>);
 }
@@ -26,7 +33,7 @@ describe('DashboardContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockRetry.mockResolvedValue(undefined);
-    mockDashboardState = { status: 'ready', metrics: { totalIncome: 360, totalHours: 8, totalOrders: 105, totalKilometers: 20, totalShifts: 1, incomePerHour: 45, incomePerOrder: 360 / 105, incomePerKilometer: 18 } };
+    mockDashboardState = { status: 'ready', metrics: { totalIncome: 360, totalHours: 8, totalOrders: 105, totalKilometers: 20, totalShifts: 1, incomePerHour: 45, incomePerOrder: 360 / 105, incomePerKilometer: 18 }, records: readyRecords };
     mockUseDashboardMetrics.mockImplementation(() => mockDashboardState);
   });
 
@@ -34,12 +41,12 @@ describe('DashboardContent', () => {
     await renderDashboard();
 
     expect(screen.getByText('navigation.tab.dashboard')).toBeTruthy();
-    for (const label of ['dashboard.totalIncome', 'dashboard.label.hours', 'dashboard.label.orders', 'dashboard.label.kilometers', 'dashboard.label.shifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.total.week', 'dashboard.section.average']) {
+    for (const label of ['dashboard.totalIncome', 'dashboard.label.hours', 'dashboard.label.orders', 'dashboard.label.kilometers', 'dashboard.label.shifts', 'dashboard.incomePerOrder', 'dashboard.incomePerKilometer', 'dashboard.section.total.week', 'dashboard.section.average', 'dashboard.section.personalRecords', 'dashboard.records.highestIncome', 'dashboard.records.bestHourlyRate', 'dashboard.records.mostOrders', 'dashboard.records.bestIncomePerKilometer']) {
       expect(screen.getByText(label)).toBeTruthy();
     }
     expect(screen.getAllByText('dashboard.incomePerHour')).toHaveLength(1);
-    expect(screen.getByText('360.00')).toBeTruthy();
-    expect(screen.getAllByText('45.00')).toHaveLength(1);
+    expect(screen.getAllByText('360.00')).toHaveLength(2);
+    expect(screen.getAllByText('45.00')).toHaveLength(2);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('work.create.action')).toBeNull();
     expect(screen.getByTestId('dashboard-period-week').props.accessibilityState).toEqual({ selected: true });
@@ -47,11 +54,12 @@ describe('DashboardContent', () => {
     expect(screen.getByText('navigation.tab.dashboard').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.total.week').props.accessibilityRole).toBe('header');
     expect(screen.getByText('dashboard.section.average').props.accessibilityRole).toBe('header');
+    expect(screen.getByText('dashboard.section.personalRecords').props.accessibilityRole).toBe('header');
   });
 
   test('changes the selected period and updates displayed KPI values', async () => {
     mockUseDashboardMetrics.mockImplementation((period) => period === 'today'
-      ? { status: 'ready', metrics: { totalIncome: 25, totalHours: 1, totalOrders: 1, totalKilometers: 2, totalShifts: 1, incomePerHour: 25, incomePerOrder: 25, incomePerKilometer: 12.5 } }
+      ? { status: 'ready', metrics: { totalIncome: 25, totalHours: 1, totalOrders: 1, totalKilometers: 2, totalShifts: 1, incomePerHour: 25, incomePerOrder: 25, incomePerKilometer: 12.5 }, records: { bestHourlyRate: 25, bestIncomePerKilometer: 12.5, highestIncome: 25, mostOrders: 1 } }
       : mockDashboardState);
     await renderDashboard();
     await fireEvent.press(screen.getByTestId('dashboard-period-today'));
@@ -116,12 +124,13 @@ describe('DashboardContent', () => {
   });
 
   test('formats zero denominator rates safely without charts or filters', async () => {
-    mockDashboardState = { status: 'ready', metrics: { totalIncome: 1, totalHours: 0, totalOrders: 0, totalKilometers: 0, totalShifts: 1, incomePerHour: 0, incomePerOrder: 0, incomePerKilometer: 0 } };
+    mockDashboardState = { status: 'ready', metrics: { totalIncome: 1, totalHours: 0, totalOrders: 0, totalKilometers: 0, totalShifts: 1, incomePerHour: 0, incomePerOrder: 0, incomePerKilometer: 0 }, records: { bestHourlyRate: null, bestIncomePerKilometer: null, highestIncome: 1, mostOrders: 0 } };
     await renderDashboard();
 
     expect(screen.getAllByText('0.00')).toHaveLength(3);
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
     expect(screen.queryByText('chart')).toBeNull();
+    expect(screen.getAllByText('—')).toHaveLength(2);
   });
 
   test('keeps period controls available for a period-specific empty state', async () => {
