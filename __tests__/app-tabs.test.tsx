@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import type { ReactElement } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { ThemeProvider } from '@/theme/ThemeProvider';
@@ -8,6 +9,7 @@ const mockPush = jest.fn();
 const mockSignOut = jest.fn<() => Promise<void>>();
 let capturedScreenOptions: Record<string, unknown> | undefined;
 const registeredTabs: string[] = [];
+const mockTabOptions = new Map<string, Record<string, unknown>>();
 const tabLabels = {
   en: { 'navigation.tab.dashboard': 'Statistics', 'navigation.tab.work': 'Work', 'navigation.tab.more': 'More' },
   pl: { 'navigation.tab.dashboard': 'Statystyki', 'navigation.tab.work': 'Zmiany', 'navigation.tab.more': 'Więcej' },
@@ -29,8 +31,9 @@ jest.mock('expo-router', () => {
     capturedScreenOptions = screenOptions;
     return React.createElement(View, null, children);
   };
-  Tabs.Screen = ({ name, options }: { name: string; options: { title: string; tabBarAccessibilityLabel: string } }) => {
+  Tabs.Screen = ({ name, options }: { name: string; options: Record<string, unknown> & { title: string; tabBarAccessibilityLabel: string } }) => {
     registeredTabs.push(name);
+    mockTabOptions.set(name, options);
     return React.createElement(Text, { accessibilityLabel: options.tabBarAccessibilityLabel }, `${name}:${options.title}`);
   };
   return { Tabs, router: { push: mockPush } };
@@ -54,6 +57,7 @@ describe('AppTabsLayout', () => {
     jest.clearAllMocks();
     capturedScreenOptions = undefined;
     registeredTabs.length = 0;
+    mockTabOptions.clear();
     mockLocale = 'en';
     mockSignOut.mockResolvedValue(undefined);
   });
@@ -70,20 +74,27 @@ describe('AppTabsLayout', () => {
     expect(registeredTabs).not.toContain('annual-report');
   });
 
-  test('uses built-in navigator presentation with semantic dark tab styling and no icons', async () => {
+  test('uses an integrated dark tab surface with semantic Ionicons', async () => {
     await renderTabs();
 
     expect(capturedScreenOptions).toMatchObject({
       headerShown: false,
-      tabBarActiveBackgroundColor: '#252530',
+      sceneStyle: { backgroundColor: '#121212' },
+      tabBarActiveBackgroundColor: 'transparent',
       tabBarActiveTintColor: '#00e5ff',
       tabBarInactiveTintColor: '#a0a0a0',
-      tabBarItemStyle: { borderRadius: 12, marginHorizontal: 8, marginVertical: 8, minHeight: 48 },
+      tabBarItemStyle: { minHeight: 48, paddingVertical: 4 },
       tabBarLabelStyle: { fontSize: 12, fontWeight: '500', lineHeight: 16, textTransform: 'none' },
       tabBarStyle: { backgroundColor: '#1e1e24', borderTopColor: '#2c2c38', borderTopWidth: StyleSheet.hairlineWidth, elevation: 0, shadowOpacity: 0 },
     });
     expect(capturedScreenOptions?.tabBar).toBeUndefined();
-    expect(capturedScreenOptions?.tabBarIcon).toBeUndefined();
+    expect(mockTabOptions.get('index')?.tabBarIcon).toEqual(expect.any(Function));
+    expect(mockTabOptions.get('work')?.tabBarIcon).toEqual(expect.any(Function));
+    expect(mockTabOptions.get('more')?.tabBarIcon).toEqual(expect.any(Function));
+    const renderIcon = (tab: string) => (mockTabOptions.get(tab)?.tabBarIcon as (props: { color: string; focused: boolean; size: number }) => ReactElement<{ name: string }>)({ color: '#00e5ff', focused: true, size: 24 });
+    expect(renderIcon('index').props.name).toBe('bar-chart-outline');
+    expect(renderIcon('work').props.name).toBe('time-outline');
+    expect(renderIcon('more').props.name).toBe('ellipsis-horizontal-outline');
     expect(capturedScreenOptions?.tabBarShowLabel).not.toBe(false);
   });
 

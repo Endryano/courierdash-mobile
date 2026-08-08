@@ -1,5 +1,7 @@
 import { setBackgroundColorAsync } from 'expo-system-ui';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider } from '@/features/auth/AuthProvider';
@@ -17,7 +19,12 @@ function SystemUiBackground() {
     });
   }, [colors.background]);
 
-  return <NavigationGate />;
+  return (
+    <View style={{ backgroundColor: colors.background, flex: 1 }}>
+      <StatusBar style="light" />
+      <NavigationGate />
+    </View>
+  );
 }
 
 export default function RootLayout() {
